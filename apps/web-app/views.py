@@ -12,3 +12,7 @@ def index():
 @devops.errorhandler(404)
 def page_not_found(error):
     return 'fail'
+
+@devops.route("/test")
+def testJSON():
+    return "Kapibara"
