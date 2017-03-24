@@ -2,16 +2,20 @@ from run import db
 
 class User(db.Model):
     id=db.Column(db.Integer, primary_key=True)
-    email = db.Column(db.String(120), index=True, unique=True)
-    password = db.Column(db.String(50), index=True, unique=False)
+    name=db.Column(db.String(15), index=True)
+    surname=db.Column(db.String(40), index=True)
+    email = db.Column(db.String(80), index=True, unique=True)
+    password = db.Column(db.String(50), index=True)
     is_admin = db.Column(db.Boolean, index=True)
     
-    def __init__(self, email, password):
+    def __init__(self, name, surname, email, password, is_admin):
+        self.name = name
+        self.surname = surname
         self.email = email
         self.password = password
-        self.is_admin = False
+        self.is_admin = is_admin
 
     def __repr__(self):
-        return '<User %r>' % (self.email)
+        return 'Name: {0} \nSurname: {1} \nE-mail: {2}'.format(self.name, self.surname, self.email)
 
 

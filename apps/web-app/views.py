@@ -1,12 +1,13 @@
-from flask import Blueprint, render_template, request, redirect, url_for
+from flask import Blueprint, render_template, request, redirect, url_for, flash
+from forms import LoginForm
 
 devops = Blueprint('devops', __name__)
 
 @devops.route('/')
-@devops.route('/index')
+@devops.route('/index', methods=['GET', 'POST'])
 def index():
-    user = {'nickname': 'World'}
-    return render_template('index.html', title='Osdev Nokia', user=user)
+    form = LoginForm()
+    return render_template('index.html', title='DevOps Nokia', form=form)
 
 @devops.errorhandler(404)
 def page_not_found(error):
