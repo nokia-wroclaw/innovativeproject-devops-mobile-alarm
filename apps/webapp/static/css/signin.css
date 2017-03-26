@@ -41,11 +41,11 @@ h2 {
   border-bottom-left-radius: 0;
 }
 .form-signin input[type="password"] {
-  margin-bottom: 10px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
 }
 .btn {
+    margin-top: 10px;
     background-color: #f29346; 
     border-color: #f29346
 }

@@ -1,27 +1,47 @@
-<html>
-    <head>
-        <title>Mobile phone DevOps alarm delivery</title>
-        <meta charset="UTF-8">
-        <link rel="stylesheet" href="css/bootstrap.css">
-    </head>
-    <body class="bg-primary">
-     <p class="well">DevOps</p>
-        <div class="row">
-            <div class="col-sm-4 col-sm-offset-4 col-xs-8 col-xs-offset-2
-                col-lg-4 col-lg-offset-4 col-md-4 col-md-offset-4 col-xl-4 col-xl-offset-4">
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                      <h3 class="panel-title" align="center">Register</h3>
-                    </div>
-                    <div class="panel-body" > 
-                        <form action="hello.html" method="post">     
-                            <h4 align="center">Authorization Panel</h4>
-                            <h6>Please enter Your e-mail:</h6> 
-                            <label for="security">E-mail:</label>
-                            <input name="security" id="email" type="email" placeholder="your email" required>
-                    </div>
-                </div> 
-            </div>
-        </div>        
-    </body>
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <!-- FONT 
+    –––––––––––––––––––––––––––––––––––––––––––––––––– --> 
+    <link href="https://fonts.googleapis.com/css?family=Eczar" rel="stylesheet"> 
+
+    <!-- Bootstrap core CSS -->
+    <link href="../static/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="../static/css/signin.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="../static/js/ie-emulation-modes-warning.js"></script>
+    
+  </head>
+
+  <body>
+
+    <div class="container">
+
+      <form class="form-signin" action="" method="post" name="signup" onsubmit="return validatePassword()">
+        <h2 class="form-signin-heading">Please sign up</h2>
+        <input type="text" name="name" id="name" maxlength="15" class="form-control" placeholder="Name" required>
+        <input type="text" name="surname" id="surname" maxlength="40" class="form-control" placeholder="Surname" required>
+        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
+        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm Password" required>
+
+        
+        
+        
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
+      </form>
+
+    </div> 
+
+  </body>
 </html>
