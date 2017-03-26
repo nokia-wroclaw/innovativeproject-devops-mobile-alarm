@@ -44,3 +44,17 @@ def page_not_found(error):
 @app.route("/test")
 def testJSON():
     return "Kapibara"
+
+@app.route('/loginandroid',methods=['GET','POST'])
+def loginandroid():
+    if request.method == 'GET':
+        return "bye"
+    email = request.form['email']
+    password = request.form['password']
+    registered_user = User.query.filter_by(email=email,password=password).first()
+    if registered_user is None:
+        flash('Email or Password is invalid' , 'error')
+        return "bye"
+    #login_user(registered_user)
+    flash('Logged in successfully')
+    return jsonify({'zalogowany': "ok"})
