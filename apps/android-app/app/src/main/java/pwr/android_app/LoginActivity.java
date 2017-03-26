@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.JsonReader;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -31,26 +32,35 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.DataOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.net.MalformedURLException;
+import java.net.ProtocolException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.net.ssl.HttpsURLConnection;
+
 import static android.Manifest.permission.READ_CONTACTS;
 
-// Ekran logowania
+// --- LOGIN SCREEN ACTIVITY --- //
 public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
 
     // Id to identity READ_CONTACTS permission request
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    // Prymitywna baza danych zarejestrowanych użytkowników
-    // TODO: Usunąć po utworzeniu prawdziwego system autoryzacji użytkowników
-    private static final String[] DUMMY_CREDENTIALS = new String[]{
-            "foo@example.com:hello",
-            "bar@example.com:world",
-            "a@a.a:aaaaa",
-    }; // Wzorzec: email@x.y:haslo
-
-    // Obiekt umożliwiający logowanie
+    // Object used in login
     private UserLoginTask mAuthTask = null;
 
     // UI references.
@@ -58,10 +68,10 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private Button mEmailSignInButton;
 
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-
+    // === ON CREATE === //
+    @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
@@ -81,7 +91,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         });
 
-        Button mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
+        mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
         mEmailSignInButton.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -91,16 +101,15 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mLoginFormView = findViewById(R.id.login_form);
         mProgressView = findViewById(R.id.login_progress);
-    }
 
+    }
+    // === METODY ZWIĄZANE Z AUTOUZUPEŁNIANIEM ADRESU EMAIL === //
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
         }
-
         getLoaderManager().initLoader(0, null, this);
     }
-
     private boolean mayRequestContacts() {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -124,9 +133,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         return false;
     }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+    @Override public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         if (requestCode == REQUEST_READ_CONTACTS) {
             if (grantResults.length == 1 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                 populateAutoComplete();
@@ -144,6 +151,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
 
         // Czyszczenie poprzednich uwag/błędów
+        // (komunikaty wyskakujące, po wprowadzeniu błędnego emaila lub hasła)
         mEmailView.setError(null);
         mPasswordView.setError(null);
 
@@ -155,7 +163,12 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         View focusView = null;
 
         // Weryfikuje zgodność hasła z szablonem, jeśli zostało ono wpisane
-        if (!TextUtils.isEmpty(password) && !isPasswordValid(password)) {
+        if (TextUtils.isEmpty(password)){
+            mPasswordView.setError(getString(R.string.error_field_required));
+            focusView = mPasswordView;
+            cancel = true;
+        }
+        else if (!isPasswordValid(password)) {
             mPasswordView.setError(getString(R.string.error_invalid_password));
             focusView = mPasswordView;
             cancel = true;
@@ -166,7 +179,8 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             mEmailView.setError(getString(R.string.error_field_required));
             focusView = mEmailView;
             cancel = true;
-        } else if (!isEmailValid(email)) {
+        }
+        else if (!isEmailValid(email)) {
             mEmailView.setError(getString(R.string.error_invalid_email));
             focusView = mEmailView;
             cancel = true;
@@ -177,9 +191,9 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             focusView.requestFocus();
         } else {
             // Przechodzi do ekranu ładowania, a następnie przechodzi do funkcji autoryzującej użytkownika
-            showProgress(true);
-            mAuthTask = new UserLoginTask(email, password);
-            mAuthTask.execute((Void) null);
+            showProgress(true);                                 // pokazuje animację
+            mAuthTask = new UserLoginTask(email, password);     // tworzy obiekt zawierający informację u uzytkowniku
+            mAuthTask.execute((Void) null);                     // przejście do procedury logowania (w osobnym wątku)
         }
     }
 
@@ -227,8 +241,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         }
     }
 
-    @Override
-    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
                 // Pobiera dane z kontaktów profilu użytkownika
                 Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
@@ -242,9 +255,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
                 // W pierwszej kolejności proponuje ostatnio używany adres
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
-
-    @Override
-    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+    @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -254,11 +265,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         addEmailsToAutoComplete(emails);
     }
-
-    @Override
-    public void onLoaderReset(Loader<Cursor> cursorLoader) {
-
-    }
+    @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {}
 
     private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
         // Tworzy adapter, który podpowiada AutoCompleteTextView co pokazać na liście proponowanych e-maili
@@ -266,7 +273,6 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
         mEmailView.setAdapter(adapter);
     }
-
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -277,50 +283,117 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
         int IS_PRIMARY = 1;
     }
 
-    // Reprezentuje asynchroniczne logowanie/rejestrację
-    public class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
+    // ======================= //
+    // === USER LOGIN TASK === //
+    // ======================= //
+    private class UserLoginTask extends AsyncTask<Void, Void, Boolean> {
 
         private final String mEmail;
         private final String mPassword;
+
+        private JsonReader responseJsonReader;
 
         UserLoginTask(String email, String password) {
             mEmail = email;
             mPassword = password;
         }
 
-        @Override
-        protected Boolean doInBackground(Void... params) {
+        @Override protected Boolean doInBackground(Void... params) {
             // TODO: dokonać autoryzacji użytkownika
 
+            HttpsURLConnection connection;
+            String requestBody = null;
             try {
-                // Symuluje łączenie z serwerem
-                Thread.sleep(2000);
-            } catch (InterruptedException e) {
+                // === Przygotowanie odpowiedniego JSONA === //
+//                JSONObject loginObject = new JSONObject();
+//                loginObject.put("email",mEmail);
+//                loginObject.put("password",mPassword);
+//                requestBody = loginObject.toString();
+
+                // === Przygotowanie parametrów === //
+                Uri.Builder builder = new Uri.Builder().
+                        appendQueryParameter("email",mEmail).
+                        appendQueryParameter("password",mPassword);
+                requestBody = builder.build().getEncodedQuery();
+
+                // === ustawianie parametrów połączenia === //
+                URL url = new URL(getString(R.string.REST_API_LOGIN_URL));
+                connection = (HttpsURLConnection) url.openConnection();
+//                connection.setRequestProperty("Content-Type","application/json");
+                connection.setRequestMethod("POST");
+                connection.setUseCaches(false);
+                connection.setDoInput(true);
+                connection.setDoOutput(true);
+
+                DataOutputStream wr = new DataOutputStream(connection.getOutputStream());
+                wr.writeBytes(requestBody);
+
+                wr.flush();
+                wr.close();
+
+                // === Pobranie odpowiedzi z serwera === //
+                if (connection.getResponseCode() == 200) {
+                    InputStream responseBody = connection.getInputStream();                         // Pobranie odpowiedzi serwera
+                    InputStreamReader responseBodyReader = new InputStreamReader(responseBody, "UTF-8");
+                    responseJsonReader = new JsonReader(responseBodyReader);                        // Tutaj przechowywana jest odpowiedź serwera jako json
+
+                    if (connection != null) {
+                        connection.disconnect();
+                    }
+                    return true;
+                }
+                else {
+                    responseJsonReader = null;
+                    if (connection != null) {
+                        connection.disconnect();
+                    }
+                    return false;
+                }
+
+                // === TODO Obsługa wyjątów === //
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                return false;
+            } catch (ProtocolException e) {
+                e.printStackTrace();
+                return false;
+            } catch (IOException e) {
+                e.printStackTrace();
                 return false;
             }
-
-            for (String credential : DUMMY_CREDENTIALS) {
-                String[] pieces = credential.split(":");
-                if (pieces[0].equals(mEmail)) {
-                    // Użytkownik istnieje, zwraca prawdę jeżeli hasło jest poprawne
-                    return pieces[1].equals(mPassword);
-                }
-            }
-
-            // TODO: Aktywność związana z rejestracją nowego użytkownika
-            return true;
         }
 
-        @Override
-        protected void onPostExecute(final Boolean success) {
+        @Override protected void onPostExecute(final Boolean success) {
             mAuthTask = null;
-            showProgress(false);
+            showProgress(false);    // Wyłącza animację
 
-            if (success) {
+            if (success) {          // W przypadku udanej próby zalogowania...
+
+                // === TODO parsowanie powinno być po stronie main activity w przyszłości po ustaleniu rest api
+                String xxx = null;
+                String name = null;
+                try {
+                    responseJsonReader.beginObject();
+                    while(responseJsonReader.hasNext()){
+                        name = responseJsonReader.nextName();
+                        if (name.equals("uid")) {
+                            xxx = responseJsonReader.nextString();
+                            break;
+                        }
+                        responseJsonReader.skipValue();
+                    }
+
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+
                 // Przejście do głównego menu aplikacji
+                // Todo wyjście z aktywności logowania
                 Context context = getApplicationContext();
                 Intent i = new Intent(context, MainActivity.class);
-                i.putExtra("user_email", mEmail);
+                i.putExtra("server_answer_to_login_request", xxx);
                 startActivity(i);
                 finish();
             } else {
@@ -329,8 +402,7 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
             }
         }
 
-        @Override
-        protected void onCancelled() {
+        @Override protected void onCancelled() {
             mAuthTask = null;
             showProgress(false);
         }

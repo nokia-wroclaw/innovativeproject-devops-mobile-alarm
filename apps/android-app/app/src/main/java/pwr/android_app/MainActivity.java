@@ -1,10 +1,9 @@
 package pwr.android_app;
 
-import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.ActionBar;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -18,15 +17,70 @@ import android.widget.TextView;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
+    // --- DATA --- //
+    private int option_id = 1;
+
+    private Toolbar toolbar = null;             // Toolbar na górze ekranu.
+    private ActionBar actionBar = null;
+
+    private MainMenuFragment mainMenuFragment;
+    private WebBrowserFragment webBrowserFragment;
+    private TestingFragment testingFragment;
+
+    // --- MY METHODS --- //
+    // Podejmuję konkretną akcję w zależności od wyboru opcji na lewym wysuwanym panelu.
+    private void chooseOption() {
+        if (option_id == R.id.main_menu_option) {
+
+            // Włączenie głównego menu po wybraniu odpowiedniej opcji z lewego panelu
+            mainMenuFragment = new MainMenuFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container,mainMenuFragment);
+//            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+            actionBar.show();
+
+        } else if (option_id == R.id.website_option) {
+
+            // Włączenie przeglądarki po wybraniu odpowiedniej opcji z lewogo panelu
+            webBrowserFragment = new WebBrowserFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container,webBrowserFragment);
+//            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+            actionBar.hide();
+
+        } else if (option_id == R.id.testing_option) {
+
+            // Włączenie strony testowej po wybraniu odpowiedniej opcji z lewogo panelu
+            testingFragment = new TestingFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container,testingFragment);
+//            fragmentTransaction.addToBackStack(null);
+            fragmentTransaction.commit();
+            actionBar.hide();
+        }
+    }
+
     // --- METHODS --- //
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // Tworzy odpowiedni fragment w oparciu o option_id
+        chooseOption();
+
+        // Tworzenie toolbara na górze
+        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Pobranie uchwytu do actionBar (pasek na górze głownej aktywności), aby móc nim manipulować.
+        actionBar = getSupportActionBar();
+//        actionBar.setHideOnContentScrollEnabled(true);
+
+
+        // Tworzenie przycisku na dole po prawej
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -36,17 +90,25 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
+        // Tworzenie wysuwanego panelu po lewej stronie
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
+        // Tworzenie górnej części panelu wysuwanego z lewej strony
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    @Override
-    public void onBackPressed() {
+    @Override public void onResume(){
+        super.onResume();
+
+    }
+
+
+    // Obsługa wciśnięcia klawisza wstecz
+    @Override public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
@@ -55,15 +117,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
 
         // Wypełnia pasek boczny informacjami
         getMenuInflater().inflate(R.menu.main, menu);
 
-        // Ustawia adres email zalogowanego użytkownika na panelu pocznym
-        TextView userEmailView = (TextView)findViewById(R.id.userEmailTextView);
-        userEmailView.setText(getIntent().getStringExtra("user_email"));
+        // Ustawia adres email zalogowanego użytkownika na panelu bocznym
+        TextView userEmailView = (TextView)findViewById(R.id.userDataTextView);
+        userEmailView.setText(getIntent().getStringExtra("server_answer_to_login_request"));
 
         return true;
     }
@@ -86,22 +147,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
-        int id = item.getItemId();
+        // Obsługa wybrania danej opcji z lewego wysuwanego panelu.
+        option_id = item.getItemId();
 
-        if (id == R.id.first_option) {
-            Context context = getApplicationContext();
-            Intent i = new Intent(context, WebsiteActivity.class);
-            startActivity(i);
-        } else if (id == R.id.second_option) {
-
-        } else if (id == R.id.third_option) {
-
-        }
+        // Tworzy odpowiedni fragment w oparciu o option_id
+        chooseOption();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
-
 }
