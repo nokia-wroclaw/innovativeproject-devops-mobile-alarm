@@ -72,9 +72,18 @@ def loginandroid():
     email = request.form['email']
     password = request.form['password']
     registered_user = User.query.filter_by(email=email,password=password).first()
+    #tu dodac jeszcze or registered_user.is_admin == True:
     if registered_user is None:
         flash('Email or Password is invalid' , 'error')
         return "bye"
     #login_user(registered_user)
     flash('Logged in successfully')
-    return jsonify({'zalogowany': "ok"})
+    return jsonify({
+               "error": false,
+               "uid": registered_user.id,
+               "user": {
+               "name": registered_user.name,
+               "surname": registered_user.surname,
+               "email": registered_user.email
+               }
+               })
