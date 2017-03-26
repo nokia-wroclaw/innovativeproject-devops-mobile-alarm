@@ -30,4 +30,15 @@ class User(db.Model):
     def get_id(self):
         return unicode(self.id)
 
+class Tokens(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    token=db.Column(db.String(50), index=True, unique=True)
+    email=db.Column(db.String(80), index=True, unique=True)
+    date_of_expire=db.Column(db.Datetime())
+
+    def __init__(token, email, date):
+        self.token=token
+        self.email=email
+        self.date_of_expire=date
+
 
