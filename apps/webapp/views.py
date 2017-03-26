@@ -1,4 +1,4 @@
-from flask import Flask, session, request, flash, url_for, redirect, render_template, abort, g
+from flask import Flask, session, request, flash, url_for, redirect, render_template, abort, g, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from webapp import db, app, login_manager
 from .models import User
@@ -41,6 +41,7 @@ def login():
     return redirect(request.args.get('next') or url_for('index'))
 
 @app.route('/invite',methods=['GET','POST'])
+@login_required
 def invite():
     if request.method == 'GET':
         return render_template('invite.html')
