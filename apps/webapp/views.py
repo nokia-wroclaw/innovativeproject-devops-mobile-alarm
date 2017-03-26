@@ -76,12 +76,8 @@ def loginandroid():
         return "bye"
     email = request.form['email']
     password = request.form['password']
-<<<<<<< HEAD
-    registered_user = User.query.filter_by(email=email,password=password).first()
     #tu dodac jeszcze or registered_user.is_admin == True:
-=======
     registered_user = User.query.filter_by(email=email).first()
->>>>>>> heroku_develop
     if registered_user is None:
         flash('The user does not exist!' , 'error')
         return "bye"
@@ -92,7 +88,7 @@ def loginandroid():
     #login_user(registered_user)
     flash('Logged in successfully')
     return jsonify({
-               "error": false,
+               "error": False,
                "uid": registered_user.id,
                "user": {
                "name": registered_user.name,
