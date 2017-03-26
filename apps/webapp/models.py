@@ -5,7 +5,7 @@ class User(db.Model):
     name=db.Column(db.String(15), index=True)
     surname=db.Column(db.String(40), index=True)
     email = db.Column(db.String(80), index=True, unique=True)
-    password = db.Column(db.String(50), index=True)
+    password = db.Column(db.String(100), index=True)
     is_admin = db.Column(db.Boolean, index=True)
     
     def __init__(self, name, surname, email, password, is_admin):
