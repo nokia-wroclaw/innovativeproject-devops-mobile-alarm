@@ -5,6 +5,7 @@ from .models import User
 import sendgrid
 import os
 from sendgrid.helpers.mail import *
+import bcrypt
 
 @login_manager.user_loader
 def load_user(id):
@@ -32,8 +33,12 @@ def login():
         return render_template('login.html')
     email = request.form['email']
     password = request.form['password']
-    registered_user = User.query.filter_by(email=email,password=password).first()
-    if registered_user is None or registered_user.is_admin == False:
+    registered_user = User.query.filter_by(email=email).first()
+    if registered_user is None:
+        flash('The user does not exist!' , 'error')
+        return redirect(url_for('login'))
+    check_pass = bcrypt.checkpw(password.encode(), registered_user.password.encode())
+    if check_pass == False or registered_user.is_admin == False:
         flash('Email or Password is invalid' , 'error')
         return redirect(url_for('login'))
     login_user(registered_user)
@@ -70,8 +75,12 @@ def loginandroid():
         return "bye"
     email = request.form['email']
     password = request.form['password']
-    registered_user = User.query.filter_by(email=email,password=password).first()
+    registered_user = User.query.filter_by(email=email).first()
     if registered_user is None:
+        flash('The user does not exist!' , 'error')
+        return "bye"
+    check_pass = bcrypt.checkpw(password.encode(), registered_user.password.encode())
+    if check_pass == False:
         flash('Email or Password is invalid' , 'error')
         return "bye"
     #login_user(registered_user)
