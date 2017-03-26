@@ -6,6 +6,12 @@ import sendgrid
 import os
 from sendgrid.helpers.mail import *
 import bcrypt
+import datetime
+from itsdangerous import URLSafeTimedSerializer
+
+def generate_registration_token(email):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
 
 @login_manager.user_loader
 def load_user(id):
@@ -67,10 +73,20 @@ def invite():
     subject = "You got invited to awesome app!"
     to_email = Email(email)
     content = Content("text/plain", "Hello, World!")
+
+    # generates token for an email
+    token=Tokens(token=generate_registration_token(email), email=email, date=datetime.datetime.now())
+    
+    content = Content("text/plain", "Hello! You've got invited to DevOps project. To continue "+
+                      "the registration click this link: "+
+                      "https://devops-nokia.herokuapp.com/register/"+token.token)
+
     # creatin the mail
     mail = Mail(from_email, subject, to_email, content)
     # sending the email
     response = sg.client.mail.send.post(request_body=mail.get())
+    db.session.add(token)
+    db.session.commit()
 
     flash('E-mail sent successfully')
     return redirect(request.args.get('next') or url_for('index'))
