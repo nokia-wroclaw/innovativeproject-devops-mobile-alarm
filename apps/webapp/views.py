@@ -2,6 +2,9 @@ from flask import Flask, session, request, flash, url_for, redirect, render_temp
 from flask_login import login_user, logout_user, current_user, login_required
 from webapp import db, app, login_manager
 from .models import User
+import sendgrid
+import os
+from sendgrid.helpers.mail import *
 
 @login_manager.user_loader
 def load_user(id):
@@ -35,6 +38,22 @@ def login():
         return redirect(url_for('login'))
     login_user(registered_user)
     flash('Logged in successfully')
+    return redirect(request.args.get('next') or url_for('index'))
+
+@app.route('/invite',methods=['GET','POST'])
+def invite():
+    if request.method == 'GET':
+        return render_template('invite.html')
+    email = request.form['email']
+    sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
+    from_email = Email("devops-nokia@heroku.com")
+    subject = "You got invited to awesome app!"
+    to_email = Email(email)
+    content = Content("text/plain", "Hello, World!")
+    mail = Mail(from_email, subject, to_email, content)
+    response = sg.client.mail.send.post(request_body=mail.get())
+
+    flash('E-mail sent successfully')
     return redirect(request.args.get('next') or url_for('index'))
 
 @app.errorhandler(404)

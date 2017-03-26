@@ -40,7 +40,8 @@
     <div class="container">
         Witaj, {{ user.name }}
         {% if g.user.is_authenticated %}
-        | <a href="{{ url_for('logout') }}">Logout</a>
+        | <a href="{{ url_for('logout') }}">Logout</a><br />
+        Invite an user: <a href="{{ url_for('invite') }}">INVITE</a>
         {% endif %}
 
     </div> <!-- /container -->
