@@ -30,10 +30,10 @@
 
       <form class="form-signin" action="" method="post" name="signup" onsubmit="return validatePassword()">
         <h2 class="form-signin-heading">Please sign up</h2>
-        <input type="text" name="name" id="name" maxlength="15" class="form-control" placeholder="Name" required>
-        <input type="text" name="surname" id="surname" maxlength="40" class="form-control" placeholder="Surname" required>
-        <input type="password" id="password" name="password" class="form-control" placeholder="Password" required>
-        <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" placeholder="Confirm Password" required>
+        <input type="text" name="name" id="name" pattern="\w+" value="{{ request.form.name }}" maxlength="15" class="form-control" placeholder="Name" required>
+        <input type="text" name="surname" id="surname" pattern="\w+" value="{{ request.form.surname }}" maxlength="40" class="form-control" placeholder="Surname" required>
+        <input type="password" id="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" name="password" value="{{ request.form.password }}" class="form-control" placeholder="Password" required onchange="form.confirmPassword.pattern = this.value;">
+        <input type="password" id="confirmPassword" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" name="confirmPassword" class="form-control" placeholder="Confirm Password" required title="Hasla roznia sie od siebie.">
 
         
         

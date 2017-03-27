@@ -13,6 +13,19 @@ def generate_registration_token(email):
     serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
     return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
 
+def confirm_token(token, expiration=3600):
+    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
+    try:
+        email = serializer.loads(
+                                 token,
+                                 salt=app.config['SECURITY_PASSWORD_SALT'],
+                                 max_age=expiration
+                                 )
+    except:
+        return False
+    return email
+
+
 @login_manager.user_loader
 def load_user(id):
     return User.query.get(int(id))
@@ -58,6 +71,35 @@ def login():
     flash('Logged in successfully')
     return redirect(request.args.get('next') or url_for('index'))
 
+@app.route('/register/<token>' , methods=['GET','POST'])
+def register(token):
+    pushed_token = Tokens.query.filter_by(token=token).first()
+    
+    
+    
+    #Dodac sprawdzanie czy date_of_expire nie jest starsze niz now()
+    
+    
+    if request.method == 'GET':
+        if pushed_token is None or pushed_token.is_used == True:
+            return "Brak dostepu!"
+        else:
+            return render_template('register.html')
+    email = confirm_token(token)
+    name = request.form['name']
+    surname = request.form['surname']
+    password = request.form['password']
+    password_bytes = password.encode('utf-8')
+    hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+    user=User(name=name, surname=surname, email=email, is_admin=False, password=hashed)
+    db.session.add(user)
+    db.session.commit()
+    # set token as USED
+    pushed_token.is_used = True
+    db.session.commit()
+    flash('User successfully registered')
+    return "Your account is ready for login. Go to your Android app and try this on!"
+
 @app.route('/invite',methods=['GET','POST'])
 @login_required
 def invite():
@@ -75,11 +117,12 @@ def invite():
     content = Content("text/plain", "Hello, World!")
 
     # generates token for an email
-    token=Tokens(token=generate_registration_token(email), email=email, date=datetime.datetime.now())
+    token=Tokens(token=generate_registration_token(email), email=email, date=datetime.datetime.now()+datetime.timedelta(days=7))
     
     content = Content("text/plain", "Hello! You've got invited to DevOps project. To continue "+
                       "the registration click this link: "+
-                      "https://devops-nokia.herokuapp.com/register/"+token.token)
+                      "https://devops-nokia.herokuapp.com/register/"+token.token +
+                      " You have 7 days for sign up, after that your token will be deactivated.")
 
     # creatin the mail
     mail = Mail(from_email, subject, to_email, content)

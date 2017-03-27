@@ -35,10 +35,10 @@ class Tokens(db.Model):
     token=db.Column(db.String(100), index=True, unique=True)
     email=db.Column(db.String(80), index=True, unique=True)
     date_of_expire=db.Column(db.DateTime())
+    is_used = db.Column(db.Boolean, index=True)
 
     def __init__(self, token, email, date):
         self.token=token
         self.email=email
         self.date_of_expire=date
-
-
+        self.is_used=False
