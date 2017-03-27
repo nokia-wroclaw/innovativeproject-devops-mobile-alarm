@@ -75,10 +75,11 @@ def login():
 def register(token):
     pushed_token = Tokens.query.filter_by(token=token).first()
     
-    
-    
-    #Dodac sprawdzanie czy date_of_expire nie jest starsze niz now()
-    
+    # check if token expired
+    expiration_date = pushed_token.date_of_expire + datetime.timedelta(days=7)
+    if expiration_date <= datetime.datetime.now():
+        if request.method == 'GET':
+            return "Brak dostepu! Token wygasl!"
     
     if request.method == 'GET':
         if pushed_token is None or pushed_token.is_used == True:
