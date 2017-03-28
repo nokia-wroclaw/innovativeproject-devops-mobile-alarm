@@ -20,4 +20,11 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+#User types
+#adm - admin, usr - regular user, oth - for later use
+def enum(**enums):
+    return type('Enum', (), enums)
+
+UserType = enum(adm=1, usr=2, oth=3)
+
 from webapp import views

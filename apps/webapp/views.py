@@ -1,30 +1,13 @@
 from flask import Flask, session, request, flash, url_for, redirect, render_template, abort, g, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
-from webapp import db, app, login_manager
+from webapp import db, app, login_manager, UserType
 from .models import User, Tokens
 import sendgrid
 import os
 from sendgrid.helpers.mail import *
 import bcrypt
 import datetime
-from itsdangerous import URLSafeTimedSerializer
-
-def generate_registration_token(email):
-    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-    return serializer.dumps(email, salt=app.config['SECURITY_PASSWORD_SALT'])
-
-def confirm_token(token, expiration=3600):
-    serializer = URLSafeTimedSerializer(app.config['SECRET_KEY'])
-    try:
-        email = serializer.loads(
-                                 token,
-                                 salt=app.config['SECURITY_PASSWORD_SALT'],
-                                 max_age=expiration
-                                 )
-    except:
-        return False
-    return email
-
+from functions import generate_registration_token, confirm_token
 
 @login_manager.user_loader
 def load_user(id):
@@ -63,7 +46,7 @@ def login():
     # checking encrypted password
     check_pass = bcrypt.checkpw(password.encode(), registered_user.password.encode())
     # check if password is correct and user is admin
-    if check_pass == False or registered_user.is_admin == False:
+    if check_pass == False or registered_user.user_type != UserType.adm:
         flash('Email or Password is invalid' , 'error')
         return redirect(url_for('login'))
     # login user
@@ -92,7 +75,7 @@ def register(token):
     password = request.form['password']
     password_bytes = password.encode('utf-8')
     hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
-    user=User(name=name, surname=surname, email=email, is_admin=False, password=hashed)
+    user=User(name=name, surname=surname, email=email, user_type=UserType.usr, password=hashed)
     db.session.add(user)
     db.session.commit()
     # set token as USED
@@ -158,7 +141,7 @@ def loginandroid():
     if check_pass == False:
         flash('Email or Password is invalid' , 'error')
         return "bye"
-    #login_user(registered_user)
+    login_user(registered_user)
     flash('Logged in successfully')
     return jsonify({
                "error": False,

@@ -6,14 +6,14 @@ class User(db.Model):
     surname=db.Column(db.String(40), index=True)
     email = db.Column(db.String(80), index=True, unique=True)
     password = db.Column(db.String(100), index=True)
-    is_admin = db.Column(db.Boolean, index=True)
+    user_type = db.Column(db.Integer, index=True)
     
-    def __init__(self, name, surname, email, password, is_admin):
+    def __init__(self, name, surname, email, password, user_type):
         self.name = name
         self.surname = surname
         self.email = email
         self.password = password
-        self.is_admin = is_admin
+        self.user_type = user_type
 
     def __repr__(self):
         return 'Name: {0} \nSurname: {1} \nE-mail: {2}'.format(self.name, self.surname, self.email)
