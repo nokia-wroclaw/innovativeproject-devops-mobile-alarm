@@ -92,6 +92,12 @@ def invite():
         return render_template('invite.html')
     # get email from template
     email = request.form['email']
+
+    # checking if email exists in database
+    email_check = User.query.filter_by(email=email).first()
+    if email_check:
+        return render_template('invite.html', exist="Ten e-mail juz istnieje w bazie danych!!!")
+
     # create a client for sending emails
     sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
     # email's data
@@ -124,23 +130,23 @@ def page_not_found(error):
 
 @app.route("/test")
 def testJSON():
-    return "Kapibara"
+    return "Kapibara", 200
 
 @app.route('/loginandroid',methods=['GET','POST'])
 def loginandroid():
     if request.method == 'GET':
-        return "bye"
+        return "Brak dostepu!", 403
     email = request.form['email']
     password = request.form['password']
     #tu dodac jeszcze or registered_user.is_admin == True:
     registered_user = User.query.filter_by(email=email).first()
     if registered_user is None:
         flash('The user does not exist!' , 'error')
-        return "bye"
+        return "Uzytkownik nie istnieje", 403
     check_pass = bcrypt.checkpw(password.encode(), registered_user.password.encode())
     if check_pass == False:
         flash('Email or Password is invalid' , 'error')
-        return "bye"
+        return "Bledne haslo", 403
     login_user(registered_user)
     flash('Logged in successfully')
     return jsonify({
@@ -151,4 +157,4 @@ def loginandroid():
                "surname": registered_user.surname,
                "email": registered_user.email
                }
-               })
+               }), 200
