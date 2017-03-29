@@ -1,10 +1,12 @@
-package pwr.android_app;
+package pwr.android_app.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import pwr.android_app.R;
 
 public class MainMenuFragment extends Fragment {
 

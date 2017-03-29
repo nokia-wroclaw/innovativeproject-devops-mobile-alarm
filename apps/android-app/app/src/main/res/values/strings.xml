@@ -1,24 +1,24 @@
 <resources>
     <string name="app_name">DevOps</string>
+    <string name="title_activity_main">DevOps</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">E-mail</string>
     <string name="prompt_password">Password</string>
+    
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
+    
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is invalid</string>
-    <string name="error_incorrect_password">This password is incorrect (probably :P)</string>
+    <string name="error_incorrect_password">This password is incorrect</string>
     <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
-    <string name="title_activity_main">DevOps</string>
+    <string name="error_bad_connection">Cannot connect!</string>
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
 
     <!-- Strings used in MainActivity -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-
     <string name="action_settings">Settings</string>
 
     <!-- Strings used in left panel -->
@@ -27,6 +27,6 @@
     <string name="test_option_name">testing page</string>
 
     <!-- RESt API URLs -->
-    <string name="REST_API_LOGIN_URL">https://devops-nokia.herokuapp.com/loginandroid</string>
+    <string name="API_BASE_URL">https://devops-nokia.herokuapp.com</string>
 
 </resources>
