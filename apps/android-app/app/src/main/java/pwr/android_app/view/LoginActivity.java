@@ -28,6 +28,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.google.gson.Gson;
+
 import java.util.ArrayList;
 import java.util.List;
 import okhttp3.OkHttpClient;
@@ -43,13 +46,15 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static android.Manifest.permission.READ_CONTACTS;
 
 // --- LOGIN SCREEN ACTIVITY --- //
-public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<Cursor> {
+public class LoginActivity
+        extends AppCompatActivity
+        implements LoaderCallbacks<Cursor> {
 
     /* ========================================== DATA ========================================== */
     // Id to identity READ_CONTACTS permission request
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    // UI references.
+    // UI references
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
@@ -171,13 +176,17 @@ public class LoginActivity extends AppCompatActivity implements LoaderCallbacks<
 
                 if (response.code() == 200) {
 
-                    // TODO: get header
-                    // TODO: get body
+                    // Getting cookie from response
+                    String cookie = response.headers().get("set-cookie");
+
+                    // Converting response body into JSON
+                    String userData = new Gson().toJson(response.body());
 
                     // Start MainActivity
                     Context context = getApplicationContext();
                     Intent i = new Intent(context, MainActivity.class);
-//                i.putExtra("server_answer_to_login_request", xxx);
+                    i.putExtra("cookie", cookie);
+                    i.putExtra("user_data", userData);
                     startActivity(i);
                     finish();
                 }

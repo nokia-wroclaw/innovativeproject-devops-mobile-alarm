@@ -14,40 +14,39 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
-
-import java.util.List;
-
-import okhttp3.OkHttpClient;
+import com.google.gson.Gson;
 import pwr.android_app.R;
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import pwr.android_app.model.dataStructures.UserData;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+// --- MAIN ACTIVITY --- //
+public class MainActivity
+        extends AppCompatActivity
+        implements NavigationView.OnNavigationItemSelectedListener {
 
-    // --- DATA --- //
-    private int option_id = 1;
+    /* ========================================== DATA ========================================== */
+    private int option_id;
 
-    private Toolbar toolbar = null;             // Toolbar na górze ekranu.
+    private String cookie = null;
+    private UserData userData = null;
+
+    // UI references
+    private Toolbar toolbar = null;
     private ActionBar actionBar = null;
-
     private MainMenuFragment mainMenuFragment;
     private WebBrowserFragment webBrowserFragment;
     private TestingFragment testingFragment;
+    private FloatingActionButton fab;
 
-    // --- MY METHODS --- //
-    // Podejmuję konkretną akcję w zależności od wyboru opcji na lewym wysuwanym panelu.
-    private void chooseOption() {
+    /* ========================================= METHODS ======================================== */
+    private void setFragment() {
         if (option_id == R.id.main_menu_option) {
 
             // Włączenie głównego menu po wybraniu odpowiedniej opcji z lewego panelu
             mainMenuFragment = new MainMenuFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container,mainMenuFragment);
-//            fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
+
             actionBar.show();
 
         } else if (option_id == R.id.website_option) {
@@ -56,8 +55,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             webBrowserFragment = new WebBrowserFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container,webBrowserFragment);
-//            fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
+
             actionBar.hide();
 
         } else if (option_id == R.id.testing_option) {
@@ -66,32 +65,37 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             testingFragment = new TestingFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container,testingFragment);
-//            fragmentTransaction.addToBackStack(null);
             fragmentTransaction.commit();
+
             actionBar.hide();
         }
     }
 
-    // --- METHODS --- //
+    // === ON CREATE === //
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Tworzy odpowiedni fragment w oparciu o option_id
-        chooseOption();
+        // Getting data from previous activity
+        this.cookie = getIntent().getStringExtra("cookie");
+        this.userData = new Gson().fromJson(getIntent().getStringExtra("user_data"),UserData.class);
 
-        // Tworzenie toolbara na górze
+        // Setting default fragment
+        mainMenuFragment = new MainMenuFragment();
+        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_container,mainMenuFragment);
+        fragmentTransaction.commit();
+
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        // Pobranie uchwytu do actionBar (pasek na górze głownej aktywności), aby móc nim manipulować.
         actionBar = getSupportActionBar();
 //        actionBar.setHideOnContentScrollEnabled(true);
 
-
-        // Tworzenie przycisku na dole po prawej
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+        // Creating floating button
+        fab = (FloatingActionButton) findViewById(R.id.fab);
+        //ToDo: floating button
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -100,7 +104,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             }
         });
 
-        // Tworzenie wysuwanego panelu po lewej stronie
+        // Creating drawer
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
@@ -111,34 +115,42 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         navigationView.setNavigationItemSelectedListener(this);
     }
 
-    @Override public void onResume(){
+    // === ON RESUME === //
+    @Override
+    public void onResume(){
         super.onResume();
 
     }
 
-
-    // Obsługa wciśnięcia klawisza wstecz
-    @Override public void onBackPressed() {
+    // === ON BACK PRESSED === //
+    @Override
+    public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
         } else {
-            super.onBackPressed();
+//            super.onBackPressed();
         }
     }
 
-    @Override public boolean onCreateOptionsMenu(Menu menu) {
+    // === ON CREATE OPTION MENU === //
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
 
         // Wypełnia pasek boczny informacjami
         getMenuInflater().inflate(R.menu.main, menu);
 
         // Ustawia adres email zalogowanego użytkownika na panelu bocznym
-        TextView userEmailView = (TextView)findViewById(R.id.userDataTextView);
-        userEmailView.setText(getIntent().getStringExtra("server_answer_to_login_request"));
+        TextView nameSurnameLabel = (TextView)findViewById(R.id.name_surname_label);
+        nameSurnameLabel.setText(this.userData.getUserName() + " " + this.userData.getUserSurname());
+
+        TextView emailLabel = (TextView)findViewById(R.id.email_label);
+        emailLabel.setText(this.userData.getUserEmail());
 
         return true;
     }
 
+    // === ON OPTION ITEM SELECTED === //
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -154,6 +166,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return super.onOptionsItemSelected(item);
     }
 
+    // === ON NAVIGATION ITEM SELECTED === //
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
@@ -161,10 +174,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         option_id = item.getItemId();
 
         // Tworzy odpowiedni fragment w oparciu o option_id
-        chooseOption();
+        setFragment();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 }
+ /* ============================================================================================= */
