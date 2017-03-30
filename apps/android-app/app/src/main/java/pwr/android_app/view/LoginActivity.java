@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.List;
 import okhttp3.OkHttpClient;
 import pwr.android_app.R;
+import pwr.android_app.model.ServiceGenerator;
 import pwr.android_app.model.dataStructures.UserData;
 import pwr.android_app.model.interfaces.DevOpsClient;
 import retrofit2.Call;
@@ -54,6 +55,9 @@ public class LoginActivity
     // Id to identity READ_CONTACTS permission request
     private static final int REQUEST_READ_CONTACTS = 0;
 
+    // Used in REST requests
+    private DevOpsClient client = null;
+
     // UI references
     private AutoCompleteTextView mEmailView;
     private EditText mPasswordView;
@@ -68,6 +72,9 @@ public class LoginActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+
+        // [Retrofit]
+        client = ServiceGenerator.createService(DevOpsClient.class);
 
         // preparing UI
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -144,25 +151,8 @@ public class LoginActivity
     }
     private void login(String mEmail, String mPassword) {
 
-        showProgress(true);                                 // show animation
-
-        OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
-
-        Retrofit.Builder builder =
-                new Retrofit.Builder()
-                        .baseUrl(getString(R.string.API_BASE_URL))
-                        .addConverterFactory(
-                                GsonConverterFactory.create()
-                        );
-
-        Retrofit retrofit =
-                builder
-                        .client(
-                                httpClient.build()
-                        )
-                        .build();
-
-        DevOpsClient client = retrofit.create(DevOpsClient.class);
+        // Show animation
+        showProgress(true);
 
         // Fetch a user information
         Call<UserData> call = client.loginToApp(mEmail, mPassword);
@@ -330,7 +320,6 @@ public class LoginActivity
     }
 
     /* ========================================================================================== */
-
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,

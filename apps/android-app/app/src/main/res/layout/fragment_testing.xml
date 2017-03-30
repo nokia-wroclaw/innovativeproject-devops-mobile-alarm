@@ -11,20 +11,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <Button
-            android:id="@+id/test1_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="/test" />
-
-        <TextView
-            android:id="@+id/test1_textview"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:text="---"
-            android:textAlignment="center"
-            android:textSize="35sp" />
-
     </TableRow>
 
     <TableRow

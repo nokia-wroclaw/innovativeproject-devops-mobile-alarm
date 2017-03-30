@@ -16,7 +16,9 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import com.google.gson.Gson;
 import pwr.android_app.R;
+import pwr.android_app.model.ServiceGenerator;
 import pwr.android_app.model.dataStructures.UserData;
+import pwr.android_app.model.interfaces.DevOpsClient;
 
 // --- MAIN ACTIVITY --- //
 public class MainActivity
@@ -26,8 +28,12 @@ public class MainActivity
     /* ========================================== DATA ========================================== */
     private int option_id;
 
+    // Data from previous activity
     private String cookie = null;
     private UserData userData = null;
+
+    // Used in REST requests
+    private DevOpsClient client = null;
 
     // UI references
     private Toolbar toolbar = null;
@@ -81,6 +87,9 @@ public class MainActivity
         this.cookie = getIntent().getStringExtra("cookie");
         this.userData = new Gson().fromJson(getIntent().getStringExtra("user_data"),UserData.class);
 
+        // [Retrofit]
+        client = ServiceGenerator.createService(DevOpsClient.class);
+
         // Setting default fragment
         mainMenuFragment = new MainMenuFragment();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
@@ -99,7 +108,7 @@ public class MainActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                Snackbar.make(view, "I will never stop watching you!", Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -181,4 +190,3 @@ public class MainActivity
         return true;
     }
 }
- /* ============================================================================================= */
