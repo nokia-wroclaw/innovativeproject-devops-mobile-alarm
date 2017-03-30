@@ -27,6 +27,6 @@
     <string name="test_option_name">testing page</string>
 
     <!-- RESt API URLs -->
-    <string name="API_BASE_URL">https://devops-nokia.herokuapp.com</string>
+    <string name="base_url">https://devops-nokia.herokuapp.com/</string>
 
 </resources>
