@@ -17,13 +17,12 @@ def load_user(id):
 @app.route('/index')
 @login_required
 def index():
-    user = g.user
-    return render_template('index.html', title="DevOps Nokia Project", user=user)
+    return redirect(url_for('dashboard'))
 
 @app.route('/logout')
 def logout():
     logout_user()
-    return redirect(url_for('index'))
+    return redirect(url_for('login'))
 
 @app.before_request
 def before_request():
@@ -52,7 +51,7 @@ def login():
     # login user
     login_user(registered_user)
     flash('Logged in successfully')
-    return redirect(request.args.get('next') or url_for('index'))
+    return redirect(request.args.get('next') or url_for('dashboard'))
 
 @app.route('/register/<token>' , methods=['GET','POST'])
 def register(token):
@@ -89,14 +88,13 @@ def register(token):
 def invite():
     # display invite template
     if request.method == 'GET':
-        return render_template('invite.html')
     # get email from template
     email = request.form['email']
 
     # checking if email exists in database
     email_check = User.query.filter_by(email=email).first()
     if email_check:
-        return render_template('invite.html', exist="Ten e-mail juz istnieje w bazie danych!!!")
+        return render_template('users.html', exist="Ten e-mail juz istnieje w bazie danych!!!")
 
     # create a client for sending emails
     sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
@@ -122,7 +120,7 @@ def invite():
     db.session.commit()
 
     flash('E-mail sent successfully')
-    return redirect(request.args.get('next') or url_for('index'))
+    return redirect(request.args.get('next') or url_for('invite'))
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -158,3 +156,15 @@ def loginandroid():
                "email": registered_user.email
                }
                }), 200
+
+@app.route('/dashboard', methods=['GET','POST'])
+@login_required
+def dashboard():
+    user = g.user
+    return render_template('dashboard.html', title="DevOps Nokia Project", user=user)
+
+@app.route('/services', methods=['GET','POST'])
+@login_required
+def services():
+    if request.method == 'GET':
+        return render_template('services.html')
