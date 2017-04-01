@@ -33,6 +33,8 @@ speaklater==1.3
 sqlalchemy-migrate
 sqlparse==0.1.11
 sendgrid
+redis
+celery
 
 # ----------------------
 # Testing
