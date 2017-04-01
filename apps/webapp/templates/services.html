@@ -81,25 +81,13 @@
           <h1 class="page-header">Services</h1>
 
           <div class="table-responsive">
-            <table class="table table-striped">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Address</th>
-                  <th>Name</th>
-                  <th>State changed in</th>
-                  <th>Previous state</th>
-                  <th>Current state</th>
-                </tr>
-              </thead>
-             
-            </table>
+            {{ services_table }}
           </div>
           <h2 class="sub-header">Add a new service</h2>
         
         <form action="" method="POST" class="form-add-service">
-            <input type="text" id="service_address" class="form-control" placeholder="Service address" required autofocus>
-            <input type="text" id="service_name" class="form-control" placeholder="Service name" required autofocus>
+            <input type="text" name="service_address" id="service_address" class="form-control" placeholder="Service address" required autofocus>
+            <input type="text" name="service_name" id="service_name" class="form-control" placeholder="Service name" required autofocus>
 
             <button class="btn btn-lg btn-primary btn-block" type="submit">Add service</button>
         </form>

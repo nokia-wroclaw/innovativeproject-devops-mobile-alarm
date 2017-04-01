@@ -27,4 +27,6 @@ def enum(**enums):
 
 UserType = enum(adm=1, usr=2, oth=3)
 
+ServiceState = enum(up=1, down=2, unspecified=3)
+
 from webapp import views

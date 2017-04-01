@@ -1,14 +1,14 @@
 from flask import Flask, session, request, flash, url_for, redirect, render_template, abort, g, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from webapp import db, app, login_manager, UserType
-from .models import User, Tokens
+from .models import User, Tokens, Service
 import sendgrid
 import os
 from sendgrid.helpers.mail import *
 import bcrypt
 import datetime
 from functions import generate_registration_token, confirm_token
-from tables import UsersTable
+from tables import UsersTable, ServicesTable
 
 @login_manager.user_loader
 def load_user(id):
@@ -89,6 +89,7 @@ def register(token):
 def invite():
     # display invite template
     if request.method == 'GET':
+        # creating a table of users
         items = User.query.all()
         users_table = UsersTable(items)
 
@@ -172,4 +173,28 @@ def dashboard():
 @login_required
 def services():
     if request.method == 'GET':
-        return render_template('services.html')
+        # creating a table of services
+        items = Service.query.all()
+        services_table = ServicesTable(items)
+
+        return render_template('services.html', services_table=services_table)
+    
+    # get the values from the template
+    address = request.form['service_address']
+    name = request.form['service_name']
+
+    # checking if a service with a given address or name does not exist
+    address_check = Service.query.filter_by(address=address).first()
+    name_check = Service.query.filter_by(name=name).first()
+
+    # if exists redirect to the error page
+    if address_check or name_check:
+        return redirect(url_for('services'))
+
+    # creating a new user
+    new_service = Service(address=address, name=name)
+    db.session.add(new_service)
+    db.session.commit()
+
+    return redirect(request.args.get('next') or url_for('services'))
+

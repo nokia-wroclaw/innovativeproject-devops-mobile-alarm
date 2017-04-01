@@ -1,4 +1,4 @@
-from webapp import db
+from webapp import db, ServiceState
 
 class User(db.Model):
     id=db.Column(db.Integer, primary_key=True)
@@ -42,3 +42,19 @@ class Tokens(db.Model):
         self.email=email
         self.date_of_expire=date
         self.is_used=False
+
+class Service(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    address=db.Column(db.String(100), index=True, unique=True)
+    name=db.Column(db.String(80), index=True, unique=True)
+    time_of_last_change_of_state=db.Column(db.DateTime())
+    previous_state = db.Column(db.Integer, index=True)
+    current_state = db.Column(db.Integer, index=True)
+
+    def __init__(self, address, name):
+        self.address=address
+        self.name=name
+        self.previous_state = ServiceState.unspecified
+        self.current_state = ServiceState.unspecified
+
+        
