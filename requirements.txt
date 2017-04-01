@@ -10,6 +10,7 @@ Flask-OpenID==1.2.1
 Flask-SQLAlchemy
 Flask-WTF==0.10.2
 Flask-WhooshAlchemy==0.56
+Flask-Table
 Jinja2==2.7.3
 MarkupSafe==0.23
 SQLAlchemy

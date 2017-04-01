@@ -8,6 +8,7 @@ from sendgrid.helpers.mail import *
 import bcrypt
 import datetime
 from functions import generate_registration_token, confirm_token
+from tables import UsersTable
 
 @login_manager.user_loader
 def load_user(id):
@@ -88,6 +89,10 @@ def register(token):
 def invite():
     # display invite template
     if request.method == 'GET':
+        items = User.query.all()
+        users_table = UsersTable(items)
+
+        return render_template('users.html', users_table=users_table)
     # get email from template
     email = request.form['email']
 
