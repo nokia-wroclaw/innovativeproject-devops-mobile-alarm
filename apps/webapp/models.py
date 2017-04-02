@@ -20,7 +20,7 @@ class User(db.Model):
 
     def is_authenticated(self):
         return True
- 
+
     def is_active(self):
         return True
  
@@ -56,5 +56,3 @@ class Service(db.Model):
         self.name=name
         self.previous_state = ServiceState.unspecified
         self.current_state = ServiceState.unspecified
-
-        
