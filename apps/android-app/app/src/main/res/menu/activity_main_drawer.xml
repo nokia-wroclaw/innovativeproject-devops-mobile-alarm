@@ -15,6 +15,10 @@
             android:id="@+id/testing_option"
             android:icon="@android:drawable/btn_star_big_on"
             android:title="@string/test_option_name" />
+        <item
+            android:id="@+id/monitor_option"
+            android:icon="@android:drawable/btn_star_big_on"
+            android:title="@string/monitor_option_name" />
     </group>
 
 

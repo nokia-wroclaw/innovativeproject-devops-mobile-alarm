@@ -15,6 +15,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.TextView;
 import com.google.gson.Gson;
+
+import pwr.android_app.MonitorFragment;
 import pwr.android_app.R;
 import pwr.android_app.model.ServiceGenerator;
 import pwr.android_app.model.dataStructures.UserData;
@@ -41,6 +43,7 @@ public class MainActivity
     private MainMenuFragment mainMenuFragment;
     private WebBrowserFragment webBrowserFragment;
     private TestingFragment testingFragment;
+    private MonitorFragment monitorFragment;
     private FloatingActionButton fab;
 
     /* ========================================= METHODS ======================================== */
@@ -50,9 +53,9 @@ public class MainActivity
             // Włączenie głównego menu po wybraniu odpowiedniej opcji z lewego panelu
             mainMenuFragment = new MainMenuFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container,mainMenuFragment);
+            fragmentTransaction.replace(R.id.fragment_container, mainMenuFragment);
             fragmentTransaction.commit();
-
+            fab.show();
             actionBar.show();
 
         } else if (option_id == R.id.website_option) {
@@ -60,9 +63,9 @@ public class MainActivity
             // Włączenie przeglądarki po wybraniu odpowiedniej opcji z lewogo panelu
             webBrowserFragment = new WebBrowserFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container,webBrowserFragment);
+            fragmentTransaction.replace(R.id.fragment_container, webBrowserFragment);
             fragmentTransaction.commit();
-
+            fab.show();
             actionBar.hide();
 
         } else if (option_id == R.id.testing_option) {
@@ -70,13 +73,30 @@ public class MainActivity
             // Włączenie strony testowej po wybraniu odpowiedniej opcji z lewogo panelu
             testingFragment = new TestingFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container,testingFragment);
+            fragmentTransaction.replace(R.id.fragment_container, testingFragment);
             fragmentTransaction.commit();
+            fab.show();
+            actionBar.hide();
+        } else if (option_id == R.id.website_option) {
 
+            // Włączenie przeglądarki po wybraniu odpowiedniej opcji z lewogo panelu
+            webBrowserFragment = new WebBrowserFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, webBrowserFragment);
+            fragmentTransaction.commit();
+            fab.show();
+            actionBar.hide();
+        } else if (option_id == R.id.monitor_option) {
+
+            // Włączenie strony testowej po wybraniu odpowiedniej opcji z lewogo panelu
+            monitorFragment = new MonitorFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, monitorFragment);
+            fragmentTransaction.commit();
+            fab.hide();
             actionBar.hide();
         }
     }
-
     // === ON CREATE === //
     @Override
     protected void onCreate(Bundle savedInstanceState) {
