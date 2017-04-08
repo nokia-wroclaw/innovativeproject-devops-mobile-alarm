@@ -18,9 +18,12 @@ import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -33,7 +36,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
-import okhttp3.OkHttpClient;
+
 import pwr.android_app.R;
 import pwr.android_app.model.ServiceGenerator;
 import pwr.android_app.model.dataStructures.UserData;
@@ -41,8 +44,6 @@ import pwr.android_app.model.interfaces.DevOpsClient;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
@@ -193,7 +194,17 @@ public class LoginActivity
             public void onFailure(Call<UserData> call, Throwable t) {
 
                 showProgress(false);
-                Toast toast = Toast.makeText(getApplicationContext(), R.string.error_bad_connection, Toast.LENGTH_LONG);
+
+                LayoutInflater inflater = getLayoutInflater();
+                View layout = inflater.inflate(R.layout.yellow_toast, (ViewGroup) findViewById(R.id.yellow_toast_container));
+
+                TextView text = (TextView) layout.findViewById(R.id.yellow_toast_text);
+                text.setText(R.string.error_bad_connection);
+
+                Toast toast = new Toast(getApplicationContext());
+                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+                toast.setDuration(Toast.LENGTH_LONG);
+                toast.setView(layout);
                 toast.show();
             }
         });
