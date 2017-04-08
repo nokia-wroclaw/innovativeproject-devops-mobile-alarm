@@ -93,7 +93,7 @@ def invite():
         items = User.query.all()
         users_table = UsersTable(items)
 
-        return render_template('users.html', users_table=users_table)
+        return render_template('users.html', users_table=users_table, panel="users")
     # get email from template
     email = request.form['email']
 
@@ -167,7 +167,7 @@ def loginandroid():
 @login_required
 def dashboard():
     user = g.user
-    return render_template('dashboard.html', title="DevOps Nokia Project", user=user)
+    return render_template('dashboard.html', title="DevOps Nokia Project", user=user, panel="dashboard")
 
 @app.route('/services', methods=['GET','POST'])
 @login_required
@@ -177,7 +177,7 @@ def services():
         items = Service.query.all()
         services_table = ServicesTable(items)
 
-        return render_template('services.html', services_table=services_table)
+        return render_template('services.html', services_table=services_table, panel="services")
     
     # get the values from the template
     address = request.form['service_address']
