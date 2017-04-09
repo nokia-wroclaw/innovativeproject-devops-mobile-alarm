@@ -1,5 +1,7 @@
 package pwr.android_app.view.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -8,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import pwr.android_app.R;
 import pwr.android_app.dataStructures.UserData;
 import pwr.android_app.network.rest.ApiService;
@@ -38,16 +43,16 @@ public class TestingFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
+        View view = inflater.inflate(R.layout.fragment_testing, container, false);
+
+        ButterKnife.bind(this, view);
+
         // [Retrofit]
         this.client = ServiceGenerator.createService(ApiService.class);
-
-
-        View view = inflater.inflate(R.layout.fragment_testing, container, false);
 
         // UI references
         testJsonButton = (Button) view.findViewById(R.id.test_json_button);
         testJsonView = (TextView) view.findViewById(R.id.test_json_view);
-
 
         // Test request
         testJsonButton.setOnClickListener((new View.OnClickListener() {
@@ -73,5 +78,14 @@ public class TestingFragment extends Fragment {
 
         // Inflate the layout for this fragment
         return view;
+    }
+
+    // --- LISTENERS --- //
+    @OnClick(R.id.clear_cookies_button)
+    public void clearCookies() {
+        SharedPreferences preferences = getContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = preferences.edit();
+        editor.putString("cookie", null);
+        editor.commit();
     }
 }

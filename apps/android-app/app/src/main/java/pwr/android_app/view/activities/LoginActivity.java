@@ -8,11 +8,13 @@ import android.content.Context;
 import android.content.CursorLoader;
 import android.content.Intent;
 import android.content.Loader;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -28,6 +30,7 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -72,6 +75,8 @@ public class LoginActivity
     View mLoginFormView;
     @BindView(R.id.email_sign_in_button)
     Button mEmailSignInButton;
+    @BindView(R.id.big_logo)
+    ImageView mBigLogo;
 
 
     /* ========================================= METHODS ======================================== */
@@ -99,6 +104,32 @@ public class LoginActivity
                 return false;
             }
         });
+    }
+
+    // === ON POST CREATE === //
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        Context context = getApplicationContext();
+
+        // Checking cookie value in SharedPreferences
+        SharedPreferences sharedPref =
+                context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        // If cookie isn't null, logging in is skipped
+        if (sharedPref.getString("cookie",null) != null) {
+            Intent i = new Intent(context, MainActivity.class);
+            startActivity(i);
+        }
+    }
+
+    // === ON START === //
+    @Override
+    protected void onStart() {
+        super.onStart();
+
+        showBigLogo(false);
+        showForm(true);
     }
 
     // === LISTENERS === //
@@ -157,6 +188,7 @@ public class LoginActivity
 
         // Show animation
         showProgress(true);
+        showForm(false);
 
         // Fetch a user information
         Call<UserData> call = client.loginToApp(mEmail, mPassword);
@@ -167,6 +199,7 @@ public class LoginActivity
             public void onResponse(Call<UserData> call, Response<UserData> response) {
 
                 showProgress(false);            // hide animation
+                showForm(true);
 
                 if (response.code() == 200) {
 
@@ -178,9 +211,18 @@ public class LoginActivity
 
                     // Start MainActivity
                     Context context = getApplicationContext();
+
+                    // Saving cookie and userData in shared preferences
+                    SharedPreferences sharedPref =
+                            context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("cookie", cookie);
+                    editor.putString("user_data", userData);
+                    editor.commit();
+
                     Intent i = new Intent(context, MainActivity.class);
-                    i.putExtra("cookie", cookie);
-                    i.putExtra("user_data", userData);
+//                    i.putExtra("cookie", cookie);
+//                    i.putExtra("user_data", userData);
                     startActivity(i);
                 } else if (response.code() == 403) {
                     mPasswordView.setError(getString(R.string.error_incorrect_password));
@@ -194,6 +236,7 @@ public class LoginActivity
             public void onFailure(Call<UserData> call, Throwable t) {
 
                 showProgress(false);                                                                // hide progress animation
+                showForm(true);
                 showToast(getResources().getString(R.string.error_bad_connection));                 // show toast message about connection failure
             }
         });
@@ -209,37 +252,44 @@ public class LoginActivity
     }
 
     // === SHOWING & HIDING COMPONENTS === //
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void showForm(final boolean show) {
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+
+        mLoginFormView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mLoginFormView.animate().setDuration(shortAnimTime)
+                .alpha(show ? 1 : 0)
+                .setListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationEnd(Animator animation) {
+                mLoginFormView.setVisibility(show ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
     private void showProgress(final boolean show) {
-        // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
-        // for very easy animations. If available, use these APIs to fade-in
-        // the progress spinner.
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-            mLoginFormView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 0 : 1).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-                }
-            });
+        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+        mProgressView.animate().setDuration(shortAnimTime)
+                .alpha(show ? 1 : 0)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
+                    }
+                });
+    }
+    private void showBigLogo(final boolean show) {
+        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mProgressView.animate().setDuration(shortAnimTime).alpha(
-                    show ? 1 : 0).setListener(new AnimatorListenerAdapter() {
-                @Override
-                public void onAnimationEnd(Animator animation) {
-                    mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                }
-            });
-        } else {
-            // The ViewPropertyAnimator APIs are not available, so simply show
-            // and hide the relevant UI components.
-            mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-            mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
-        }
+        mBigLogo.setVisibility(show ? View.VISIBLE : View.GONE);
+        mBigLogo.animate().setDuration(shortAnimTime)
+                .alpha(show ? 1 : 0)
+                .setListener(new AnimatorListenerAdapter() {
+                    @Override
+                    public void onAnimationEnd(Animator animation) {
+                        mBigLogo.setVisibility(show ? View.VISIBLE : View.GONE);
+                    }
+                });
     }
 
     private void showToast(CharSequence text) {

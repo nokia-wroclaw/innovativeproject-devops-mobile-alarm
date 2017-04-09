@@ -27,6 +27,9 @@
     <string name="test_option_name">testing page</string>
     <string name="monitor_option_name">services</string>
 
+    <!-- preferences -->
+    <string name="preference_file_key">pwr.android_app.pref</string>
+
     <!-- RESt API URLs -->
     <string name="base_url">https://devops-nokia.herokuapp.com/</string>
     <string-array name="sites">
@@ -34,4 +37,5 @@
         <item>Google</item>
         <item>Interia</item>
     </string-array>
+
 </resources>

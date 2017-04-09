@@ -1,5 +1,7 @@
 package pwr.android_app.view.activities;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
@@ -109,9 +111,15 @@ public class MainActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Getting data from previous activity
-        this.cookie = getIntent().getStringExtra("cookie");
-        this.userData = new Gson().fromJson(getIntent().getStringExtra("user_data"), UserData.class);
+        Context context = getApplicationContext();
+
+        // Getting data from SharedPreferences
+        SharedPreferences sharedPref =
+                context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        this.cookie = sharedPref.getString("cookie",null);
+        this.userData = new Gson().fromJson(sharedPref.getString("user_data",null), UserData.class);
+//        this.cookie = getIntent().getStringExtra("cookie");
+//        this.userData = new Gson().fromJson(getIntent().getStringExtra("user_data"), UserData.class);
 
         // [Retrofit]
         client = ServiceGenerator.createService(ApiService.class);
