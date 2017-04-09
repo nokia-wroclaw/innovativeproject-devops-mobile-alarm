@@ -2,6 +2,7 @@ package pwr.android_app.view.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,32 +12,17 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import pwr.android_app.R;
-import pwr.android_app.view.adapters.MyItemRecyclerViewAdapter;
 import pwr.android_app.dataStructures.DummyContent;
-import pwr.android_app.dataStructures.DummyContent.DummyItem;
+import pwr.android_app.dataStructures.ServiceData;
+import pwr.android_app.view.adapters.MyItemRecyclerViewAdapter;
 
-/**
- * A fragment representing a list of Items.
- * <p/>
- * Activities containing this fragment MUST implement the {@link OnListFragmentInteractionListener}
- * interface.
- */
 public class MonitorFragment extends Fragment {
-
-    // TODO: Customize parameter argument names
     private static final String ARG_COLUMN_COUNT = "column-count";
-    // TODO: Customize parameters
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
 
-    /**
-     * Mandatory empty constructor for the fragment manager to instantiate the
-     * fragment (e.g. upon screen orientation changes).
-     */
-    public MonitorFragment() {
-    }
+    public MonitorFragment() { }
 
-    // TODO: Customize parameter initialization
     @SuppressWarnings("unused")
     public static MonitorFragment newInstance(int columnCount) {
         MonitorFragment fragment = new MonitorFragment();
@@ -56,34 +42,49 @@ public class MonitorFragment extends Fragment {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
-        // Set the adapter
         if (view instanceof RecyclerView) {
             Context context = view.getContext();
-            RecyclerView recyclerView = (RecyclerView) view;
+            final RecyclerView recyclerView = (RecyclerView) view;
+
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
             } else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
+
             recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+
+            Handler mleko = new Handler();
+            mleko.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    // Test funkcji edytujących listę
+
+                    //for (int i = 0; i < 2; i++) {
+                    //    ((MyItemRecyclerViewAdapter)recyclerView.getAdapter()).addService(new ServiceData(i+5, "a", "b", 0));
+                    //}
+
+                    for (int i = 2; i < 4; i++) {
+                        ((MyItemRecyclerViewAdapter) recyclerView.getAdapter()).removeService(i);
+                    }
+                }
+            }, 3000);
         }
+
         return view;
     }
-
 
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-//        if (context instanceof OnListFragmentInteractionListener) {
-//            mListener = (OnListFragmentInteractionListener) context;
-//        } else {
-//            throw new RuntimeException(context.toString()
-//                    + " must implement OnListFragmentInteractionListener");
-//        }
+        if (context instanceof OnListFragmentInteractionListener) {
+            mListener = (OnListFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
+        }
     }
 
     @Override
@@ -92,18 +93,7 @@ public class MonitorFragment extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnListFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onListFragmentInteraction(DummyItem item);
+        void onListFragmentInteraction(ServiceData item);
     }
 }

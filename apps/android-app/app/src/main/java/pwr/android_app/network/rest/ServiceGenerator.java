@@ -22,7 +22,7 @@ public class ServiceGenerator {
 
     private static OkHttpClient.Builder httpClient = new OkHttpClient.Builder();
 
-    public static <S> S createService(Class<S> serviceClass){
+    public static <S> S createService(Class<S> serviceClass) {
 
         return retrofit.create(serviceClass);
     }

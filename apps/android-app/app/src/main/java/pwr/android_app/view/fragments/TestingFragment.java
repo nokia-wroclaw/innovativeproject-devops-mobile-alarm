@@ -9,9 +9,9 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import pwr.android_app.R;
-import pwr.android_app.network.rest.ServiceGenerator;
 import pwr.android_app.dataStructures.UserData;
 import pwr.android_app.network.rest.ApiService;
+import pwr.android_app.network.rest.ServiceGenerator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;

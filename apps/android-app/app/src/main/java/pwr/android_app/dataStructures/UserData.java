@@ -8,15 +8,27 @@ public class UserData {
     private user user;
 
     // --- GETTERS --- //
-    public boolean isError() {return error;}
-    public int getUid() {return uid;}
+    public boolean isError() {
+        return error;
+    }
 
-    public String getUserEmail() {return user.email;}
-    public String getUserName() {return user.name;}
-    public String getUserSurname() {return user.surname;}
+    public int getUid() {
+        return uid;
+    }
 
-    class user
-    {
+    public String getUserEmail() {
+        return user.email;
+    }
+
+    public String getUserName() {
+        return user.name;
+    }
+
+    public String getUserSurname() {
+        return user.surname;
+    }
+
+    class user {
         // --- DATA --- //
         private String email;
         private String name;
