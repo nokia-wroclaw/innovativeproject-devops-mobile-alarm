@@ -40,23 +40,23 @@ public class WebBrowserFragment extends Fragment {
 
     // --- ON SAVE INSTANCE STATE --- //
     @Override
-    public void onSaveInstanceState(Bundle outState){
+    public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString("URL",myWebView.getUrl());
+        outState.putString("URL", myWebView.getUrl());
     }
 
     // --- ON ACTIVITY CREATED --- //
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        if (savedInstanceState != null){
+        if (savedInstanceState != null) {
             myWebView.loadUrl(savedInstanceState.getString("URL"));
         }
     }
 
     // --- ON RESUME --- //
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
     }
 }

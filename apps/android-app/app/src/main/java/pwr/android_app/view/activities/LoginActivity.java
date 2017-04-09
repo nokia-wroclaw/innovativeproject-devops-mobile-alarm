@@ -3,26 +3,25 @@ package pwr.android_app.view.activities;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.annotation.TargetApi;
-import android.content.Context;
-import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.support.annotation.NonNull;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
 import android.app.LoaderManager.LoaderCallbacks;
+import android.content.Context;
 import android.content.CursorLoader;
+import android.content.Intent;
 import android.content.Loader;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.ArrayAdapter;
@@ -40,11 +39,10 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnEditorAction;
 import pwr.android_app.R;
-import pwr.android_app.network.rest.ServiceGenerator;
 import pwr.android_app.dataStructures.UserData;
 import pwr.android_app.network.rest.ApiService;
+import pwr.android_app.network.rest.ServiceGenerator;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -64,11 +62,16 @@ public class LoginActivity
     private ApiService client = null;
 
     // UI references
-    @BindView(R.id.email) AutoCompleteTextView mEmailView;
-    @BindView(R.id.password) EditText mPasswordView;
-    @BindView(R.id.login_progress) View mProgressView;
-    @BindView(R.id.login_form) View mLoginFormView;
-    @BindView(R.id.email_sign_in_button) Button mEmailSignInButton;
+    @BindView(R.id.email)
+    AutoCompleteTextView mEmailView;
+    @BindView(R.id.password)
+    EditText mPasswordView;
+    @BindView(R.id.login_progress)
+    View mProgressView;
+    @BindView(R.id.login_form)
+    View mLoginFormView;
+    @BindView(R.id.email_sign_in_button)
+    Button mEmailSignInButton;
 
 
     /* ========================================= METHODS ======================================== */
@@ -149,6 +152,7 @@ public class LoginActivity
             login(email, password);
         }
     }
+
     private void login(String mEmail, String mPassword) {
 
         // Show animation
@@ -178,12 +182,10 @@ public class LoginActivity
                     i.putExtra("cookie", cookie);
                     i.putExtra("user_data", userData);
                     startActivity(i);
-                }
-                else if (response.code() == 403) {
+                } else if (response.code() == 403) {
                     mPasswordView.setError(getString(R.string.error_incorrect_password));
                     mPasswordView.requestFocus();
-                }
-                else {
+                } else {
                     showToast(getResources().getString(R.string.error_bad_connection));
                 }
             }
@@ -201,6 +203,7 @@ public class LoginActivity
     private boolean isEmailValid(String email) {
         return email.contains("@");
     }
+
     private boolean isPasswordValid(String password) {
         return password.length() > 4;
     }
@@ -238,6 +241,7 @@ public class LoginActivity
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
     }
+
     private void showToast(CharSequence text) {
         LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.layout_yellow_toast, (ViewGroup) findViewById(R.id.yellow_toast_container));
@@ -259,6 +263,7 @@ public class LoginActivity
         }
         getLoaderManager().initLoader(0, null, this);
     }
+
     private boolean mayRequestContacts() {
 
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
@@ -303,7 +308,8 @@ public class LoginActivity
         mEmailView.setAdapter(adapter);
     }
 
-    @Override public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
+    @Override
+    public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
                 // Pobiera dane z kontaktów profilu użytkownika
                 Uri.withAppendedPath(ContactsContract.Profile.CONTENT_URI,
@@ -317,7 +323,9 @@ public class LoginActivity
                 // W pierwszej kolejności proponuje ostatnio używany adres
                 ContactsContract.Contacts.Data.IS_PRIMARY + " DESC");
     }
-    @Override public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> cursorLoader, Cursor cursor) {
         List<String> emails = new ArrayList<>();
         cursor.moveToFirst();
         while (!cursor.isAfterLast()) {
@@ -327,7 +335,9 @@ public class LoginActivity
 
         addEmailsToAutoComplete(emails);
     }
-    @Override public void onLoaderReset(Loader<Cursor> cursorLoader) {
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> cursorLoader) {
     }
 
     /* ========================================================================================== */

@@ -1,78 +1,32 @@
 package pwr.android_app.dataStructures;
 
-import android.content.res.Resources;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import pwr.android_app.R;
-
-/**
- * Helper class for providing sample content for user interfaces created by
- * Android template wizards.
- * <p>
- * TODO: Replace all uses of this class before publishing your app.
- */
 public class DummyContent {
-
-    /**
-     * An array of sample (dummy) items.
-     */
-    public static final List<DummyItem> ITEMS = new ArrayList<DummyItem>();
-
-    /**
-     * A map of sample (dummy) items, by ID.
-     */
-    public static final Map<String, DummyItem> ITEM_MAP = new HashMap<String, DummyItem>();
-
+    public static final List<ServiceData> ITEMS = new ArrayList<ServiceData>();
+    public static final Map<String, ServiceData> ITEM_MAP = new HashMap<String, ServiceData>();
 
     private static final String[] names = {"Facebook", "Interia", "Onet", "Google", "Youtube"};
+    private static final String[] ips = {"192.168.122.133", "192.168.252.101", "192.168.66.56", "192.168.120.42", "192.168.150.125"};
     private static final int COUNT = 5;
 
     static {
+        for (int i = 0; i < 4; i++) {
             for (int j = 0; j < COUNT; j++) {
                 addItem(createDummyItem(j));
+            }
         }
     }
 
-    private static void addItem(DummyItem item) {
+    private static void addItem(ServiceData item) {
         ITEMS.add(item);
-        ITEM_MAP.put(item.id, item);
+        ITEM_MAP.put(item.toString(), item);
     }
 
-    private static DummyItem createDummyItem(int position) {
-        return new DummyItem(String.valueOf(position+1), names[position], makeDetails(position));
-    }
-
-
-    private static String makeDetails(int position) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("Details about Item: ").append(position);
-        for (int i = 0; i < position; i++) {
-            builder.append("\nMore details information here.");
-        }
-        return builder.toString();
-    }
-
-    /**
-     * A dummy item representing a piece of content.
-     */
-    public static class DummyItem {
-        public final String id;
-        public final String content;
-        public final String details;
-
-        public DummyItem(String id, String content, String details) {
-            this.id = id;
-            this.content = content;
-            this.details = details;
-        }
-
-        @Override
-        public String toString() {
-            return content;
-        }
+    private static ServiceData createDummyItem(int position) {
+        return new ServiceData(position, ips[position], names[position], 1);
     }
 }

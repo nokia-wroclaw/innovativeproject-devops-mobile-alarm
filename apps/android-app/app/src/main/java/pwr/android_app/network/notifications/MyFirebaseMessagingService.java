@@ -19,11 +19,11 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        Intent i = new Intent(this,MainActivity.class);
+        Intent i = new Intent(this, MainActivity.class);
         i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
 
         PendingIntent pendingIntent =
-                PendingIntent.getActivity(this,0,i, PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder =
                 (NotificationCompat.Builder) new NotificationCompat.Builder(this)
@@ -40,6 +40,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
         NotificationManager manager =
                 (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
-        manager.notify(0,builder.build());
+        manager.notify(0, builder.build());
     }
 }

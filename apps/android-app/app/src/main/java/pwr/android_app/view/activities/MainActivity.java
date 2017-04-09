@@ -2,33 +2,35 @@ package pwr.android_app.view.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.ActionBar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.TextView;
+
 import com.google.gson.Gson;
 
-import pwr.android_app.view.fragments.MonitorFragment;
 import pwr.android_app.R;
-import pwr.android_app.network.rest.ServiceGenerator;
+import pwr.android_app.dataStructures.ServiceData;
 import pwr.android_app.dataStructures.UserData;
 import pwr.android_app.network.rest.ApiService;
+import pwr.android_app.network.rest.ServiceGenerator;
 import pwr.android_app.view.fragments.MainMenuFragment;
+import pwr.android_app.view.fragments.MonitorFragment;
 import pwr.android_app.view.fragments.TestingFragment;
 import pwr.android_app.view.fragments.WebBrowserFragment;
 
 // --- MAIN ACTIVITY --- //
 public class MainActivity
         extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+        implements NavigationView.OnNavigationItemSelectedListener, MonitorFragment.OnListFragmentInteractionListener {
 
     /* ========================================== DATA ========================================== */
     private int option_id;
@@ -91,7 +93,7 @@ public class MainActivity
             actionBar.hide();
         } else if (option_id == R.id.monitor_option) {
 
-            // Włączenie strony testowej po wybraniu odpowiedniej opcji z lewogo panelu
+            // Włączenie strony testowej po wybraniu odpowiedniej opcji z lewego panelu
             monitorFragment = new MonitorFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
             fragmentTransaction.replace(R.id.fragment_container, monitorFragment);
@@ -100,6 +102,7 @@ public class MainActivity
             actionBar.hide();
         }
     }
+
     // === ON CREATE === //
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,7 +111,7 @@ public class MainActivity
 
         // Getting data from previous activity
         this.cookie = getIntent().getStringExtra("cookie");
-        this.userData = new Gson().fromJson(getIntent().getStringExtra("user_data"),UserData.class);
+        this.userData = new Gson().fromJson(getIntent().getStringExtra("user_data"), UserData.class);
 
         // [Retrofit]
         client = ServiceGenerator.createService(ApiService.class);
@@ -116,7 +119,7 @@ public class MainActivity
         // Setting default fragment
         mainMenuFragment = new MainMenuFragment();
         android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container,mainMenuFragment);
+        fragmentTransaction.replace(R.id.fragment_container, mainMenuFragment);
         fragmentTransaction.commit();
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -149,7 +152,7 @@ public class MainActivity
 
     // === ON RESUME === //
     @Override
-    public void onResume(){
+    public void onResume() {
         super.onResume();
 
     }
@@ -173,10 +176,10 @@ public class MainActivity
         getMenuInflater().inflate(R.menu.main, menu);
 
         // Ustawia adres email zalogowanego użytkownika na panelu bocznym
-        TextView nameSurnameLabel = (TextView)findViewById(R.id.name_surname_label);
+        TextView nameSurnameLabel = (TextView) findViewById(R.id.name_surname_label);
         nameSurnameLabel.setText(this.userData.getUserName() + " " + this.userData.getUserSurname());
 
-        TextView emailLabel = (TextView)findViewById(R.id.email_label);
+        TextView emailLabel = (TextView) findViewById(R.id.email_label);
         emailLabel.setText(this.userData.getUserEmail());
 
         return true;
@@ -211,5 +214,10 @@ public class MainActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    @Override
+    public void onListFragmentInteraction(ServiceData item) {
+
     }
 }
