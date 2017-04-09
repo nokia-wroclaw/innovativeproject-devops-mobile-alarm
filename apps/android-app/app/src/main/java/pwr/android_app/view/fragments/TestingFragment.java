@@ -1,6 +1,5 @@
-package pwr.android_app.view;
+package pwr.android_app.view.fragments;
 
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -9,32 +8,19 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.TextView;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.MalformedURLException;
-import java.net.ProtocolException;
-import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
-
-import okhttp3.OkHttpClient;
 import pwr.android_app.R;
-import pwr.android_app.model.ServiceGenerator;
-import pwr.android_app.model.dataStructures.UserData;
-import pwr.android_app.model.interfaces.DevOpsClient;
+import pwr.android_app.network.rest.ServiceGenerator;
+import pwr.android_app.dataStructures.UserData;
+import pwr.android_app.network.rest.ApiService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class TestingFragment extends Fragment {
 
     /* ========================================== DATA ========================================== */
     // Used in REST requests
-    private DevOpsClient client = null;
+    private ApiService client = null;
 
     // UI references
     private Button testJsonButton = null;
@@ -53,7 +39,7 @@ public class TestingFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         // [Retrofit]
-        this.client = ServiceGenerator.createService(DevOpsClient.class);
+        this.client = ServiceGenerator.createService(ApiService.class);
 
 
         View view = inflater.inflate(R.layout.fragment_testing, container, false);

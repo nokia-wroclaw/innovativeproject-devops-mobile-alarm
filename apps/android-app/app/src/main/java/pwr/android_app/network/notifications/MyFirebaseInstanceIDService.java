@@ -1,4 +1,4 @@
-package pwr.android_app.model;
+package pwr.android_app.network.notifications;
 
 import android.util.Log;
 
@@ -11,8 +11,10 @@ public class MyFirebaseInstanceIDService extends FirebaseInstanceIdService {
     @Override
     public void onTokenRefresh() {
         // Get updated InstanceID token.
-        String refreshedToken = FirebaseInstanceId.getInstance().getToken();
-        Log.d("TOKEN", "Refreshed token: " + refreshedToken);
+        String FireBaseToken = FirebaseInstanceId.getInstance().getToken();
+        Log.d("TOKEN", "Refreshed token: " + FireBaseToken);
+
+        // TO DO: w przypadku odświeżenia tokenu należy wysłać go do serwera!!!
     }
 
 }

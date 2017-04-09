@@ -1,4 +1,4 @@
-package pwr.android_app.view;
+package pwr.android_app.view.activities;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -38,9 +38,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pwr.android_app.R;
-import pwr.android_app.model.ServiceGenerator;
-import pwr.android_app.model.dataStructures.UserData;
-import pwr.android_app.model.interfaces.DevOpsClient;
+import pwr.android_app.network.rest.ServiceGenerator;
+import pwr.android_app.dataStructures.UserData;
+import pwr.android_app.network.rest.ApiService;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -57,7 +57,7 @@ public class LoginActivity
     private static final int REQUEST_READ_CONTACTS = 0;
 
     // Used in REST requests
-    private DevOpsClient client = null;
+    private ApiService client = null;
 
     // UI references
     private AutoCompleteTextView mEmailView;
@@ -75,7 +75,7 @@ public class LoginActivity
         setContentView(R.layout.activity_login);
 
         // [Retrofit]
-        client = ServiceGenerator.createService(DevOpsClient.class);
+        client = ServiceGenerator.createService(ApiService.class);
 
         // preparing UI
         mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
@@ -179,33 +179,21 @@ public class LoginActivity
                     i.putExtra("cookie", cookie);
                     i.putExtra("user_data", userData);
                     startActivity(i);
-                    finish();
                 }
                 else if (response.code() == 403) {
                     mPasswordView.setError(getString(R.string.error_incorrect_password));
                     mPasswordView.requestFocus();
                 }
                 else {
-                    Toast.makeText(getApplicationContext(), R.string.error_bad_connection, Toast.LENGTH_LONG);
+                    showToast(getResources().getString(R.string.error_bad_connection));
                 }
             }
 
             @Override
             public void onFailure(Call<UserData> call, Throwable t) {
 
-                showProgress(false);
-
-                LayoutInflater inflater = getLayoutInflater();
-                View layout = inflater.inflate(R.layout.yellow_toast, (ViewGroup) findViewById(R.id.yellow_toast_container));
-
-                TextView text = (TextView) layout.findViewById(R.id.yellow_toast_text);
-                text.setText(R.string.error_bad_connection);
-
-                Toast toast = new Toast(getApplicationContext());
-                toast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-                toast.setDuration(Toast.LENGTH_LONG);
-                toast.setView(layout);
-                toast.show();
+                showProgress(false);                                                                // hide progress animation
+                showToast(getResources().getString(R.string.error_bad_connection));                 // show toast message about connection failure
             }
         });
     }
@@ -218,7 +206,7 @@ public class LoginActivity
         return password.length() > 4;
     }
 
-    // === SHOWING & HIDING LOGIN ANIMATION === //
+    // === SHOWING & HIDING COMPONENTS === //
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void showProgress(final boolean show) {
         // On Honeycomb MR2 we have the ViewPropertyAnimator APIs, which allow
@@ -250,6 +238,19 @@ public class LoginActivity
             mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
             mLoginFormView.setVisibility(show ? View.GONE : View.VISIBLE);
         }
+    }
+    private void showToast(CharSequence text) {
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.layout_yellow_toast, (ViewGroup) findViewById(R.id.yellow_toast_container));
+
+        TextView textView = (TextView) layout.findViewById(R.id.yellow_toast_text);
+        textView.setText(text);
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.TOP, 0, 20);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
     }
 
     // === METHODS USED TO AUTO-FILLING EMAIL VIEW === //

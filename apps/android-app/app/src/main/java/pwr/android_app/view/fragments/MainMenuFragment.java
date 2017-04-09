@@ -1,4 +1,4 @@
-package pwr.android_app.view;
+package pwr.android_app.view.fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;

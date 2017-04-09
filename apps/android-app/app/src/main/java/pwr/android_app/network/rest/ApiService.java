@@ -1,13 +1,13 @@
-package pwr.android_app.model.interfaces;
+package pwr.android_app.network.rest;
 
-import pwr.android_app.model.dataStructures.UserData;
+import pwr.android_app.dataStructures.UserData;
 import retrofit2.Call;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
 
-public interface DevOpsClient {
+public interface ApiService {
 
     @GET("/testjson")
     Call<UserData> doTestJson();

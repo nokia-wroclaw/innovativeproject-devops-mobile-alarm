@@ -1,4 +1,4 @@
-package pwr.android_app;
+package pwr.android_app.view.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
@@ -10,10 +10,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import pwr.android_app.dummy.DummyContent;
-import pwr.android_app.dummy.DummyContent.DummyItem;
-
-import java.util.List;
+import pwr.android_app.R;
+import pwr.android_app.view.adapters.MyItemRecyclerViewAdapter;
+import pwr.android_app.dataStructures.DummyContent;
+import pwr.android_app.dataStructures.DummyContent.DummyItem;
 
 /**
  * A fragment representing a list of Items.

@@ -1,4 +1,4 @@
-package pwr.android_app.dummy;
+package pwr.android_app.dataStructures;
 
 import android.content.res.Resources;
 

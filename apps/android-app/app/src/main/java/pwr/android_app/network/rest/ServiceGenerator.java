@@ -1,4 +1,4 @@
-package pwr.android_app.model;
+package pwr.android_app.network.rest;
 
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;

@@ -1,4 +1,4 @@
-package pwr.android_app.view;
+package pwr.android_app.view.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -16,11 +16,14 @@ import android.view.MenuItem;
 import android.widget.TextView;
 import com.google.gson.Gson;
 
-import pwr.android_app.MonitorFragment;
+import pwr.android_app.view.fragments.MonitorFragment;
 import pwr.android_app.R;
-import pwr.android_app.model.ServiceGenerator;
-import pwr.android_app.model.dataStructures.UserData;
-import pwr.android_app.model.interfaces.DevOpsClient;
+import pwr.android_app.network.rest.ServiceGenerator;
+import pwr.android_app.dataStructures.UserData;
+import pwr.android_app.network.rest.ApiService;
+import pwr.android_app.view.fragments.MainMenuFragment;
+import pwr.android_app.view.fragments.TestingFragment;
+import pwr.android_app.view.fragments.WebBrowserFragment;
 
 // --- MAIN ACTIVITY --- //
 public class MainActivity
@@ -35,7 +38,7 @@ public class MainActivity
     private UserData userData = null;
 
     // Used in REST requests
-    private DevOpsClient client = null;
+    private ApiService client = null;
 
     // UI references
     private Toolbar toolbar = null;
@@ -108,7 +111,7 @@ public class MainActivity
         this.userData = new Gson().fromJson(getIntent().getStringExtra("user_data"),UserData.class);
 
         // [Retrofit]
-        client = ServiceGenerator.createService(DevOpsClient.class);
+        client = ServiceGenerator.createService(ApiService.class);
 
         // Setting default fragment
         mainMenuFragment = new MainMenuFragment();

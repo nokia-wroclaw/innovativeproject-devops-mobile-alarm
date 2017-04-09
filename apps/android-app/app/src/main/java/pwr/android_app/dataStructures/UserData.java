@@ -1,4 +1,4 @@
-package pwr.android_app.model.dataStructures;
+package pwr.android_app.dataStructures;
 
 public class UserData {
 

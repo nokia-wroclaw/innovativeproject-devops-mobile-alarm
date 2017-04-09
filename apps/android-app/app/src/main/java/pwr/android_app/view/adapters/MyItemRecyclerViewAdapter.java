@@ -1,4 +1,4 @@
-package pwr.android_app;
+package pwr.android_app.view.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -6,8 +6,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import pwr.android_app.MonitorFragment.OnListFragmentInteractionListener;
-import pwr.android_app.dummy.DummyContent.DummyItem;
+import pwr.android_app.view.fragments.MonitorFragment.OnListFragmentInteractionListener;
+import pwr.android_app.R;
+import pwr.android_app.dataStructures.DummyContent.DummyItem;
 
 import java.util.List;
 

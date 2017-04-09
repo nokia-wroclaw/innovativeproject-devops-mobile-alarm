@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="pwr.android_app.view.MainActivity">
+    tools:context=".view.activities.MainActivity">
 
     <FrameLayout
         android:id="@+id/fragment_container"
@@ -20,7 +20,7 @@
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/light_grey"
         app:elevation="0dp"
-        app:srcCompat="@mipmap/logo" />
+        app:srcCompat="@mipmap/icon" />
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

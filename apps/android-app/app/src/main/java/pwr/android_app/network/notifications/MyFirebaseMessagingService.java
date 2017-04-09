@@ -1,4 +1,4 @@
-package pwr.android_app.model;
+package pwr.android_app.network.notifications;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -9,7 +9,7 @@ import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
 import pwr.android_app.R;
-import pwr.android_app.view.MainActivity;
+import pwr.android_app.view.activities.MainActivity;
 
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
@@ -29,7 +29,7 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 .setAutoCancel(true)
                 .setContentTitle(remoteMessage.getNotification().getTitle())
                 .setContentText(remoteMessage.getNotification().getBody())
-                .setSmallIcon(R.mipmap.logo)
+                .setSmallIcon(R.mipmap.icon)
                 .setContentIntent(pendingIntent);
 
         NotificationManager manager =
