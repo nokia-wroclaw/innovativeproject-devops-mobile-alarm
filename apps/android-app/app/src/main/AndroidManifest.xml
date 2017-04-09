@@ -8,6 +8,7 @@
     <uses-permission android:name="android.permission.READ_CONTACTS" />
     <!-- To use Internet in app -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
 
     <application
@@ -20,11 +21,11 @@
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
-            android:resource="@mipmap/icon" />
+            android:resource="@drawable/icon" />
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_color"
-            android:resource="@color/light_grey" />
+            android:resource="@color/dark_grey" />
 
         <activity
             android:name=".view.activities.LoginActivity"
