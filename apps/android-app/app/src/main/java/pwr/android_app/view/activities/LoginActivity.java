@@ -37,6 +37,10 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
+import butterknife.OnEditorAction;
 import pwr.android_app.R;
 import pwr.android_app.network.rest.ServiceGenerator;
 import pwr.android_app.dataStructures.UserData;
@@ -60,11 +64,11 @@ public class LoginActivity
     private ApiService client = null;
 
     // UI references
-    private AutoCompleteTextView mEmailView;
-    private EditText mPasswordView;
-    private View mProgressView;
-    private View mLoginFormView;
-    private Button mEmailSignInButton;
+    @BindView(R.id.email) AutoCompleteTextView mEmailView;
+    @BindView(R.id.password) EditText mPasswordView;
+    @BindView(R.id.login_progress) View mProgressView;
+    @BindView(R.id.login_form) View mLoginFormView;
+    @BindView(R.id.email_sign_in_button) Button mEmailSignInButton;
 
 
     /* ========================================= METHODS ======================================== */
@@ -74,14 +78,14 @@ public class LoginActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
+        ButterKnife.bind(this);
+
         // [Retrofit]
         client = ServiceGenerator.createService(ApiService.class);
 
         // preparing UI
-        mEmailView = (AutoCompleteTextView) findViewById(R.id.email);
         populateAutoComplete();
 
-        mPasswordView = (EditText) findViewById(R.id.password);
         mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
@@ -92,17 +96,12 @@ public class LoginActivity
                 return false;
             }
         });
+    }
 
-        mEmailSignInButton = (Button) findViewById(R.id.email_sign_in_button);
-        mEmailSignInButton.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                attemptLogin();
-            }
-        });
-
-        mLoginFormView = findViewById(R.id.login_form);
-        mProgressView = findViewById(R.id.login_progress);
+    // === LISTENERS === //
+    @OnClick(R.id.email_sign_in_button)
+    void onClickSignInButton(Button button) {
+        attemptLogin();
     }
 
     // === LOGIN PROCESS === //
