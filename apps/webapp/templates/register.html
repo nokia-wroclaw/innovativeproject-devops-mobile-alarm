@@ -7,6 +7,12 @@
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="">
     <meta name="author" content="">
+        
+    {% if title %}
+    <title>{{ title }}</title>
+    {% else %}
+    <title>Welcome to DevOps Project</title>
+    {% endif %}
 
     <!-- FONT 
     –––––––––––––––––––––––––––––––––––––––––––––––––– --> 
@@ -30,7 +36,12 @@
         <input type="text" name="name" id="name" pattern="\w+" value="{{ request.form.name }}" maxlength="15" class="form-control" placeholder="Name" required>
         <input type="text" name+"surname" id="surname" pattern="\w+" value="{{ request.form.surname }}" maxlength="40" class="form-control" placeholder="Surname" required>
         <input type="password" name="password" id="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" value="{{ request.form.password }}" class="form-control" placeholder="Password" required onchange="form.confirmPassword.pattern = this.value;">
-        <input type="password" name="confirmPassword" id="confirmPassword" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" class="form-control" placeholder="Confirm Password" required title="Hasla roznia sie od siebie.">    
+        <input type="password" name="confirmPassword" id="confirmPassword" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" class="form-control" placeholder="Confirm Password" required title="Hasla roznia sie od siebie.">
+        
+        {% if registerAdmin == "true" %}
+        <input type="text" name="email" id="email" pattern="\w+" value="{{ request.form.email }}" maxlength="15" class="form-control" placeholder="Email" required>
+        <input type="text" name="organization" id="organization" pattern="\w+" value="{{ request.form.organization }}" maxlength="15" class="form-control" placeholder="Organization" required>
+        {% endif %}
         
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
       </form>

@@ -1,7 +1,7 @@
 from flask import Flask, session, request, flash, url_for, redirect, render_template, abort, g, jsonify
 from flask_login import login_user, logout_user, current_user, login_required
 from webapp import db, app, login_manager, UserType
-from .models import User, Tokens, Service
+from .models import *
 import sendgrid
 import os
 from sendgrid.helpers.mail import *
@@ -33,7 +33,7 @@ def before_request():
 def login():
     # display login template
     if request.method == 'GET':
-        return render_template('login.html')
+        return render_template('login.html', title="DevOps")
     # get input values from template
     email = request.form['email']
     password = request.form['password']
@@ -46,7 +46,8 @@ def login():
     # checking encrypted password
     check_pass = bcrypt.checkpw(password.encode(), registered_user.password.encode())
     # check if password is correct and user is admin
-    if check_pass == False or registered_user.user_type != UserType.adm:
+    org_usr_mapp = User_Organization_mapping.query.filter_by(id_user=registered_user.id).first()
+    if check_pass == False or org_usr_mapp.user_type != UserType.adm:
         flash('Email or Password is invalid' , 'error')
         return redirect(url_for('login'))
     # login user
@@ -68,14 +69,19 @@ def register(token):
         if pushed_token is None or pushed_token.is_used == True:
             return "Brak dostepu!"
         else:
-            return render_template('register.html')
+            return render_template('register.html', title="DevOps", registerAdmin="false")
+
+
+
+
+#tu wprowadzic zmiany m.in. usertype w user_mapping cos tam, id_organiacji przekazywac POSTEM, itpitd.
     email = confirm_token(token)
     name = request.form['name']
     surname = request.form['surname']
     password = request.form['password']
     password_bytes = password.encode('utf-8')
     hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
-    user=User(name=name, surname=surname, email=email, user_type=UserType.usr, password=hashed)
+    user=User(name=name, surname=surname, email=email, password=hashed)
     db.session.add(user)
     db.session.commit()
     # set token as USED
@@ -83,6 +89,36 @@ def register(token):
     db.session.commit()
     flash('User successfully registered')
     return "Your account is ready for login. Go to your Android app and try this on!"
+
+#admin registration
+@app.route('/register' , methods=['GET','POST'])
+def register_admin():
+    if request.method == 'GET':
+        return render_template('register.html', title="DevOps", registerAdmin="true")
+
+    email = request.form['email']
+    name = request.form['name']
+    organization = request.form['organization']
+    surname = request.form['surname']
+    password = request.form['password']
+    password_bytes = password.encode('utf-8')
+    hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+    user=User(name=name, surname=surname, email=email, password=hashed)
+    organization=Organization(name=organization)
+    db.session.add(organization)
+    db.session.add(user)
+    db.session.commit()
+
+    #Admin setting
+    registered_user = User.query.filter_by(email=email).first()
+    registered_organization = Organization.query.filter_by(name=organization).first()
+    usr_mapp=User_organization_mapping(id_user=registered_user.id, id_organization=registered_organization.id, user_type=UserType.adm)
+    db.session.add(usr_mapp)
+    db.session.commit()
+    # set token as USED
+    flash('User successfully registered')
+    return redirect(request.args.get('next') or url_for('login'))
+
 
 @app.route('/invite',methods=['GET','POST'])
 @login_required
@@ -92,8 +128,9 @@ def invite():
         # creating a table of users
         items = User.query.all()
         users_table = UsersTable(items)
+        ### lista organizacji do wybrania tu ma byc
 
-        return render_template('users.html', users_table=users_table)
+        return render_template('users.html', users_table=users_table, panel="users")
     # get email from template
     email = request.form['email']
 
@@ -101,6 +138,16 @@ def invite():
     email_check = User.query.filter_by(email=email).first()
     if email_check:
         return render_template('users.html', exist="Ten e-mail juz istnieje w bazie danych!!!")
+
+    #gettin id_organization for invitation
+    admin = g.user #current logned user
+################ nie skonczone
+
+
+
+
+
+
 
     # create a client for sending emails
     sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
@@ -167,7 +214,7 @@ def loginandroid():
 @login_required
 def dashboard():
     user = g.user
-    return render_template('dashboard.html', title="DevOps Nokia Project", user=user)
+    return render_template('dashboard.html', title="DevOps Nokia Project", user=user, panel="dashboard")
 
 @app.route('/services', methods=['GET','POST'])
 @login_required
@@ -177,7 +224,7 @@ def services():
         items = Service.query.all()
         services_table = ServicesTable(items)
 
-        return render_template('services.html', services_table=services_table)
+        return render_template('services.html', services_table=services_table, panel="services")
     
     # get the values from the template
     address = request.form['service_address']
