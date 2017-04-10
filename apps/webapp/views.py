@@ -104,17 +104,13 @@ def register_admin():
     password_bytes = password.encode('utf-8')
     hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
     user=User(name=name, surname=surname, email=email, password=hashed)
-    organization=Organization(name=organization)
-    db.session.add(organization)
+    org_usr_mapp=User_Organization_mapping(user_type=1)
+    org_usr_mapp.organization=Organization(name=organization)
+    user.organizations.append(org_usr_mapp)
     db.session.add(user)
+    db.session.add(org_usr_mapp)
     db.session.commit()
 
-    #Admin setting
-    registered_user = User.query.filter_by(email=email).first()
-    registered_organization = Organization.query.filter_by(name=organization).first()
-    usr_mapp=User_organization_mapping(id_user=registered_user.id, id_organization=registered_organization.id, user_type=UserType.adm)
-    db.session.add(usr_mapp)
-    db.session.commit()
     # set token as USED
     flash('User successfully registered')
     return redirect(request.args.get('next') or url_for('login'))
@@ -126,9 +122,16 @@ def invite():
     # display invite template
     if request.method == 'GET':
         # creating a table of users
-        items = User.query.all()
+        items = User.query.all() #### dodaj user_type
         users_table = UsersTable(items)
+        
+        
         ### lista organizacji do wybrania tu ma byc
+        
+        ### oraz wyswietlanie po tym jaka organizacja a nie wszyscy userzy
+        
+        
+        
 
         return render_template('users.html', users_table=users_table, panel="users")
     # get email from template

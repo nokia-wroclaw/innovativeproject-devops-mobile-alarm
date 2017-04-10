@@ -6,7 +6,7 @@ class UsersTable(Table):
     name = Col('Name')
     surname = Col('Surname')
     email = Col('Email')
-    user_type = OptCol('Type of user', choices={1: 'Admin', 2: 'User', 3: 'Other'})
+    #user_type = OptCol('Type of user', choices={1: 'Admin', 2: 'User', 3: 'Other'})
 
 class ServicesTable(Table):
     classes = ['table', 'table-striped']
