@@ -75,9 +75,6 @@ public class LoginActivity
     View mLoginFormView;
     @BindView(R.id.email_sign_in_button)
     Button mEmailSignInButton;
-    @BindView(R.id.big_logo)
-    ImageView mBigLogo;
-
 
     /* ========================================= METHODS ======================================== */
     // === ON CREATE === //
@@ -121,15 +118,6 @@ public class LoginActivity
             Intent i = new Intent(context, MainActivity.class);
             startActivity(i);
         }
-    }
-
-    // === ON START === //
-    @Override
-    protected void onStart() {
-        super.onStart();
-
-        showBigLogo(false);
-        showForm(true);
     }
 
     // === LISTENERS === //
@@ -275,19 +263,6 @@ public class LoginActivity
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         mProgressView.setVisibility(show ? View.VISIBLE : View.GONE);
-                    }
-                });
-    }
-    private void showBigLogo(final boolean show) {
-        int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-
-        mBigLogo.setVisibility(show ? View.VISIBLE : View.GONE);
-        mBigLogo.animate().setDuration(shortAnimTime)
-                .alpha(show ? 1 : 0)
-                .setListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationEnd(Animator animation) {
-                        mBigLogo.setVisibility(show ? View.VISIBLE : View.GONE);
                     }
                 });
     }
