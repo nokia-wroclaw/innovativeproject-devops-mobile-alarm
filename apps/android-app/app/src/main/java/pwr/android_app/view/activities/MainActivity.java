@@ -19,6 +19,9 @@ import android.widget.TextView;
 
 import com.google.gson.Gson;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
+import butterknife.OnClick;
 import pwr.android_app.R;
 import pwr.android_app.dataStructures.ServiceData;
 import pwr.android_app.dataStructures.UserData;
@@ -45,81 +48,38 @@ public class MainActivity
     private ApiService client = null;
 
     // UI references
-    private Toolbar toolbar = null;
+    @BindView(R.id.toolbar)
+    Toolbar toolbar;
+    @BindView(R.id.fab)
+    FloatingActionButton fab;
+    @BindView(R.id.drawer_layout)
+    DrawerLayout drawer;
+    @BindView(R.id.nav_view)
+    NavigationView navigationView;
+
     private ActionBar actionBar = null;
+
+    // Fragments
     private MainMenuFragment mainMenuFragment;
     private WebBrowserFragment webBrowserFragment;
     private TestingFragment testingFragment;
     private MonitorFragment monitorFragment;
-    private FloatingActionButton fab;
 
-    /* ========================================= METHODS ======================================== */
-    private void setFragment() {
-        if (option_id == R.id.main_menu_option) {
-
-            // Włączenie głównego menu po wybraniu odpowiedniej opcji z lewego panelu
-            mainMenuFragment = new MainMenuFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, mainMenuFragment);
-            fragmentTransaction.commit();
-            fab.show();
-            actionBar.show();
-
-        } else if (option_id == R.id.website_option) {
-
-            // Włączenie przeglądarki po wybraniu odpowiedniej opcji z lewogo panelu
-            webBrowserFragment = new WebBrowserFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, webBrowserFragment);
-            fragmentTransaction.commit();
-            fab.show();
-            actionBar.hide();
-
-        } else if (option_id == R.id.testing_option) {
-
-            // Włączenie strony testowej po wybraniu odpowiedniej opcji z lewogo panelu
-            testingFragment = new TestingFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, testingFragment);
-            fragmentTransaction.commit();
-            fab.show();
-            actionBar.hide();
-        } else if (option_id == R.id.website_option) {
-
-            // Włączenie przeglądarki po wybraniu odpowiedniej opcji z lewogo panelu
-            webBrowserFragment = new WebBrowserFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, webBrowserFragment);
-            fragmentTransaction.commit();
-            fab.show();
-            actionBar.hide();
-        } else if (option_id == R.id.monitor_option) {
-
-            // Włączenie strony testowej po wybraniu odpowiedniej opcji z lewego panelu
-            monitorFragment = new MonitorFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, monitorFragment);
-            fragmentTransaction.commit();
-            fab.hide();
-            actionBar.hide();
-        }
-    }
-
+    /* ==================================== OVERRIDE METHODS ==================================== */
     // === ON CREATE === //
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         Context context = getApplicationContext();
+
+        ButterKnife.bind(this);
 
         // Getting data from SharedPreferences
         SharedPreferences sharedPref =
                 context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
         this.cookie = sharedPref.getString("cookie",null);
         this.userData = new Gson().fromJson(sharedPref.getString("user_data",null), UserData.class);
-//        this.cookie = getIntent().getStringExtra("cookie");
-//        this.userData = new Gson().fromJson(getIntent().getStringExtra("user_data"), UserData.class);
 
         // [Retrofit]
         client = ServiceGenerator.createService(ApiService.class);
@@ -130,31 +90,20 @@ public class MainActivity
         fragmentTransaction.replace(R.id.fragment_container, mainMenuFragment);
         fragmentTransaction.commit();
 
-        toolbar = (Toolbar) findViewById(R.id.toolbar);
+        // ToolBar
+//        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // ActionBar
         actionBar = getSupportActionBar();
 //        actionBar.setHideOnContentScrollEnabled(true);
 
-        // Creating floating button
-        fab = (FloatingActionButton) findViewById(R.id.fab);
-        //ToDo: floating button
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "I will never stop watching you!", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
         // Creating drawer
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.setDrawerListener(toggle);
         toggle.syncState();
 
-        // Tworzenie górnej części panelu wysuwanego z lewej strony
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+        // Navigation view
         navigationView.setNavigationItemSelectedListener(this);
     }
 
@@ -162,7 +111,6 @@ public class MainActivity
     @Override
     public void onResume() {
         super.onResume();
-
     }
 
     // === ON BACK PRESSED === //
@@ -219,13 +167,77 @@ public class MainActivity
         // Tworzy odpowiedni fragment w oparciu o option_id
         setFragment();
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
+    // === ON LIST FRAGMENT INTERACTION === //
     @Override
     public void onListFragmentInteraction(ServiceData item) {
 
+    }
+
+    /* ==================================== ON CLICK METHODS ==================================== */
+    @OnClick(R.id.fab)
+    void onFabClick(View view) {
+        Snackbar.make(view, "I will never stop watching you!", Snackbar.LENGTH_LONG)
+                .setAction("Action", null).show();
+    }
+
+    /* ========================================= METHODS ======================================== */
+    private void setFragment() {
+        if (option_id == R.id.main_menu_option) {
+
+            // Włączenie głównego menu po wybraniu odpowiedniej opcji z lewego panelu
+            mainMenuFragment = new MainMenuFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, mainMenuFragment);
+            fragmentTransaction.commit();
+
+            fab.show();
+            actionBar.show();
+
+        } else if (option_id == R.id.website_option) {
+
+            // Włączenie przeglądarki po wybraniu odpowiedniej opcji z lewogo panelu
+            webBrowserFragment = new WebBrowserFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, webBrowserFragment);
+            fragmentTransaction.commit();
+
+            fab.show();
+            actionBar.hide();
+
+        } else if (option_id == R.id.testing_option) {
+
+            // Włączenie strony testowej po wybraniu odpowiedniej opcji z lewogo panelu
+            testingFragment = new TestingFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, testingFragment);
+            fragmentTransaction.commit();
+
+            fab.show();
+            actionBar.hide();
+        } else if (option_id == R.id.website_option) {
+
+            // Włączenie przeglądarki po wybraniu odpowiedniej opcji z lewogo panelu
+            webBrowserFragment = new WebBrowserFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, webBrowserFragment);
+            fragmentTransaction.commit();
+
+            fab.show();
+            actionBar.hide();
+        } else if (option_id == R.id.monitor_option) {
+
+            // Włączenie strony testowej po wybraniu odpowiedniej opcji z lewego panelu
+            monitorFragment = new MonitorFragment();
+            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
+            fragmentTransaction.replace(R.id.fragment_container, monitorFragment);
+            fragmentTransaction.commit();
+
+            fab.hide();
+            actionBar.hide();
+        }
     }
 }

@@ -24,9 +24,9 @@ public class MainMenuFragment extends Fragment {
                              ViewGroup container,
                              Bundle savedInstanceState) {
 
-        View view = inflater.inflate(R.layout.fragment_main_menu, container, false);
         // Inflate the layout for this fragment
+        View view = inflater.inflate(R.layout.fragment_main_menu, container, false);
+
         return view;
     }
-
 }

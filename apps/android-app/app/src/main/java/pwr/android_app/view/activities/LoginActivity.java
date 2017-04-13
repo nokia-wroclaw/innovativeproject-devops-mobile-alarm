@@ -31,6 +31,8 @@ import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -70,9 +72,9 @@ public class LoginActivity
     @BindView(R.id.password)
     EditText mPasswordView;
     @BindView(R.id.login_progress)
-    View mProgressView;
+    ProgressBar mProgressView;
     @BindView(R.id.login_form)
-    View mLoginFormView;
+    ScrollView mLoginFormView;
     @BindView(R.id.email_sign_in_button)
     Button mEmailSignInButton;
 
@@ -209,8 +211,6 @@ public class LoginActivity
                     editor.commit();
 
                     Intent i = new Intent(context, MainActivity.class);
-//                    i.putExtra("cookie", cookie);
-//                    i.putExtra("user_data", userData);
                     startActivity(i);
                 } else if (response.code() == 403) {
                     mPasswordView.setError(getString(R.string.error_incorrect_password));
