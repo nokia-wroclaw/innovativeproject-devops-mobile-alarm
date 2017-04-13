@@ -38,4 +38,8 @@
         <item>Interia</item>
     </string-array>
 
+    <!-- Notifications -->
+    <string name="fcm_message_service_state_title">Service %1$s</string>
+    <string name="fcm_message_service_state_body">is %1$s now!</string>
+
 </resources>
