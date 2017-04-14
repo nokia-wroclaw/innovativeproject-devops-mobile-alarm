@@ -213,6 +213,11 @@ def loginandroid():
                }
                }), 200
 
+@app.route('/logoutandroid')
+def logoutandroid():
+    logout_user()
+    return "Success", 200
+
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
 def dashboard():
