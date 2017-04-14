@@ -1,4 +1,5 @@
 from flask_table import Table, Col, OptCol
+#from models import User_Organization_mapping
 
 class UsersTable(Table):
     classes = ['table', 'table-striped']

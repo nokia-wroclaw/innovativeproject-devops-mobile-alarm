@@ -55,8 +55,8 @@ def login():
     flash('Logged in successfully')
     return redirect(request.args.get('next') or url_for('dashboard'))
 
-@app.route('/register/<token>' , methods=['GET','POST'])
-def register(token):
+@app.route('/register/<token>/<organization_id>' , methods=['GET','POST'])
+def register(token, organization_id):
     pushed_token = Tokens.query.filter_by(token=token).first()
     
     # check if token expired
@@ -71,10 +71,6 @@ def register(token):
         else:
             return render_template('register.html', title="DevOps", registerAdmin="false")
 
-
-
-
-#tu wprowadzic zmiany m.in. usertype w user_mapping cos tam, id_organiacji przekazywac POSTEM, itpitd.
     email = confirm_token(token)
     name = request.form['name']
     surname = request.form['surname']
@@ -84,7 +80,8 @@ def register(token):
     user=User(name=name, surname=surname, email=email, password=hashed)
     db.session.add(user)
     db.session.commit()
-    # set token as USED
+    org_usr_mapp=User_Organization_mapping(id_user=user.id, id_organization=organization_id, user_type=2)
+    db.session.add(org_usr_mapp)
     pushed_token.is_used = True
     db.session.commit()
     flash('User successfully registered')
@@ -119,21 +116,16 @@ def register_admin():
 @app.route('/invite',methods=['GET','POST'])
 @login_required
 def invite():
+    # get id_organization of specific admin
+    organization_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first().id_organization
+    
     # display invite template
     if request.method == 'GET':
         # creating a table of users
-        items = User.query.all() #### dodaj user_type
+        items = User.query.all()
         users_table = UsersTable(items)
-        
-        
-        ### lista organizacji do wybrania tu ma byc
-        
-        ### oraz wyswietlanie po tym jaka organizacja a nie wszyscy userzy
-        
-        
-        
-
         return render_template('users.html', users_table=users_table, panel="users")
+    
     # get email from template
     email = request.form['email']
 
@@ -141,16 +133,6 @@ def invite():
     email_check = User.query.filter_by(email=email).first()
     if email_check:
         return render_template('users.html', exist="Ten e-mail juz istnieje w bazie danych!!!")
-
-    #gettin id_organization for invitation
-    admin = g.user #current logned user
-################ nie skonczone
-
-
-
-
-
-
 
     # create a client for sending emails
     sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
@@ -165,7 +147,7 @@ def invite():
     
     content = Content("text/plain", "Hello! You've got invited to DevOps project. To continue "+
                       "the registration click this link: "+
-                      "https://devops-nokia.herokuapp.com/register/"+token.token +
+                      "https://devops-nokia.herokuapp.com/register/"+token.token+"/"+str(organization_id)+
                       " You have 7 days for sign up, after that your token will be deactivated.")
 
     # creatin the mail
@@ -192,7 +174,6 @@ def loginandroid():
         return "Brak dostepu!", 403
     email = request.form['email']
     password = request.form['password']
-    #tu dodac jeszcze or registered_user.is_admin == True:
     registered_user = User.query.filter_by(email=email).first()
     if registered_user is None:
         flash('The user does not exist!' , 'error')

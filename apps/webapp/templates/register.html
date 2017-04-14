@@ -18,12 +18,23 @@
     –––––––––––––––––––––––––––––––––––––––––––––––––– --> 
     <link href="https://fonts.googleapis.com/css?family=Eczar" rel="stylesheet"> 
 
+    {% if registerAdmin == "true" %}
     <!-- Bootstrap core CSS -->
     <link href="../static/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
     <link href="../static/css/base.css" rel="stylesheet">
     <link href="../static/css/login_register.css" rel="stylesheet">
+    {% endif %}
+    
+    {% if registerAdmin == "false" %}
+    <!-- Bootstrap core CSS -->
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+        
+        <!-- Custom styles for this template -->
+        <link href="../../static/css/base.css" rel="stylesheet">
+            <link href="../../static/css/login_register.css" rel="stylesheet">
+    {% endif %}
     
   </head>
 
