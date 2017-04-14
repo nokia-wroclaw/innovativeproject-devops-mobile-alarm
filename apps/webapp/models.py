@@ -57,13 +57,14 @@ class Service(db.Model):
     time_of_last_change_of_state=db.Column(db.DateTime())
     previous_state = db.Column(db.Integer, index=True)
     current_state = db.Column(db.Integer, index=True)
-    fcm_token_group=db.Column(db.String(100), index=True)
+    #fcm_token_group=db.Column(db.String(100), index=True)
     organization_id=db.Column(db.Integer, db.ForeignKey('organization.id'))
     users=db.relationship("Subscription", back_populates="service")
     
-    def __init__(self, address, name):
+    def __init__(self, address, name, organization_id):
         self.address=address
         self.name=name
+        self.organization_id=organization_id
         self.previous_state = ServiceState.unspecified
         self.current_state = ServiceState.unspecified
 

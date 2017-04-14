@@ -208,6 +208,7 @@ def dashboard():
 @app.route('/services', methods=['GET','POST'])
 @login_required
 def services():
+    org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first().id_organization
     if request.method == 'GET':
         # creating a table of services
         items = Service.query.all()
@@ -228,7 +229,7 @@ def services():
         return redirect(url_for('services'))
 
     # creating a new user
-    new_service = Service(address=address, name=name)
+    new_service = Service(address=address, name=name, organization_id=org_id)
     db.session.add(new_service)
     db.session.commit()
 
