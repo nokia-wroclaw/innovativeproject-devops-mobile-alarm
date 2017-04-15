@@ -1,6 +1,7 @@
 package pwr.android_app.view.activities;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,10 +13,15 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 
@@ -31,6 +37,9 @@ import pwr.android_app.view.fragments.MainMenuFragment;
 import pwr.android_app.view.fragments.MonitorFragment;
 import pwr.android_app.view.fragments.TestingFragment;
 import pwr.android_app.view.fragments.WebBrowserFragment;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 // --- MAIN ACTIVITY --- //
 public class MainActivity
@@ -41,8 +50,8 @@ public class MainActivity
     private int option_id;
 
     // Data from previous activity
-    private String cookie = null;
-    private UserData userData = null;
+//    private String cookie = null;
+//    private UserData userData = null;
 
     // Used in REST requests
     private ApiService client = null;
@@ -65,6 +74,9 @@ public class MainActivity
     private TestingFragment testingFragment;
     private MonitorFragment monitorFragment;
 
+    // SharedPreferences
+    SharedPreferences sharedPref;
+
     /* ==================================== OVERRIDE METHODS ==================================== */
     // === ON CREATE === //
     @Override
@@ -76,13 +88,12 @@ public class MainActivity
         ButterKnife.bind(this);
 
         // Getting data from SharedPreferences
-        SharedPreferences sharedPref =
-                context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-        this.cookie = sharedPref.getString("cookie",null);
-        this.userData = new Gson().fromJson(sharedPref.getString("user_data",null), UserData.class);
+        sharedPref = context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+//        this.cookie = sharedPref.getString("cookie",null);
+//        this.userData = new Gson().fromJson(sharedPref.getString("user_data",null), UserData.class);
 
         // [Retrofit]
-        client = ServiceGenerator.createService(ApiService.class);
+        this.client = ServiceGenerator.createService(ApiService.class);
 
         // Setting default fragment
         mainMenuFragment = new MainMenuFragment();
@@ -128,15 +139,17 @@ public class MainActivity
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
+        UserData userData = new Gson().fromJson(sharedPref.getString("user_data",null), UserData.class);
+
         // Wypełnia pasek boczny informacjami
         getMenuInflater().inflate(R.menu.main, menu);
 
         // Ustawia adres email zalogowanego użytkownika na panelu bocznym
         TextView nameSurnameLabel = (TextView) findViewById(R.id.name_surname_label);
-        nameSurnameLabel.setText(this.userData.getUserName() + " " + this.userData.getUserSurname());
+        nameSurnameLabel.setText(userData.getUserName() + " " + userData.getUserSurname());
 
         TextView emailLabel = (TextView) findViewById(R.id.email_label);
-        emailLabel.setText(this.userData.getUserEmail());
+        emailLabel.setText(userData.getUserEmail());
 
         return true;
     }
@@ -150,10 +163,14 @@ public class MainActivity
         int id = item.getItemId();
 
         // noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+        switch (id) {
+            case R.id.action_settings:
+                return true;
 
+            case R.id.action_logout:
+                logout();
+                return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
@@ -239,5 +256,56 @@ public class MainActivity
             fab.hide();
             actionBar.hide();
         }
+    }
+
+    private void logout() {
+
+        String cookie = sharedPref.getString("cookie",null);
+        Call<Void> call = client.logout(cookie);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+                if(response.code() == 200) {
+
+                    Log.d("LOGOUT", "success");
+
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString("cookie",null);
+                    editor.commit();
+
+                    Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    startActivity(intent);
+                }
+                else {
+                    Log.d("LOGOUT", "fail, response code: " + response.code());
+
+                    showToast("cannot logout - error in server response");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                Log.d("LOGOUT", "fail");
+
+                showToast("cannot connect with server");
+            }
+        });
+    }
+
+    private void showToast(CharSequence text) {
+        LayoutInflater inflater = getLayoutInflater();
+        View layout = inflater.inflate(R.layout.layout_yellow_toast, (ViewGroup) findViewById(R.id.yellow_toast_container));
+
+        TextView textView = (TextView) layout.findViewById(R.id.yellow_toast_text);
+        textView.setText(text);
+
+        Toast toast = new Toast(getApplicationContext());
+        toast.setGravity(Gravity.BOTTOM, 0, 60);
+        toast.setDuration(Toast.LENGTH_LONG);
+        toast.setView(layout);
+        toast.show();
     }
 }

@@ -14,7 +14,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.SystemClock;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -30,7 +29,6 @@ import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
@@ -181,7 +179,7 @@ public class LoginActivity
         showForm(false);
 
         // Fetch a user information
-        Call<UserData> call = client.loginToApp(mEmail, mPassword);
+        Call<UserData> call = client.login(mEmail, mPassword);
 
         // Execute the call asynchronously. Get a positive or negative callback.
         call.enqueue(new Callback<UserData>() {
