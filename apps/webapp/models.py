@@ -50,6 +50,22 @@ class User_Organization_mapping(db.Model):
     user=db.relationship("User", back_populates="organizations")
     organization=db.relationship("Organization", back_populates="users")
 
+    @property
+    def id(self):
+        return self.user.id
+
+    @property
+    def name(self):
+        return self.user.name
+    
+    @property
+    def surname(self):
+        return self.user.surname
+    
+    @property
+    def email(self):
+        return self.user.email
+
 class Service(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     address=db.Column(db.String(100), index=True, unique=True)

@@ -117,14 +117,14 @@ def register_admin():
 @login_required
 def invite():
     # get id_organization of specific admin
-    organization_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first().id_organization
+    org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
     
     # display invite template
     if request.method == 'GET':
         # creating a table of users
-        items = User.query.all()
+        items = db.session.query(User_Organization_mapping).filter_by(id_organization=org_id.id_organization).all()
         users_table = UsersTable(items)
-        return render_template('users.html', users_table=users_table, panel="users")
+        return render_template('users.html', users_table=users_table, panel="users", org_name=org_id.organization.name)
     
     # get email from template
     email = request.form['email']
@@ -147,7 +147,7 @@ def invite():
     
     content = Content("text/plain", "Hello! You've got invited to DevOps project. To continue "+
                       "the registration click this link: "+
-                      "https://devops-nokia.herokuapp.com/register/"+token.token+"/"+str(organization_id)+
+                      "https://devops-nokia.herokuapp.com/register/"+token.token+"/"+str(org_id.id_organization)+
                       " You have 7 days for sign up, after that your token will be deactivated.")
 
     # creatin the mail
@@ -208,13 +208,13 @@ def dashboard():
 @app.route('/services', methods=['GET','POST'])
 @login_required
 def services():
-    org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first().id_organization
+    org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
     if request.method == 'GET':
         # creating a table of services
-        items = Service.query.all()
+        items = db.session.query(Service).filter_by(organization_id=org_id.id_organization).all()
         services_table = ServicesTable(items)
 
-        return render_template('services.html', services_table=services_table, panel="services")
+        return render_template('services.html', services_table=services_table, panel="services", org_name=org_id.organization.name)
     
     # get the values from the template
     address = request.form['service_address']
@@ -229,7 +229,7 @@ def services():
         return redirect(url_for('services'))
 
     # creating a new user
-    new_service = Service(address=address, name=name, organization_id=org_id)
+    new_service = Service(address=address, name=name, organization_id=org_id.id_organization)
     db.session.add(new_service)
     db.session.commit()
 
