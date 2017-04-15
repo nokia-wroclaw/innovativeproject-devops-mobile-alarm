@@ -3,6 +3,7 @@ package pwr.android_app.view.fragments;
 import android.content.Context;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,6 +11,9 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import pwr.android_app.R;
 import pwr.android_app.dataStructures.DummyContent;
@@ -55,23 +59,38 @@ public class MonitorFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            // Login act. ---> Main act.
+            // 1. Najpierw pobierz stan serwisów (jakikolwiek)
+            // 2. Wypełnij listę w DummyContent informacjami o serwisach z 1.
+            // 3. Napisanie stanu obiektów z savedInstanceState.get...ArrayList("lista");
 
-            Handler mleko = new Handler();
-            mleko.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    // Test funkcji edytujących listę
+            if(savedInstanceState == null) {
+                // 1 i 2
+                recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+            }
+            else {
+                List<ServiceData> strony = new ArrayList<ServiceData>();
+                strony = savedInstanceState.getParcelableArrayList("lista");
+                recyclerView.setAdapter(new MyItemRecyclerViewAdapter(strony, mListener));
+            }
 
-                    //for (int i = 0; i < 2; i++) {
-                    //    ((MyItemRecyclerViewAdapter)recyclerView.getAdapter()).addService(new ServiceData(i+5, "a", "b", 0));
-                    //}
+            //recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
 
-                    for (int i = 2; i < 4; i++) {
-                        ((MyItemRecyclerViewAdapter) recyclerView.getAdapter()).removeService(i);
-                    }
-                }
-            }, 3000);
+//            Handler mleko = new Handler();
+//            mleko.postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    // Test funkcji edytujących listę
+//
+//                    //for (int i = 0; i < 2; i++) {
+//                    //    ((MyItemRecyclerViewAdapter)recyclerView.getAdapter()).addService(new ServiceData(i+5, "a", "b", 0));
+//                    //}
+//
+//                    for (int i = 2; i < 4; i++) {
+//                        ((MyItemRecyclerViewAdapter) recyclerView.getAdapter()).removeService(i);
+//                    }
+//                }
+//            }, 3000);
         }
 
         return view;
@@ -91,6 +110,13 @@ public class MonitorFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelableArrayList("lista", (ArrayList<? extends Parcelable>) DummyContent.ITEMS);
     }
 
     public interface OnListFragmentInteractionListener {
