@@ -9,6 +9,8 @@ import bcrypt
 import datetime
 from functions import generate_registration_token, confirm_token
 from tables import UsersTable, ServicesTable
+import json
+from bson import json_util
 
 @login_manager.user_loader
 def load_user(id):
@@ -198,6 +200,14 @@ def loginandroid():
 def logoutandroid():
     logout_user()
     return "Success", 200
+
+@app.route('/servicesandroid')
+@login_required
+def servicesandroid():
+    org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
+    items=db.session.query(Service).filter_by(organization_id=org_id.id_organization).all()
+
+    return json.dumps([o.dump() for o in items], default=json_util.default)
 
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required

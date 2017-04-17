@@ -84,6 +84,15 @@ class Service(db.Model):
         self.previous_state = ServiceState.unspecified
         self.current_state = ServiceState.unspecified
 
+
+    def dump(self):
+        return {"Service": {'id': self.id,
+                'address': self.address,
+                'name': self.name,
+                'time_of_last_change_of_state': self.time_of_last_change_of_state,
+                'previous_state': self.previous_state,
+                'current_state': self.current_state}}
+
 class Subscription(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     id_user=db.Column(db.Integer, db.ForeignKey('user.id'), primary_key=True)
