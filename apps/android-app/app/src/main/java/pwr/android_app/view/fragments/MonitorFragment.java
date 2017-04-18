@@ -56,22 +56,6 @@ public class MonitorFragment extends Fragment {
             }
 
             recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
-
-            Handler mleko = new Handler();
-            mleko.postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    // Test funkcji edytujących listę
-
-                    //for (int i = 0; i < 2; i++) {
-                    //    ((MyItemRecyclerViewAdapter)recyclerView.getAdapter()).addService(new ServiceData(i+5, "a", "b", 0));
-                    //}
-
-                    for (int i = 2; i < 4; i++) {
-                        ((MyItemRecyclerViewAdapter) recyclerView.getAdapter()).removeService(i);
-                    }
-                }
-            }, 3000);
         }
 
         return view;
