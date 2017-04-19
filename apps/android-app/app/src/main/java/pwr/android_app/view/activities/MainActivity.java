@@ -116,6 +116,18 @@ public class MainActivity
 
         // Navigation view
         navigationView.setNavigationItemSelectedListener(this);
+
+        if(option_id == 0 && savedInstanceState != null ) {
+            option_id = savedInstanceState.getInt("choosen_window");
+            setFragment();
+        }
+    }
+
+    @Override
+    protected void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt("choosen_window", option_id);
     }
 
     // === ON RESUME === //
