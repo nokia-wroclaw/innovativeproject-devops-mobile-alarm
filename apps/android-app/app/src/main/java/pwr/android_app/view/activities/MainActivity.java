@@ -87,10 +87,8 @@ public class MainActivity
 
         ButterKnife.bind(this);
 
-        // Getting data from SharedPreferences
+        // SharedPreferences
         sharedPref = context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
-//        this.cookie = sharedPref.getString("cookie",null);
-//        this.userData = new Gson().fromJson(sharedPref.getString("user_data",null), UserData.class);
 
         // [Retrofit]
         this.client = ServiceGenerator.createService(ApiService.class);
@@ -102,12 +100,10 @@ public class MainActivity
         fragmentTransaction.commit();
 
         // ToolBar
-//        toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
         // ActionBar
         actionBar = getSupportActionBar();
-//        actionBar.setHideOnContentScrollEnabled(true);
 
         // Creating drawer
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -225,7 +221,6 @@ public class MainActivity
             fragmentTransaction.commit();
 
             fab.show();
-            actionBar.show();
 
         } else if (option_id == R.id.website_option) {
 
@@ -236,7 +231,6 @@ public class MainActivity
             fragmentTransaction.commit();
 
             fab.show();
-            actionBar.hide();
 
         } else if (option_id == R.id.testing_option) {
 
@@ -247,7 +241,7 @@ public class MainActivity
             fragmentTransaction.commit();
 
             fab.show();
-            actionBar.hide();
+
         } else if (option_id == R.id.website_option) {
 
             // Włączenie przeglądarki po wybraniu odpowiedniej opcji z lewogo panelu
@@ -257,7 +251,7 @@ public class MainActivity
             fragmentTransaction.commit();
 
             fab.show();
-            actionBar.hide();
+
         } else if (option_id == R.id.monitor_option) {
 
             // Włączenie strony testowej po wybraniu odpowiedniej opcji z lewego panelu
@@ -267,7 +261,6 @@ public class MainActivity
             fragmentTransaction.commit();
 
             fab.hide();
-            actionBar.hide();
         }
     }
 
