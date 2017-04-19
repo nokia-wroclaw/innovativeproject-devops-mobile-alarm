@@ -33,11 +33,6 @@
 
     <!-- RESt API URLs -->
     <string name="base_url">https://devops-nokia.herokuapp.com/</string>
-    <string-array name="sites">
-        <item>Facebook</item>
-        <item>Google</item>
-        <item>Interia</item>
-    </string-array>
 
     <!-- Notifications -->
     <string name="fcm_message_service_state_title">Service %1$s</string>

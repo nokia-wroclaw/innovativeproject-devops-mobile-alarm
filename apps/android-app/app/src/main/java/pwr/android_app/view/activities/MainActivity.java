@@ -123,6 +123,7 @@ public class MainActivity
         }
     }
 
+    // === ON SAVE INSTANCE STATE === //
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);

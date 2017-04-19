@@ -59,38 +59,14 @@ public class MonitorFragment extends Fragment {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
-            // Login act. ---> Main act.
-            // 1. Najpierw pobierz stan serwisów (jakikolwiek)
-            // 2. Wypełnij listę w DummyContent informacjami o serwisach z 1.
-            // 3. Napisanie stanu obiektów z savedInstanceState.get...ArrayList("lista");
-
             if(savedInstanceState == null) {
-                // 1 i 2
                 recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
             }
             else {
-                List<ServiceData> strony = new ArrayList<ServiceData>();
-                strony = savedInstanceState.getParcelableArrayList("lista");
+                List<ServiceData> strony;
+                strony = savedInstanceState.getParcelableArrayList("lista");    
                 recyclerView.setAdapter(new MyItemRecyclerViewAdapter(strony, mListener));
             }
-
-            //recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
-
-//            Handler mleko = new Handler();
-//            mleko.postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    // Test funkcji edytujących listę
-//
-//                    //for (int i = 0; i < 2; i++) {
-//                    //    ((MyItemRecyclerViewAdapter)recyclerView.getAdapter()).addService(new ServiceData(i+5, "a", "b", 0));
-//                    //}
-//
-//                    for (int i = 2; i < 4; i++) {
-//                        ((MyItemRecyclerViewAdapter) recyclerView.getAdapter()).removeService(i);
-//                    }
-//                }
-//            }, 3000);
         }
 
         return view;
