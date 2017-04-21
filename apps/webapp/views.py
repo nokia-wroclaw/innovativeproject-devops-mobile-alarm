@@ -202,12 +202,14 @@ def logoutandroid():
     return "Success", 200
 
 @app.route('/servicesandroid')
-@login_required
 def servicesandroid():
-    org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
-    items=db.session.query(Service).filter_by(organization_id=org_id.id_organization).all()
+    if current_user.is_authenticated():
+        org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
+        items=db.session.query(Service).filter_by(organization_id=org_id.id_organization).all()
 
-    return json.dumps([o.dump() for o in items], default=json_util.default)
+        return json.dumps([o.dump() for o in items], default=json_util.default)
+    else:
+        return "Blad", 400
 
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required
@@ -231,8 +233,8 @@ def services():
     name = request.form['service_name']
 
     # checking if a service with a given address or name does not exist
-    address_check = Service.query.filter_by(address=address).first()
-    name_check = Service.query.filter_by(name=name).first()
+    address_check = Service.query.filter_by(address=address, organization_id=org_id.id_organization).first()
+    name_check = Service.query.filter_by(name=name, organization_id=org_id.id_organization).first()
 
     # if exists redirect to the error page
     if address_check or name_check:

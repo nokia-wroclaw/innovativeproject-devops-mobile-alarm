@@ -68,8 +68,8 @@ class User_Organization_mapping(db.Model):
 
 class Service(db.Model):
     id=db.Column(db.Integer, primary_key=True)
-    address=db.Column(db.String(100), index=True, unique=True)
-    name=db.Column(db.String(80), index=True, unique=True)
+    address=db.Column(db.String(100), index=True)
+    name=db.Column(db.String(80), index=True)
     time_of_last_change_of_state=db.Column(db.DateTime())
     previous_state = db.Column(db.Integer, index=True)
     current_state = db.Column(db.Integer, index=True)
