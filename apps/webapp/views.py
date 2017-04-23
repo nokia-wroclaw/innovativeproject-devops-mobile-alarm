@@ -172,6 +172,7 @@ def loginandroid():
         return "Brak dostepu!", 403
     email = request.form['email']
     password = request.form['password']
+    fcm_token = request.form['fcm_token']
     registered_user = User.query.filter_by(email=email).first()
     if registered_user is None:
         flash('The user does not exist!' , 'error')
@@ -182,13 +183,18 @@ def loginandroid():
         return "Bledne haslo", 403
     login_user(registered_user)
     flash('Logged in successfully')
+
+    registered_user.fcm_token = fcm_token
+    db.session.commit()
+
     return jsonify({
                "error": False,
                "uid": registered_user.id,
                "user": {
                "name": registered_user.name,
                "surname": registered_user.surname,
-               "email": registered_user.email
+               "email": registered_user.email,
+               "fcm_token": registered_user.fcm_token
                }
                }), 200
 
