@@ -86,7 +86,7 @@ class Service(db.Model):
 
 
     def dump(self):
-        return {"Service": {'id': self.id,
+        return {"service": {'id': self.id,
                 'address': self.address,
                 'name': self.name,
                 'time_of_last_change_of_state': self.time_of_last_change_of_state,
@@ -102,7 +102,7 @@ class Subscription(db.Model):
     service=db.relationship("Service", back_populates="users")
 
     def dump(self):
-        return {"Subscritpion": {'id': self.id,
+        return {"subscritpion": {'id': self.id,
                 'id_user': self.id_user,
                 'id_service': self.id_service,
                 'status': self.status}}
