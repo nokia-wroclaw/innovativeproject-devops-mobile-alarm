@@ -29,6 +29,7 @@
 
     <TextView
         android:id="@+id/ip"
+        android:textSize="12dp"
         android:layout_marginTop="5dp"
         android:layout_height="25dp"
         percent:layout_widthPercent="61%"

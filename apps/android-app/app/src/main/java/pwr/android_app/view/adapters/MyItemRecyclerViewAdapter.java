@@ -16,7 +16,7 @@ import pwr.android_app.view.fragments.MonitorFragment.OnListFragmentInteractionL
 
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
-    private final List<ServiceData> mValues;
+    private List<ServiceData> mValues;
     private final OnListFragmentInteractionListener mListener;
 
     public MyItemRecyclerViewAdapter(List<ServiceData> items, OnListFragmentInteractionListener listener) {
@@ -89,6 +89,15 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         mValues.get(id).setCurrent_state(newState);
         notifyItemChanged(id);
     };
+
+    public void clearValues() {
+        mValues.clear();
+    }
+
+    public void addValues(List<ServiceData> list) {
+        this.mValues = list;
+
+    }
 
     public ServiceData getItem(int id) {
         return mValues.get(id);

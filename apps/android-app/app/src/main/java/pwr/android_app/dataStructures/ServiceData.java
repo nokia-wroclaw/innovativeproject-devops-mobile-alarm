@@ -5,57 +5,50 @@ import android.os.Parcelable;
 
 public class ServiceData implements Parcelable {
 
-    // --- DATA --- //
-    private int id;
-    private String address;
-    private String name;
-    private int current_state;
+    Service service = null;
 
-    public ServiceData(int id, String address, String name, int current_state) {
-        this.id = id;
-        this.address = address;
-        this.name = name;
-        this.current_state = current_state;
+    class Service {
+        // --- DATA --- //
+        private int id;
+        private String address;
+        private String name;
+        private int current_state;
     }
 
-
+    public ServiceData(int id, String address, String name, int current_state) {
+        service = new Service();
+        service.id = id;
+        service.address = address;
+        service.name = name;
+        service.current_state = current_state;
+    }
 
     // --- GETTERS --- //
     public int getId() {
-        return this.id;
+        return service.id;
     }
-
     public String getAddress() {
-        return this.address;
+        return service.address;
     }
-
     public String getName() {
-        return this.name;
+        return service.name;
     }
-
     public int getCurrent_state() {
-        return this.current_state;
+        return service.current_state;
     }
-
-
 
     // --- SETTERS --- //
-    public void setCurrent_state(int state) { this.current_state = state; }
-    public void setAddress(String address) { this.address = address; }
-
-    @Override
-    public String toString() {
-        return Integer.toString(id);
-    }
+    public void setCurrent_state(int state) { service.current_state = state; }
+    public void setAddress(String address) { service.address = address; }
+    public void setName(String name) { service.name = name; }
+    public void setId(int id) { service.id = id; }
 
     protected ServiceData(Parcel in) {
-        id = in.readInt();
-        address = in.readString();
-        name = in.readString();
-        current_state = in.readInt();
+        service.id = in.readInt();
+        service.address = in.readString();
+        service.name = in.readString();
+        service.current_state = in.readInt();
     }
-
-
 
     @Override
     public int describeContents() {
@@ -64,17 +57,17 @@ public class ServiceData implements Parcelable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
-        dest.writeInt(id);
-        dest.writeString(address);
-        dest.writeString(name);
-        dest.writeInt(current_state);
+        dest.writeInt(service.id);
+        dest.writeString(service.address);
+        dest.writeString(service.name);
+        dest.writeInt(service.current_state);
     }
 
     public void readFromParcel(Parcel in) {
-        this.id = in.readInt();
-        this.address = in.readString();
-        this.name = in.readString();
-        this.current_state = in.readInt();
+        service.id = in.readInt();
+        service.address = in.readString();
+        service.name = in.readString();
+        service.current_state = in.readInt();
     }
 
     @SuppressWarnings("unused")

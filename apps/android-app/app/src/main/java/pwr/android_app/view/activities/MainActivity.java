@@ -26,11 +26,14 @@ import android.widget.Toast;
 
 import com.google.gson.Gson;
 
+import java.util.List;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import pwr.android_app.R;
 import pwr.android_app.dataStructures.ServiceData;
+import pwr.android_app.dataStructures.SynchronizedData;
 import pwr.android_app.dataStructures.UserData;
 import pwr.android_app.network.rest.ApiService;
 import pwr.android_app.network.rest.ServiceGenerator;
@@ -117,8 +120,35 @@ public class MainActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                showToast("Zamiana!");
-                monitorFragment.getAdapter().getItem(0).setAddress("10.10.10.10");
+                String cookie = sharedPref.getString("cookie",null);
+                Call<List<ServiceData>> call = client.get_services(cookie);
+
+                call.enqueue(new Callback<List<ServiceData>>() {
+                    @Override
+                    public void onResponse(Call<List<ServiceData>> call, Response<List<ServiceData>> response) {
+                        if (response.code() == 200) {
+                            SynchronizedData newData = new SynchronizedData();
+                            for(ServiceData data : response.body()) {
+                                newData.addService(new ServiceData(data.getId(), data.getAddress(), data.getName(), data.getCurrent_state()));
+                            }
+                            monitorFragment.getAdapter().clearValues();
+                            monitorFragment.getAdapter().notifyDataSetChanged();
+                            monitorFragment.getAdapter().addValues(newData.getSites());
+                            showToast("Sukces!");
+                        }
+                        else {
+                            showToast("Sukces, ale bez kodu 200!");
+                        }
+
+
+                    }
+
+                    @Override
+                    public void onFailure(Call<List<ServiceData>> call, Throwable t) {
+                        showToast("Niepowodzenie!");
+                    }
+                });
+
                 monitorFragment.getAdapter().notifyDataSetChanged();
             }
         });
@@ -153,6 +183,7 @@ public class MainActivity
 //            super.onBackPressed();
         }
     }
+
 
     // === ON CREATE OPTION MENU === //
     @Override
