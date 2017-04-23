@@ -24,6 +24,7 @@ public class MonitorFragment extends Fragment {
     private static final String ARG_COLUMN_COUNT = "column-count";
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
+    private MyItemRecyclerViewAdapter adapter = null;
 
     public MonitorFragment() { }
 
@@ -60,12 +61,14 @@ public class MonitorFragment extends Fragment {
             }
 
             if(savedInstanceState == null) {
-                recyclerView.setAdapter(new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener));
+                adapter = new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener);
+                recyclerView.setAdapter(adapter);
             }
             else {
                 List<ServiceData> strony;
-                strony = savedInstanceState.getParcelableArrayList("lista");    
-                recyclerView.setAdapter(new MyItemRecyclerViewAdapter(strony, mListener));
+                strony = savedInstanceState.getParcelableArrayList("lista");
+                adapter = new MyItemRecyclerViewAdapter(strony, mListener);
+                recyclerView.setAdapter(adapter);
             }
         }
 
@@ -97,5 +100,9 @@ public class MonitorFragment extends Fragment {
 
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(ServiceData item);
+    }
+
+    public MyItemRecyclerViewAdapter getAdapter() {
+        return this.adapter;
     }
 }

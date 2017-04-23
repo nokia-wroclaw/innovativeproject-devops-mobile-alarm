@@ -41,6 +41,7 @@ public class ServiceData implements Parcelable {
 
     // --- SETTERS --- //
     public void setCurrent_state(int state) { this.current_state = state; }
+    public void setAddress(String address) { this.address = address; }
 
     @Override
     public String toString() {

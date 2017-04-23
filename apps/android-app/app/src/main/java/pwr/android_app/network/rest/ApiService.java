@@ -1,5 +1,7 @@
 package pwr.android_app.network.rest;
 
+import java.util.List;
+
 import pwr.android_app.dataStructures.UserData;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -20,4 +22,6 @@ public interface ApiService {
     @GET("/logoutandroid")
     Call<Void> logout(@Header("Cookie") String cookie);
 
+    @GET("/servicesandroid")
+    Call<List<UserData>> get_services(@Header("Cookie") String cookie);
 }

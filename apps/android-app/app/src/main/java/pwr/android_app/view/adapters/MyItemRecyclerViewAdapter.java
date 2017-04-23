@@ -89,4 +89,8 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         mValues.get(id).setCurrent_state(newState);
         notifyItemChanged(id);
     };
+
+    public ServiceData getItem(int id) {
+        return mValues.get(id);
+    }
 }

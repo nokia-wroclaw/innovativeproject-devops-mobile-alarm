@@ -12,6 +12,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -50,8 +51,8 @@ public class MainActivity
     private int option_id;
 
     // Data from previous activity
-//    private String cookie = null;
-//    private UserData userData = null;
+    private String cookie = null;
+    private UserData userData = null;
 
     // Used in REST requests
     private ApiService client = null;
@@ -112,6 +113,15 @@ public class MainActivity
 
         // Navigation view
         navigationView.setNavigationItemSelectedListener(this);
+
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showToast("Zamiana!");
+                monitorFragment.getAdapter().getItem(0).setAddress("10.10.10.10");
+                monitorFragment.getAdapter().notifyDataSetChanged();
+            }
+        });
 
         if(option_id == 0 && savedInstanceState != null ) {
             option_id = savedInstanceState.getInt("choosen_window");
@@ -260,7 +270,8 @@ public class MainActivity
             fragmentTransaction.replace(R.id.fragment_container, monitorFragment);
             fragmentTransaction.commit();
 
-            fab.hide();
+            fab.show();
+            fab.bringToFront();
         }
     }
 

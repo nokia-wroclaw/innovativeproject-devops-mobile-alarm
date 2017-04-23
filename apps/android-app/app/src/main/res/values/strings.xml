@@ -38,4 +38,7 @@
     <string name="fcm_message_service_state_title">Service %1$s</string>
     <string name="fcm_message_service_state_body">is %1$s now!</string>
 
+    <string name="fix">Fix</string>
+    <string name="chat">Chat</string>
+
 </resources>
