@@ -1,4 +1,4 @@
-from flask import Flask, session, request, flash, url_for, redirect, render_template, abort, g, jsonify
+from flask import Flask, session, request, flash, url_for, redirect, render_template, abort, g, jsonify, Response
 from flask_login import login_user, logout_user, current_user, login_required
 from webapp import db, app, login_manager, UserType
 from .models import *
@@ -166,10 +166,6 @@ def invite():
 def page_not_found(error):
     return 'fail'
 
-@app.route("/test")
-def testJSON():
-    return "Kapibara", 200
-
 @app.route('/loginandroid',methods=['GET','POST'])
 def loginandroid():
     if request.method == 'GET':
@@ -207,9 +203,43 @@ def servicesandroid():
         org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
         items=db.session.query(Service).filter_by(organization_id=org_id.id_organization).all()
 
-        return json.dumps([o.dump() for o in items], default=json_util.default)
+        return Response((json.dumps([o.dump() for o in items], default=json_util.default)), mimetype='application/json')
     else:
         return "Blad", 400
+
+@app.route('/subscriptionandroid', methods=['GET', 'POST'])
+def subscriptionandroid():
+    if current_user.is_authenticated():
+        if request.method == 'GET':
+            items=db.session.query(Subscription).filter_by(id_user=g.user.id).all()
+
+            return Response((json.dumps([o.dump() for o in items], default=json_util.default)), mimetype='application/json')
+
+        json_dict = request.get_json()
+        id = json_dict['id']
+        status = json_dict['status']
+
+        if status == "remove":
+            get_sub = Subscription.query.filter_by(id_user=g.user.id, id_service=id).first()
+            if get_sub != None:
+                db.session.delete(get_sub)
+                db.session.commit()
+            
+                return "Success", 200
+        elif status == "add":
+            if Subscription.query.filter_by(id_user=1, id_service=1).first() is None:
+                sub=Subscription(id_user=g.user.id, id_service=id, status=1)
+                db.session.add(sub)
+                db.session.commit()
+        
+                return "Success", 200
+            else:
+                return "You've already subscribed this service", 400
+        else:
+            return "Bad request", 400
+    else:
+        return "Blad", 400
+
 
 @app.route('/dashboard', methods=['GET','POST'])
 @login_required

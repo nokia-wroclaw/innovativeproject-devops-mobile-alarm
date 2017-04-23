@@ -101,6 +101,12 @@ class Subscription(db.Model):
     user=db.relationship("User", back_populates="services")
     service=db.relationship("Service", back_populates="users")
 
+    def dump(self):
+        return {"Subscritpion": {'id': self.id,
+                'id_user': self.id_user,
+                'id_service': self.id_service,
+                'status': self.status}}
+
 class Tokens(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     token=db.Column(db.String(100), index=True, unique=True)
