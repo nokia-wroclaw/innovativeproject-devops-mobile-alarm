@@ -6,7 +6,7 @@ class User(db.Model):
     surname=db.Column(db.String(40), index=True)
     email = db.Column(db.String(80), index=True, unique=True)
     password = db.Column(db.String(100), index=True)
-    fcm_token = db.Column(db.String(100), index=True)
+    fcm_token = db.Column(db.String(200), index=True)
     organizations = db.relationship("User_Organization_mapping", back_populates="user")
     services=db.relationship("Subscription", back_populates="user")
     
