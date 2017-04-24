@@ -168,18 +168,19 @@ public class LoginActivity
             focusView.requestFocus();
         } else {
             // After successful validation...
-            login(email, password);
+            //String token = FirebaseInstanceId.getInstance().getId();
+            login(email, password, "temporary_fcm_token");
         }
     }
 
-    private void login(String mEmail, String mPassword) {
+    private void login(String mEmail, String mPassword, String fcm_token) {
 
         // Show animation
         showProgress(true);
         showForm(false);
 
         // Fetch a user information
-        Call<UserData> call = client.login(mEmail, mPassword);
+        Call<UserData> call = client.login(mEmail, mPassword, fcm_token);
 
         // Execute the call asynchronously. Get a positive or negative callback.
         call.enqueue(new Callback<UserData>() {

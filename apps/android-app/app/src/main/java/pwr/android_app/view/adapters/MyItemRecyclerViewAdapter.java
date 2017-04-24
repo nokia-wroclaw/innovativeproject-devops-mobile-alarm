@@ -8,7 +8,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.List;
-import java.util.Random;
 
 import pwr.android_app.R;
 import pwr.android_app.dataStructures.ServiceData;
@@ -17,7 +16,7 @@ import pwr.android_app.view.fragments.MonitorFragment.OnListFragmentInteractionL
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
     private List<ServiceData> mValues;
-    private final OnListFragmentInteractionListener mListener;
+    private OnListFragmentInteractionListener mListener;
 
     public MyItemRecyclerViewAdapter(List<ServiceData> items, OnListFragmentInteractionListener listener) {
         mValues = items;
@@ -34,6 +33,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
+
         holder.idView.setText(String.valueOf(mValues.get(position).getId()));
         holder.ipNumber.setText(mValues.get(position).getAddress());
         holder.siteName.setText(mValues.get(position).getName());
@@ -75,31 +75,17 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         }
     }
 
-    public void addService(ServiceData item) {
-        mValues.add(item);
-        notifyDataSetChanged();
-    }
-
-    public void removeService(int id) {
-        mValues.remove(id);
-        notifyDataSetChanged();
-    }
-
-    public void changeState(int id, int newState) {
-        mValues.get(id).setCurrent_state(newState);
-        notifyItemChanged(id);
-    };
+    public void addService(ServiceData item) { mValues.add(item); }
 
     public void clearValues() {
         mValues.clear();
     }
 
-    public void addValues(List<ServiceData> list) {
-        this.mValues = list;
-
-    }
+    public void addValues(List<ServiceData> list) { this.mValues = list; }
 
     public ServiceData getItem(int id) {
         return mValues.get(id);
     }
+
+    public List<ServiceData> getList() { return mValues; }
 }

@@ -6,13 +6,11 @@ import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
-import android.support.design.widget.Snackbar;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Gravity;
@@ -30,10 +28,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
-import butterknife.OnClick;
 import pwr.android_app.R;
 import pwr.android_app.dataStructures.ServiceData;
-import pwr.android_app.dataStructures.SynchronizedData;
 import pwr.android_app.dataStructures.UserData;
 import pwr.android_app.network.rest.ApiService;
 import pwr.android_app.network.rest.ServiceGenerator;
@@ -127,31 +123,30 @@ public class MainActivity
                     @Override
                     public void onResponse(Call<List<ServiceData>> call, Response<List<ServiceData>> response) {
                         if (response.code() == 200) {
-                            SynchronizedData newData = new SynchronizedData();
-                            for(ServiceData data : response.body()) {
-                                newData.addService(new ServiceData(data.getId(), data.getAddress(), data.getName(), data.getCurrent_state()));
-                            }
                             monitorFragment.getAdapter().clearValues();
+
+                            for(ServiceData data : response.body()) {
+                                monitorFragment.getAdapter().addService(new ServiceData(data.getId(), data.getAddress(), data.getName(), data.getCurrent_state()));
+                            }
+
                             monitorFragment.getAdapter().notifyDataSetChanged();
-                            monitorFragment.getAdapter().addValues(newData.getSites());
-                            showToast("Sukces!");
                         }
                         else {
-                            showToast("Sukces, ale bez kodu 200!");
+                            showToast("Problem has occured.");
                         }
-
-
                     }
 
                     @Override
                     public void onFailure(Call<List<ServiceData>> call, Throwable t) {
-                        showToast("Niepowodzenie!");
+                        showToast("Failed to download data.");
                     }
                 });
 
                 monitorFragment.getAdapter().notifyDataSetChanged();
             }
         });
+
+        fab.hide();
 
         if(option_id == 0 && savedInstanceState != null ) {
             option_id = savedInstanceState.getInt("choosen_window");
@@ -244,13 +239,6 @@ public class MainActivity
 
     }
 
-    /* ==================================== ON CLICK METHODS ==================================== */
-    @OnClick(R.id.fab)
-    void onFabClick(View view) {
-        Snackbar.make(view, "I will never stop watching you!", Snackbar.LENGTH_LONG)
-                .setAction("Action", null).show();
-    }
-
     /* ========================================= METHODS ======================================== */
     private void setFragment() {
         if (option_id == R.id.main_menu_option) {
@@ -261,7 +249,7 @@ public class MainActivity
             fragmentTransaction.replace(R.id.fragment_container, mainMenuFragment);
             fragmentTransaction.commit();
 
-            fab.show();
+            fab.hide();
 
         } else if (option_id == R.id.website_option) {
 
@@ -271,7 +259,7 @@ public class MainActivity
             fragmentTransaction.replace(R.id.fragment_container, webBrowserFragment);
             fragmentTransaction.commit();
 
-            fab.show();
+            fab.hide();
 
         } else if (option_id == R.id.testing_option) {
 
@@ -281,7 +269,7 @@ public class MainActivity
             fragmentTransaction.replace(R.id.fragment_container, testingFragment);
             fragmentTransaction.commit();
 
-            fab.show();
+            fab.hide();
 
         } else if (option_id == R.id.website_option) {
 
@@ -291,7 +279,7 @@ public class MainActivity
             fragmentTransaction.replace(R.id.fragment_container, webBrowserFragment);
             fragmentTransaction.commit();
 
-            fab.show();
+            fab.hide();
 
         } else if (option_id == R.id.monitor_option) {
 

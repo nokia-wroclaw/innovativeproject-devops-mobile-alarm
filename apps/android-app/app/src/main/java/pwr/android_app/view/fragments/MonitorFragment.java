@@ -2,7 +2,6 @@ package pwr.android_app.view.fragments;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
@@ -16,7 +15,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import pwr.android_app.R;
-import pwr.android_app.dataStructures.DummyContent;
 import pwr.android_app.dataStructures.ServiceData;
 import pwr.android_app.view.adapters.MyItemRecyclerViewAdapter;
 
@@ -56,20 +54,24 @@ public class MonitorFragment extends Fragment {
 
             if (mColumnCount <= 1) {
                 recyclerView.setLayoutManager(new LinearLayoutManager(context));
-            } else {
+            }
+            else {
                 recyclerView.setLayoutManager(new GridLayoutManager(context, mColumnCount));
             }
 
             if(savedInstanceState == null) {
-                adapter = new MyItemRecyclerViewAdapter(DummyContent.ITEMS, mListener);
-                recyclerView.setAdapter(adapter);
+                adapter = new MyItemRecyclerViewAdapter(new ArrayList<ServiceData>(), mListener);
             }
             else {
                 List<ServiceData> strony;
                 strony = savedInstanceState.getParcelableArrayList("lista");
-                adapter = new MyItemRecyclerViewAdapter(strony, mListener);
-                recyclerView.setAdapter(adapter);
+                adapter = new MyItemRecyclerViewAdapter(new ArrayList<ServiceData>(), mListener);
+                adapter.clearValues();
+                adapter.addValues(strony);
             }
+
+            recyclerView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
         }
 
         return view;
@@ -95,7 +97,7 @@ public class MonitorFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelableArrayList("lista", (ArrayList<? extends Parcelable>) DummyContent.ITEMS);
+        outState.putParcelableArrayList("lista", (ArrayList<? extends Parcelable>) getAdapter().getList());
     }
 
     public interface OnListFragmentInteractionListener {
@@ -106,3 +108,4 @@ public class MonitorFragment extends Fragment {
         return this.adapter;
     }
 }
+
