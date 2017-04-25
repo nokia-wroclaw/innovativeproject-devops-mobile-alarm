@@ -33,16 +33,14 @@ import android.widget.ProgressBar;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import butterknife.OnEditorAction;
 import pwr.android_app.R;
 import pwr.android_app.dataStructures.UserData;
 import pwr.android_app.network.rest.ApiService;
@@ -53,19 +51,18 @@ import retrofit2.Response;
 
 import static android.Manifest.permission.READ_CONTACTS;
 
-// --- LOGIN SCREEN ACTIVITY --- //
 public class LoginActivity
         extends AppCompatActivity
         implements LoaderCallbacks<Cursor> {
 
     /* ========================================== DATA ========================================== */
+
     // Id to identity READ_CONTACTS permission request
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    // Used in REST requests
-    private ApiService client = null;
+    private ApiService client =
+            ServiceGenerator.createService(ApiService.class);
 
-    // UI references
     @BindView(R.id.email)
     AutoCompleteTextView mEmailView;
     @BindView(R.id.password)
@@ -78,33 +75,17 @@ public class LoginActivity
     Button mEmailSignInButton;
 
     /* ========================================= METHODS ======================================== */
-    // === ON CREATE === //
+
+    // ----------------------------------- Activity Lifecycle ----------------------------------- //
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
-
         ButterKnife.bind(this);
-
-        // [Retrofit]
-        client = ServiceGenerator.createService(ApiService.class);
-
-        // preparing UI
         populateAutoComplete();
-
-        mPasswordView.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-            @Override
-            public boolean onEditorAction(TextView textView, int id, KeyEvent keyEvent) {
-                if (id == R.id.login || id == EditorInfo.IME_NULL) {
-                    attemptLogin();
-                    return true;
-                }
-                return false;
-            }
-        });
     }
 
-    // === ON POST CREATE === //
     @Override
     protected void onPostCreate(Bundle savedInstanceState) {
         super.onPostCreate(savedInstanceState);
@@ -121,13 +102,22 @@ public class LoginActivity
         }
     }
 
-    // === LISTENERS === //
+    // ---------------------------------------- Listeners --------------------------------------- //
+    @OnEditorAction(R.id.password)
+    boolean onEditorActionPassword(TextView textView, int id, KeyEvent keyEvent) {
+        if (id == R.id.login || id == EditorInfo.IME_NULL) {
+            attemptLogin();
+            return true;
+        }
+        return false;
+    }
+
     @OnClick(R.id.email_sign_in_button)
     void onClickSignInButton(Button button) {
         attemptLogin();
     }
 
-    // === LOGIN PROCESS === //
+    // -------------------------------------- Login Process ------------------------------------- //
     private void attemptLogin() {
 
         // Cleaning error messages
@@ -230,7 +220,6 @@ public class LoginActivity
         });
     }
 
-    // === METHODS USED TO VALIDATE EMAIL & PASSWORD === //
     private boolean isEmailValid(String email) {
         return email.contains("@");
     }
@@ -239,7 +228,7 @@ public class LoginActivity
         return password.length() > 4;
     }
 
-    // === SHOWING & HIDING COMPONENTS === //
+    // --------------------------------Showing & Hiding Components ------------------------------ //
     private void showForm(final boolean show) {
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
@@ -253,6 +242,7 @@ public class LoginActivity
             }
         });
     }
+
     private void showProgress(final boolean show) {
         int shortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
 
@@ -281,12 +271,20 @@ public class LoginActivity
         toast.show();
     }
 
-    // === METHODS USED TO AUTO-FILLING EMAIL VIEW === //
+    // -------------------------------- Auto-Filling Email View --------------------------------- //
     private void populateAutoComplete() {
         if (!mayRequestContacts()) {
             return;
         }
         getLoaderManager().initLoader(0, null, this);
+    }
+
+    private void addEmailsToAutoComplete(
+            List<String> emailAddressCollection) {
+        // Tworzy adapter, który podpowiada AutoCompleteTextView co pokazać na liście proponowanych e-maili
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
+
+        mEmailView.setAdapter(adapter);
     }
 
     private boolean mayRequestContacts() {
@@ -325,14 +323,6 @@ public class LoginActivity
         }
     }
 
-    private void addEmailsToAutoComplete(
-            List<String> emailAddressCollection) {
-        // Tworzy adapter, który podpowiada AutoCompleteTextView co pokazać na liście proponowanych e-maili
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
-
-        mEmailView.setAdapter(adapter);
-    }
-
     @Override
     public Loader<Cursor> onCreateLoader(int i, Bundle bundle) {
         return new CursorLoader(this,
@@ -365,7 +355,8 @@ public class LoginActivity
     public void onLoaderReset(Loader<Cursor> cursorLoader) {
     }
 
-    /* ========================================================================================== */
+    /* ========================================= CLASSES ======================================== */
+
     private interface ProfileQuery {
         String[] PROJECTION = {
                 ContactsContract.CommonDataKinds.Email.ADDRESS,
@@ -375,5 +366,7 @@ public class LoginActivity
         int ADDRESS = 0;
         int IS_PRIMARY = 1;
     }
+
+    /* ========================================================================================== */
 }
 

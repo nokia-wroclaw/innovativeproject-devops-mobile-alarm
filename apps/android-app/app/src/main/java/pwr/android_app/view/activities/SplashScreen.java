@@ -4,9 +4,9 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 
-import pwr.android_app.view.activities.LoginActivity;
-
 public class SplashScreen extends AppCompatActivity {
+
+    /* ========================================= METHODS ======================================== */
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -16,4 +16,6 @@ public class SplashScreen extends AppCompatActivity {
         startActivity(intent);
         finish();
     }
+
+    /* ========================================================================================== */
 }

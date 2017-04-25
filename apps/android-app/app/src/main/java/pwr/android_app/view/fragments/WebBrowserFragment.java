@@ -7,23 +7,23 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 import pwr.android_app.R;
 
 public class WebBrowserFragment extends Fragment {
 
     /* ========================================== DATA ========================================== */
-    // UI references
+
     WebView myWebView = null;
     View view = null;
 
-    /* ========================================= METHODS ======================================== */
-    // --- CONSTRUCTOR --- //
+    /* ====================================== CONSTRUCTORS ====================================== */
+
     public WebBrowserFragment() {
         // Required empty public constructor
     }
 
-    // --- ON CREATE VIEW --- //
+    /* ========================================= METHODS ======================================== */
+
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -38,14 +38,12 @@ public class WebBrowserFragment extends Fragment {
         return view;
     }
 
-    // --- ON SAVE INSTANCE STATE --- //
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putString("URL", myWebView.getUrl());
     }
 
-    // --- ON ACTIVITY CREATED --- //
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
@@ -54,9 +52,10 @@ public class WebBrowserFragment extends Fragment {
         }
     }
 
-    // --- ON RESUME --- //
     @Override
     public void onResume() {
         super.onResume();
     }
+
+    /* ========================================================================================== */
 }

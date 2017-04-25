@@ -10,22 +10,34 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import pwr.android_app.R;
 import pwr.android_app.dataStructures.ServiceData;
 import pwr.android_app.view.adapters.MyItemRecyclerViewAdapter;
 
 public class MonitorFragment extends Fragment {
-    private static final String ARG_COLUMN_COUNT = "column-count";
+
+    /* ========================================== DATA ========================================== */
+
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
     private MyItemRecyclerViewAdapter adapter = null;
 
+    // .......................................... STATIC ........................................ //
+    private static final String ARG_COLUMN_COUNT = "column-count";
+
+    /* ====================================== CONSTRUCTORS ====================================== */
+
     public MonitorFragment() { }
 
+    /* ========================================= GETTERS ======================================== */
+
+    public MyItemRecyclerViewAdapter getAdapter() {
+        return this.adapter;
+    }
+
+    // .......................................... STATIC ........................................ //
     @SuppressWarnings("unused")
     public static MonitorFragment newInstance(int columnCount) {
         MonitorFragment fragment = new MonitorFragment();
@@ -33,6 +45,20 @@ public class MonitorFragment extends Fragment {
         args.putInt(ARG_COLUMN_COUNT, columnCount);
         fragment.setArguments(args);
         return fragment;
+    }
+
+
+    /* ========================================= METHODS ======================================== */
+
+    // ----------------------------------- Fragment Lifecycle ----------------------------------- //
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof OnListFragmentInteractionListener) {
+            mListener = (OnListFragmentInteractionListener) context;
+        } else {
+            throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
+        }
     }
 
     @Override
@@ -76,13 +102,10 @@ public class MonitorFragment extends Fragment {
     }
 
     @Override
-    public void onAttach(Context context) {
-        super.onAttach(context);
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        } else {
-            throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
-        }
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) getAdapter().getList());
     }
 
     @Override
@@ -91,19 +114,11 @@ public class MonitorFragment extends Fragment {
         mListener = null;
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-
-        outState.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) getAdapter().getList());
-    }
-
+    // ---------------------------------------- Listeners --------------------------------------- //
     public interface OnListFragmentInteractionListener {
         void onListFragmentInteraction(ServiceData item);
     }
 
-    public MyItemRecyclerViewAdapter getAdapter() {
-        return this.adapter;
-    }
+    /* ========================================================================================== */
 }
 

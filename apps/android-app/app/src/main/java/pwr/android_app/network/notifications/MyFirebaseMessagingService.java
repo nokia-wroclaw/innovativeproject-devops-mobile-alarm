@@ -1,22 +1,18 @@
 package pwr.android_app.network.notifications;
 
-import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
 import android.support.v7.app.NotificationCompat;
-
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
-
 import pwr.android_app.R;
 import pwr.android_app.view.activities.LoginActivity;
-import pwr.android_app.view.activities.MainActivity;
-
 
 public class MyFirebaseMessagingService extends FirebaseMessagingService {
+
+    /* ========================================= METHODS ======================================== */
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
@@ -29,19 +25,26 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
                 PendingIntent.getActivity(this, 0, i, PendingIntent.FLAG_UPDATE_CURRENT);
 
         // creating String with notification Title
-        int notificationTitleId = getResources().getIdentifier(remoteMessage.getNotification().getTitleLocalizationKey(),"string", getPackageName());
-        String[] notificationTitleArgs = remoteMessage.getNotification().getTitleLocalizationArgs();
-        String notificationTitle = getResources().getString(notificationTitleId, notificationTitleArgs);
+        int notificationTitleId =
+                getResources().getIdentifier(remoteMessage.getNotification().getTitleLocalizationKey(),"string", getPackageName());
+        String[] notificationTitleArgs =
+                remoteMessage.getNotification().getTitleLocalizationArgs();
+        String notificationTitle =
+                getResources().getString(notificationTitleId, notificationTitleArgs);
 
         // creating String with notification Body
-        int notificationBodyId = getResources().getIdentifier(remoteMessage.getNotification().getBodyLocalizationKey(), "string", getPackageName());
-        String[] notificationBodyArgs = remoteMessage.getNotification().getBodyLocalizationArgs();
-        String notificationBody = getResources().getString(notificationBodyId, notificationBodyArgs );
+        int notificationBodyId =
+                getResources().getIdentifier(remoteMessage.getNotification().getBodyLocalizationKey(), "string", getPackageName());
+        String[] notificationBodyArgs =
+                remoteMessage.getNotification().getBodyLocalizationArgs();
+        String notificationBody =
+                getResources().getString(notificationBodyId, notificationBodyArgs );
 
         // preparing icon id
-        int notificationIconId = getResources().getIdentifier(remoteMessage.getNotification().getIcon(), "drawable", getPackageName());
+        int notificationIconId =
+                getResources().getIdentifier(remoteMessage.getNotification().getIcon(), "drawable", getPackageName());
 
-
+        // building notification
         NotificationCompat.Builder builder =
                 (NotificationCompat.Builder) new NotificationCompat.Builder(this)
 					.setAutoCancel(true)
@@ -59,4 +62,6 @@ public class MyFirebaseMessagingService extends FirebaseMessagingService {
 
         manager.notify(0, builder.build());
     }
+
+    /* ========================================================================================== */
 }

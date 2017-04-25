@@ -6,32 +6,64 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
 import java.util.List;
-
 import pwr.android_app.R;
 import pwr.android_app.dataStructures.ServiceData;
 import pwr.android_app.view.fragments.MonitorFragment.OnListFragmentInteractionListener;
 
 public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecyclerViewAdapter.ViewHolder> {
 
+    /* ========================================== DATA ========================================== */
+
     private List<ServiceData> mValues;
     private OnListFragmentInteractionListener mListener;
 
-    public MyItemRecyclerViewAdapter(List<ServiceData> items, OnListFragmentInteractionListener listener) {
+    /* ====================================== CONSTRUCTORS ====================================== */
+
+    public MyItemRecyclerViewAdapter(List<ServiceData> items,
+                                     OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
 
+    /* ========================================= GETTERS ======================================== */
+
+    @Override
+    public int getItemCount() {
+        return mValues.size();
+    }
+
+    public ServiceData getItem(int id) {
+        return mValues.get(id);
+    }
+
+    public List<ServiceData> getList() { return mValues; }
+
+    /* ========================================= SETTERS ======================================== */
+
+    public void addService(ServiceData item) { mValues.add(item); }
+
+    public void clearValues() {
+        mValues.clear();
+    }
+
+    public void addValues(List<ServiceData> list) { this.mValues = list; }
+
+     /* ========================================= METHODS ======================================== */
+
     @Override
     public ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
-                .inflate(R.layout.fragment_item, parent, false);
+
+        View view = LayoutInflater.
+                from(parent.getContext()).
+                inflate(R.layout.fragment_item, parent, false);
+
         return new ViewHolder(view);
     }
 
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
+
         holder.mItem = mValues.get(position);
 
         holder.idView.setText(String.valueOf(mValues.get(position).getId()));
@@ -48,11 +80,7 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         });
     }
 
-    @Override
-    public int getItemCount() {
-        return mValues.size();
-    }
-
+    // .......................................... STATIC ........................................ //
     public static class ViewHolder extends RecyclerView.ViewHolder {
         public final TextView idView;
         public final TextView ipNumber;
@@ -75,17 +103,5 @@ public class MyItemRecyclerViewAdapter extends RecyclerView.Adapter<MyItemRecycl
         }
     }
 
-    public void addService(ServiceData item) { mValues.add(item); }
-
-    public void clearValues() {
-        mValues.clear();
-    }
-
-    public void addValues(List<ServiceData> list) { this.mValues = list; }
-
-    public ServiceData getItem(int id) {
-        return mValues.get(id);
-    }
-
-    public List<ServiceData> getList() { return mValues; }
+    /* ========================================================================================== */
 }

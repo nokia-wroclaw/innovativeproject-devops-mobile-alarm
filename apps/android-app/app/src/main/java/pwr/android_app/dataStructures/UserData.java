@@ -2,38 +2,31 @@ package pwr.android_app.dataStructures;
 
 public class UserData {
 
-    // --- DATA --- //
+    /* ========================================== DATA ========================================== */
+
     private boolean error;
     private int uid;
-    private user user;
+    private User user;
 
-    // --- GETTERS --- //
-    public boolean isError() {
-        return error;
-    }
+    /* ========================================= GETTERS ======================================== */
 
-    public int getUid() {
-        return uid;
-    }
+    public boolean isError() { return error; }
+    public int getUid() { return uid; }
+    public String getUserEmail() { return user.email; }
+    public String getUserName() { return user.name; }
+    public String getUserSurname() { return user.surname; }
 
-    public String getUserEmail() {
-        return user.email;
-    }
+    /* ========================================= CLASSES ======================================== */
 
-    public String getUserName() {
-        return user.name;
-    }
+    class User {
 
-    public String getUserSurname() {
-        return user.surname;
-    }
-
-    class user {
         // --- DATA --- //
         private String email;
         private String name;
         private String surname;
     }
+
+    /* ========================================================================================== */
 }
 
 

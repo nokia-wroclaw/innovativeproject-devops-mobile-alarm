@@ -21,11 +21,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.google.gson.Gson;
-
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pwr.android_app.R;
@@ -41,22 +38,20 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-// --- MAIN ACTIVITY --- //
 public class MainActivity
         extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener, MonitorFragment.OnListFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener,
+                   MonitorFragment.OnListFragmentInteractionListener {
 
     /* ========================================== DATA ========================================== */
+
     private int option_id;
 
-    // Data from previous activity
-    private String cookie = null;
-    private UserData userData = null;
+    private ApiService client =
+            ServiceGenerator.createService(ApiService.class);
 
-    // Used in REST requests
-    private ApiService client = null;
+    private SharedPreferences sharedPref;
 
-    // UI references
     @BindView(R.id.toolbar)
     Toolbar toolbar;
     @BindView(R.id.fab)
@@ -66,57 +61,33 @@ public class MainActivity
     @BindView(R.id.nav_view)
     NavigationView navigationView;
 
-    private ActionBar actionBar = null;
+    private ActionBar actionBar;
 
-    // Fragments
     private MainMenuFragment mainMenuFragment;
     private WebBrowserFragment webBrowserFragment;
     private TestingFragment testingFragment;
     private MonitorFragment monitorFragment;
 
-    // SharedPreferences
-    SharedPreferences sharedPref;
+    /* ========================================= METHODS ======================================== */
 
-    /* ==================================== OVERRIDE METHODS ==================================== */
-    // === ON CREATE === //
+    // ----------------------------------- Activity Lifecycle ----------------------------------- //
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         Context context = getApplicationContext();
 
-        ButterKnife.bind(this);
-
-        // SharedPreferences
         sharedPref = context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
 
-        // [Retrofit]
-        this.client = ServiceGenerator.createService(ApiService.class);
+        ButterKnife.bind(this);
 
-        if(savedInstanceState == null || !savedInstanceState.containsKey("choosen_window")) {
-            option_id = R.id.main_menu_option;
-            setFragment();
-        }
-
-        // ToolBar
-        setSupportActionBar(toolbar);
-
-        // ActionBar
-        actionBar = getSupportActionBar();
-
-        // Creating drawer
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
-
-        // Navigation view
-        navigationView.setNavigationItemSelectedListener(this);
-
+        // ToDo: Przerobić FAB'a
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String cookie = sharedPref.getString("cookie",null);
-                Call<List<ServiceData>> call = client.get_services(cookie);
+                Call<List<ServiceData>> call = client.getServices(cookie);
 
                 call.enqueue(new Callback<List<ServiceData>>() {
                     @Override
@@ -144,23 +115,29 @@ public class MainActivity
                 monitorFragment.getAdapter().notifyDataSetChanged();
             }
         });
+
+        if(savedInstanceState == null || !savedInstanceState.containsKey("choosen_window")) {
+            option_id = R.id.main_menu_option;
+            setFragment();
+        }
+
+        setSupportActionBar(toolbar);
+        actionBar = getSupportActionBar();
+        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+        drawer.setDrawerListener(toggle);
+        toggle.syncState();
+
+        navigationView.setNavigationItemSelectedListener(this);
     }
 
-    // === ON SAVE INSTANCE STATE === //
     @Override
     protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
 
+        super.onSaveInstanceState(outState);
         outState.putInt("choosen_window", option_id);
     }
 
-    // === ON RESUME === //
-    @Override
-    public void onResume() {
-        super.onResume();
-    }
-
-    // === ON BACK PRESSED === //
+    // --------------------------------------- Components --------------------------------------- //
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -172,30 +149,17 @@ public class MainActivity
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-    }
-
-    // === ON CREATE OPTION MENU === //
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+
+        getMenuInflater().inflate(R.menu.main, menu);
 
         UserData userData = new Gson().fromJson(sharedPref.getString("user_data",null), UserData.class);
 
-        // Wypełnia pasek boczny informacjami
-        getMenuInflater().inflate(R.menu.main, menu);
-
-        // Ustawia adres email zalogowanego użytkownika na panelu bocznym
-        TextView nameSurnameLabel = (TextView) findViewById(R.id.name_surname_label);
-        nameSurnameLabel.setText(userData.getUserName() + " " + userData.getUserSurname());
-
-        TextView emailLabel = (TextView) findViewById(R.id.email_label);
-        emailLabel.setText(userData.getUserEmail());
+        setUserInfo(userData);
 
         return true;
     }
 
-    // === ON OPTION ITEM SELECTED === //
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -203,7 +167,6 @@ public class MainActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        // noinspection SimplifiableIfStatement
         switch (id) {
             case R.id.action_settings:
                 return true;
@@ -215,27 +178,34 @@ public class MainActivity
         return super.onOptionsItemSelected(item);
     }
 
-    // === ON NAVIGATION ITEM SELECTED === //
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Obsługa wybrania danej opcji z lewego wysuwanego panelu.
+
         option_id = item.getItemId();
 
-        // Tworzy odpowiedni fragment w oparciu o option_id
         setFragment();
 
         drawer.closeDrawer(GravityCompat.START);
+
         return true;
     }
 
-    // === ON LIST FRAGMENT INTERACTION === //
     @Override
     public void onListFragmentInteraction(ServiceData item) {
 
     }
 
-    /* ========================================= METHODS ======================================== */
+    // ---------------------------------------- Functions --------------------------------------- //
+    private void setUserInfo(UserData userData) {
+
+        TextView nameSurnameLabel = (TextView) findViewById(R.id.name_surname_label);
+        TextView emailLabel = (TextView) findViewById(R.id.email_label);
+
+        nameSurnameLabel.setText(userData.getUserName() + " " + userData.getUserSurname());
+        emailLabel.setText(userData.getUserEmail());
+    }
+
     private void setFragment() {
         if (option_id == R.id.main_menu_option) {
 
@@ -328,6 +298,7 @@ public class MainActivity
     }
 
     private void showToast(CharSequence text) {
+
         LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.layout_yellow_toast, (ViewGroup) findViewById(R.id.yellow_toast_container));
 
@@ -340,4 +311,6 @@ public class MainActivity
         toast.setView(layout);
         toast.show();
     }
+
+    /* ========================================================================================== */
 }

@@ -5,15 +5,11 @@ import android.os.Parcelable;
 
 public class ServiceData implements Parcelable {
 
-    Service service = null;
+    /* ========================================== DATA ========================================== */
 
-    class Service {
-        // --- DATA --- //
-        private int id;
-        private String address;
-        private String name;
-        private int current_state;
-    }
+    private Service service = null;
+
+    /* ====================================== CONSTRUCTORS ====================================== */
 
     public ServiceData(int id, String address, String name, int current_state) {
         service = new Service();
@@ -22,8 +18,15 @@ public class ServiceData implements Parcelable {
         service.name = name;
         service.current_state = current_state;
     }
+    private ServiceData(Parcel in) {
+        service.id = in.readInt();
+        service.address = in.readString();
+        service.name = in.readString();
+        service.current_state = in.readInt();
+    }
 
-    // --- GETTERS --- //
+    /* ========================================= GETTERS ======================================== */
+
     public int getId() {
         return service.id;
     }
@@ -37,19 +40,16 @@ public class ServiceData implements Parcelable {
         return service.current_state;
     }
 
-    // --- SETTERS --- //
+    /* ========================================= SETTERS ======================================== */
+
     public void setCurrent_state(int state) { service.current_state = state; }
     public void setAddress(String address) { service.address = address; }
     public void setName(String name) { service.name = name; }
     public void setId(int id) { service.id = id; }
 
-    protected ServiceData(Parcel in) {
-        service.id = in.readInt();
-        service.address = in.readString();
-        service.name = in.readString();
-        service.current_state = in.readInt();
-    }
+    /* ========================================= METHODS ======================================== */
 
+    // --------------------------------------- Parcelable --------------------------------------- //
     @Override
     public int describeContents() {
         return 0;
@@ -70,8 +70,8 @@ public class ServiceData implements Parcelable {
         service.current_state = in.readInt();
     }
 
-    @SuppressWarnings("unused")
     public static final Parcelable.Creator<ServiceData> CREATOR = new Parcelable.Creator<ServiceData>() {
+
         @Override
         public ServiceData createFromParcel(Parcel in) {
             return new ServiceData(in);
@@ -82,4 +82,17 @@ public class ServiceData implements Parcelable {
             return new ServiceData[size];
         }
     };
+
+    /* ========================================= CLASSES ======================================== */
+
+    class Service {
+
+        // --- DATA --- //
+        private int id;
+        private String address;
+        private String name;
+        private int current_state;
+    }
+
+    /* ========================================================================================== */
 }

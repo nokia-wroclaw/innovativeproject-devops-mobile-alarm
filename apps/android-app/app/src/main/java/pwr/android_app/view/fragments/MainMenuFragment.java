@@ -5,20 +5,22 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import pwr.android_app.R;
 
 public class MainMenuFragment extends Fragment {
 
     /* ========================================== DATA ========================================== */
 
-    /* ========================================= METHODS ======================================== */
-    // --- CONSTRUCTOR --- //
+
+
+    /* ====================================== CONSTRUCTORS ====================================== */
+
     public MainMenuFragment() {
         // Required empty public constructor
     }
 
-    // --- ON CREATE VIEW --- //
+    /* ========================================= METHODS ======================================== */
+
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -29,4 +31,6 @@ public class MainMenuFragment extends Fragment {
 
         return view;
     }
+
+    /* ========================================================================================== */
 }

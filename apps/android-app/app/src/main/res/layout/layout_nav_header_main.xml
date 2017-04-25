@@ -24,16 +24,12 @@
         android:id="@+id/name_surname_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="name surname"
-        android:textAlignment="textStart"
         android:textSize="16sp" />
 
     <TextView
         android:id="@+id/email_label"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="email"
-        android:textAlignment="textStart"
         android:textSize="16sp" />
 
 </LinearLayout>
