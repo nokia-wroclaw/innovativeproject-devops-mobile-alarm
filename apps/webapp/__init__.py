@@ -8,8 +8,8 @@ from flask_sqlalchemy import SQLAlchemy
 app = Flask(__name__)
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
-#config for Forms
-app.config.update(DEBUG = True, SECRET_KEY = 'you-will-never-guess', SECURITY_PASSWORD_SALT = 'my_precious_two')
+#config for Forms, Register and FCM tokens
+app.config.update(DEBUG = True, SECRET_KEY = 'you-will-never-guess', SECURITY_PASSWORD_SALT = 'my_precious_two', FCM_APP_TOKEN = 'AAAAXUWoieY:APA91bGcVQ67M5mAEl7e2OSb5yKko8J17NH7GZtOspoq9NKjnHMyD9RiCePjLKUHfyBzn4II0aVJx_JnyyBHQijdbT6sYwxAoDrI15bZX_0FdBpHKgAVqMBpKMQAxIggXxakcZ3It54f')
 
 #conection to database
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']
