@@ -34,6 +34,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
@@ -168,8 +169,8 @@ public class LoginActivity
             focusView.requestFocus();
         } else {
             // After successful validation...
-            //String token = FirebaseInstanceId.getInstance().getId();
-            login(email, password, "temporary_fcm_token");
+            String token = FirebaseInstanceId.getInstance().getToken();
+            login(email, password, token);
         }
     }
 

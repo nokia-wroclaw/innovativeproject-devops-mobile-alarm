@@ -63,11 +63,9 @@ public class MonitorFragment extends Fragment {
                 adapter = new MyItemRecyclerViewAdapter(new ArrayList<ServiceData>(), mListener);
             }
             else {
-                List<ServiceData> strony;
-                strony = savedInstanceState.getParcelableArrayList("lista");
-                adapter = new MyItemRecyclerViewAdapter(new ArrayList<ServiceData>(), mListener);
-                adapter.clearValues();
-                adapter.addValues(strony);
+                List<ServiceData> sites;
+                sites = savedInstanceState.getParcelableArrayList("list");
+                adapter = new MyItemRecyclerViewAdapter(sites, mListener);
             }
 
             recyclerView.setAdapter(adapter);
@@ -97,7 +95,7 @@ public class MonitorFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelableArrayList("lista", (ArrayList<? extends Parcelable>) getAdapter().getList());
+        outState.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) getAdapter().getList());
     }
 
     public interface OnListFragmentInteractionListener {

@@ -93,11 +93,10 @@ public class MainActivity
         // [Retrofit]
         this.client = ServiceGenerator.createService(ApiService.class);
 
-        // Setting default fragment
-        mainMenuFragment = new MainMenuFragment();
-        android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_container, mainMenuFragment);
-        fragmentTransaction.commit();
+        if(savedInstanceState == null || !savedInstanceState.containsKey("choosen_window")) {
+            option_id = R.id.main_menu_option;
+            setFragment();
+        }
 
         // ToolBar
         setSupportActionBar(toolbar);
@@ -145,13 +144,6 @@ public class MainActivity
                 monitorFragment.getAdapter().notifyDataSetChanged();
             }
         });
-
-        fab.hide();
-
-        if(option_id == 0 && savedInstanceState != null ) {
-            option_id = savedInstanceState.getInt("choosen_window");
-            setFragment();
-        }
     }
 
     // === ON SAVE INSTANCE STATE === //
@@ -179,6 +171,10 @@ public class MainActivity
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+    }
 
     // === ON CREATE OPTION MENU === //
     @Override
@@ -296,7 +292,7 @@ public class MainActivity
 
     private void logout() {
 
-        String cookie = sharedPref.getString("cookie",null);
+        String cookie = sharedPref.getString("cookie", null);
         Call<Void> call = client.logout(cookie);
 
         call.enqueue(new Callback<Void>() {
@@ -308,7 +304,7 @@ public class MainActivity
                     Log.d("LOGOUT", "success");
 
                     SharedPreferences.Editor editor = sharedPref.edit();
-                    editor.putString("cookie",null);
+                    editor.putString("cookie", null);
                     editor.commit();
 
                     Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
