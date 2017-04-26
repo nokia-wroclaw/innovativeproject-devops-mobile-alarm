@@ -91,7 +91,8 @@ class Service(db.Model):
                 'name': self.name,
                 'time_of_last_change_of_state': self.time_of_last_change_of_state,
                 'previous_state': self.previous_state,
-                'current_state': self.current_state}}
+                'current_state': self.current_state,
+                'organization_id': self.organization_id}}
 
 class Subscription(db.Model):
     id=db.Column(db.Integer, primary_key=True)
