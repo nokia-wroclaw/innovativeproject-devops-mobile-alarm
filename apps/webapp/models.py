@@ -107,6 +107,10 @@ class Subscription(db.Model):
                 'id_service': self.id_service,
                 'status': self.status}}
 
+    @property
+    def fcm_token(self):
+        return self.user.fcm_token
+
 class Tokens(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     token=db.Column(db.String(100), index=True, unique=True)

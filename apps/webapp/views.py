@@ -10,7 +10,6 @@ import datetime
 from functions import generate_registration_token, confirm_token
 from tables import UsersTable, ServicesTable
 import json
-import requests
 from bson import json_util
 
 @login_manager.user_loader
@@ -32,17 +31,10 @@ def logout():
 def before_request():
     g.user = current_user
 
-@app.route('/test', methods=['GET','POST'])
-@login_required
-def test():
-    json_data = { "registration_ids" : [ User.query.filter_by(id=2).first().fcm_token ], "notification" : { 'icon' : 'icon_blue', 'sound' : 'default', 'tag' : '1', 'title_loc_key' : 'fcm_message_service_state_title', 'title_loc_args' : [ 'Me me me' ], 'body_loc_key' : 'fcm_message_service_state_body', 'body_loc_args' : [ 'down' ] } }
-    json_string = json.dumps(json_data)
-    headers = {'Content-Type': 'application/json', 'Authorization': 'key='+app.config['FCM_APP_TOKEN']}
-    print json_string
-    res = requests.post('https://fcm.googleapis.com/fcm/send', headers=headers, data=json_string)
-    print 'response from server:', json.dumps(res.text)
-    
-    return res.text
+@app.route('/test_service')
+def test_service():
+    #return "Internal Server Error", 500
+    return "OK!", 200
 
 @app.route('/login',methods=['GET','POST'])
 def login():
