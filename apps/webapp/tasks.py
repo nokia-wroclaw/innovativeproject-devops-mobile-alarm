@@ -4,7 +4,7 @@ from celery.utils.log import get_task_logger
 from celery.signals import worker_process_init
 import datetime
 import ping
-from models import Service
+from models import Service, Tokens
 from webapp import celery, ServiceState, db
 from functions import send_notification
 
@@ -28,4 +28,14 @@ def ping_services():
             service.current_state = ServiceState.down
             if service.users:
                 send_notification( "icon_red", service, "DOWN" )
+    db.session.commit()
+
+#task run every Monday at 7:30
+@periodic_task(run_every=(crontab(hour=7, minute=30, day_of_week=1)), ignore_result=True)
+def cleaning_tokens():
+    for token in Tokens.query.all():
+        #checking if token is older then 7 days
+        expiration_date = token.date_of_expire + datetime.timedelta(days=7)
+        if expiration_date <= datetime.datetime.now() or token.is_used == True:
+            db.session.delete(token)
     db.session.commit()
