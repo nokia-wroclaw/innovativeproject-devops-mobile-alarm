@@ -256,7 +256,18 @@ def subscriptionandroid():
 @login_required
 def dashboard():
     user = g.user
-    return render_template('dashboard.html', title="DevOps Nokia Project", user=user, panel="dashboard")
+    org_id = User_Organization_mapping.query.filter_by(id_user=user.id).first()
+
+    up_services = Service.query.filter_by(organization_id=org_id.id_organization, current_state=ServiceState.up).count()
+    down_services = Service.query.filter_by(organization_id=org_id.id_organization, current_state=ServiceState.down).count()
+    #unspecified_services = Service.query.filter_by(organization_id=org_id.id_organization, current_state=ServiceState.unspecified).count()
+    all_services = Service.query.filter_by(organization_id=org_id.id_organization).count()
+
+    percent_up_services = int(float(up_services)/float(all_services)*100)
+    percent_down_services = int(float(down_services)/float(all_services)*100)
+    percent_unspecified_services = 100 - percent_up_services - percent_down_services
+
+    return render_template('dashboard.html', title="DevOps Nokia Project", user=user, panel="dashboard", percent_up_services=percent_up_services, percent_down_services=percent_down_services, percent_unspecified_services=percent_unspecified_services)
 
 @app.route('/services', methods=['GET','POST'])
 @login_required
