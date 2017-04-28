@@ -1,4 +1,4 @@
-from flask_table import Table, Col, OptCol
+from flask_table import Table, Col, OptCol, ButtonCol
 
 class UsersTable(Table):
     classes = ['table', 'table-striped']
@@ -17,3 +17,4 @@ class ServicesTable(Table):
     time_of_last_change_of_state = Col('State changed in')
     previous_state = OptCol('Previous state', choices=states)
     current_state = OptCol('Current state', choices=states)
+    remove = ButtonCol('Remove', 'remove_service', url_kwargs=dict(id='id'), anchor_attrs={'class': 'myclass'})

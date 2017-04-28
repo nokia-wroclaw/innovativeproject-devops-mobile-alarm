@@ -94,6 +94,21 @@ def register(token, organization_id):
     flash('User successfully registered')
     return "Your account is ready for login. Go to your Android app and try this on!"
 
+@app.route('/remove_service', methods=['GET', 'POST'])
+@login_required
+def remove_service():
+    if request.method == 'POST':
+        id = request.args.get('id')
+        subscriptions=Subscription.query.filter_by(id_service=id).all()
+        serv=Service.query.filter_by(id=id).first()
+       
+        for sub in subscriptions:
+            db.session.delete(sub)
+        
+        db.session.delete(serv)
+        db.session.commit()
+    return redirect(request.args.get('next') or url_for('services'))
+
 #admin registration
 @app.route('/register' , methods=['GET','POST'])
 def register_admin():
@@ -298,4 +313,3 @@ def services():
     db.session.commit()
 
     return redirect(request.args.get('next') or url_for('services'))
-
