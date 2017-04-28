@@ -89,9 +89,6 @@ class Service(db.Model):
         return {"service": {'id': self.id,
                 'address': self.address,
                 'name': self.name,
-                'time_of_last_change_of_state': self.time_of_last_change_of_state,
-                'previous_state': self.previous_state,
-                'current_state': self.current_state,
                 'organization_id': self.organization_id}}
 
 class Subscription(db.Model):
@@ -103,14 +100,17 @@ class Subscription(db.Model):
     service=db.relationship("Service", back_populates="users")
 
     def dump(self):
-        return {"subscritpion": {'id': self.id,
-                'id_user': self.id_user,
+        return {"subscritpion": {
                 'id_service': self.id_service,
-                'status': self.status}}
+                'status': self.service_state}}
 
     @property
     def fcm_token(self):
         return self.user.fcm_token
+
+    @property
+    def service_state(self):
+        return self.service.current_state
 
 class Tokens(db.Model):
     id=db.Column(db.Integer, primary_key=True)
