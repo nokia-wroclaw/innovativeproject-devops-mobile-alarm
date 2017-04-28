@@ -275,14 +275,22 @@ def dashboard():
 
     up_services = Service.query.filter_by(organization_id=org_id.id_organization, current_state=ServiceState.up).count()
     down_services = Service.query.filter_by(organization_id=org_id.id_organization, current_state=ServiceState.down).count()
-    #unspecified_services = Service.query.filter_by(organization_id=org_id.id_organization, current_state=ServiceState.unspecified).count()
+    unspecified_services = Service.query.filter_by(organization_id=org_id.id_organization, current_state=ServiceState.unspecified).count()
     all_services = Service.query.filter_by(organization_id=org_id.id_organization).count()
 
     percent_up_services = int(float(up_services)/float(all_services)*100)
     percent_down_services = int(float(down_services)/float(all_services)*100)
-    percent_unspecified_services = 100 - percent_up_services - percent_down_services
+    percent_unspecified_services = int(float(unspecified_services)/float(all_services)*100)
 
-    return render_template('dashboard.html', title="DevOps Nokia Project", user=user, panel="dashboard", percent_up_services=percent_up_services, percent_down_services=percent_down_services, percent_unspecified_services=percent_unspecified_services)
+    if percent_up_services + percent_down_services + percent_unspecified_services < 100:
+        if percent_up_services != 0:
+            percent_up_services = percent_up_services + 1
+        elif percent_down_services != 0:
+            percent_down_services = percent_down_services + 1
+        else:
+            percent_unspecified_services = percent_unspecified_services + 1
+
+    return render_template('dashboard.html', title="DevOps Nokia Project", user=user, panel="dashboard", org_name=org_id.organization.name, percent_up_services=percent_up_services, percent_down_services=percent_down_services, percent_unspecified_services=percent_unspecified_services)
 
 @app.route('/services', methods=['GET','POST'])
 @login_required

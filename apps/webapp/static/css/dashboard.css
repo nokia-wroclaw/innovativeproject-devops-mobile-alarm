@@ -89,3 +89,21 @@ body {
   display: inline-block;
   border-radius: 50%;
 }
+.center {
+  text-align: center;
+}
+.label_up {
+  font-size: 200%;
+  color: #4db53c;
+}
+.label_down {
+  font-size: 200%;
+  color: #f94044;
+}
+.label_unspecified {
+  font-size: 200%;
+  color: #dd9d22;
+}
+.col-md-offset-own {
+  margin-left: 12%;
+}

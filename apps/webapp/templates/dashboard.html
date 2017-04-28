@@ -2,11 +2,13 @@
 {% extends "base.html" %}
 
 {% block content %}
+<link href="../static/css/dashboard.css" rel="stylesheet">
         <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
-          <h1 class="page-header">Dashboard</h1>
+          <h1 class="page-header ">Dashboard</h1>
+          <h2 class="page-header center">Organization: {{ org_name }}</h2>
 
           <div class="modal-body row">
-            <div class="col-md-3 col-md-offset-1">
+            <div class="col-md-3 col-md-offset-own center">
               {% if percent_up_services == 0 %}
                 <div class="c100 p0 big green">
               {% endif %}
@@ -49,8 +51,9 @@
                         <div class="fill"></div>
                     </div>
                 </div>
+                <label for="up" class="label_up">Up</label>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 center">
               {% if percent_down_services == 0 %}
                 <div class="c100 p0 big">
               {% endif %}
@@ -93,8 +96,9 @@
                         <div class="fill"></div>
                     </div>
                 </div>
+                <label for="down" class="label_down">Down</label>
             </div>
-            <div class="col-md-3">
+            <div class="col-md-3 center">
               {% if percent_unspecified_services == 0 %}
                 <div class="c100 p0 big orange">
               {% endif %}
@@ -137,6 +141,7 @@
                         <div class="fill"></div>
                     </div>
                 </div>
+                <label for="unspecified" class="label_unspecified">Unspecified</label>
             </div>
           </div>
 
