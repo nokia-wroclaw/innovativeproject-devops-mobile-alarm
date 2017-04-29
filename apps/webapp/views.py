@@ -278,6 +278,7 @@ def subscriptionandroid():
                 return "Success", 200
         elif status == "add":
             if Subscription.query.filter_by(id_user=1, id_service=1).first() is None:
+            if Subscription.query.filter_by(id_user=g.user.id, id_service=id).first() is None:
                 sub=Subscription(id_user=g.user.id, id_service=id, status=1)
                 db.session.add(sub)
                 db.session.commit()
