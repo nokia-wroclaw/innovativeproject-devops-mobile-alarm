@@ -17,4 +17,4 @@ class ServicesTable(Table):
     time_of_last_change_of_state = Col('State changed in')
     previous_state = OptCol('Previous state', choices=states)
     current_state = OptCol('Current state', choices=states)
-    remove = ButtonCol('Remove', 'remove_service', url_kwargs=dict(id='id'), anchor_attrs={'class': 'myclass'})
+    remove = ButtonCol('Remove', 'remove_service', url_kwargs=dict(id='id'), button_attrs={'class': 'remove-btn'})
