@@ -1,8 +1,8 @@
 package pwr.android_app.view.fragments;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -10,19 +10,37 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import pwr.android_app.R;
+import pwr.android_app.dataStructures.Service;
 import pwr.android_app.dataStructures.ServiceData;
-import pwr.android_app.view.adapters.MyItemRecyclerViewAdapter;
+import pwr.android_app.dataStructures.SubscriptionData;
+import pwr.android_app.network.rest.ApiService;
+import pwr.android_app.network.rest.ServiceGenerator;
+import pwr.android_app.view.activities.MainActivity;
+import pwr.android_app.view.adapters.MyAdapter;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MonitorFragment extends Fragment {
 
     /* ========================================== DATA ========================================== */
 
+    private ApiService client =
+            ServiceGenerator.createService(ApiService.class);
+
+    private SharedPreferences sharedPref;
+
     private int mColumnCount = 1;
     private OnListFragmentInteractionListener mListener;
-    private MyItemRecyclerViewAdapter adapter = null;
+    private MyAdapter adapter = null;
 
     // .......................................... STATIC ........................................ //
     private static final String ARG_COLUMN_COUNT = "column-count";
@@ -33,7 +51,7 @@ public class MonitorFragment extends Fragment {
 
     /* ========================================= GETTERS ======================================== */
 
-    public MyItemRecyclerViewAdapter getAdapter() {
+    public MyAdapter getAdapter() {
         return this.adapter;
     }
 
@@ -50,13 +68,71 @@ public class MonitorFragment extends Fragment {
 
     /* ========================================= METHODS ======================================== */
 
+    // ---------------------------------------- Functions --------------------------------------- //
+    public void getSubscriptions() {
+        // ToDo: string resource
+        String cookie = sharedPref.getString("cookie",null);
+        Call<List<SubscriptionData>> call = client.getSubscriptions(cookie);
+
+        call.enqueue(new Callback<List<SubscriptionData>>() {
+            @Override
+            public void onResponse(Call<List<SubscriptionData>> call, Response<List<SubscriptionData>> response) {
+                if (response.code() == 200) {
+
+                    getAdapter().addInformationAboutSubscriptions(response.body());
+                    getAdapter().notifyDataSetChanged();
+                }
+                else {
+
+                    // ToDo: string resource
+                    ((MainActivity)getActivity()).showToast("Couldn't get subscriptions.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<SubscriptionData>> call, Throwable t) {
+                // ToDo: string resource
+                ((MainActivity)getActivity()).showToast("Couldn't get subscriptions. Bad connection");
+            }
+        });
+    }
+
+    public void getServices() {
+        // ToDo: string resource
+        String cookie = sharedPref.getString("cookie",null);
+        Call<List<ServiceData>> call = client.getServices(cookie);
+
+        call.enqueue(new Callback<List<ServiceData>>() {
+            @Override
+            public void onResponse(Call<List<ServiceData>> call, Response<List<ServiceData>> response) {
+                if (response.code() == 200) {
+
+                    getAdapter().setNewServicesDataList(response.body());
+                    getAdapter().notifyDataSetChanged();
+                }
+                else {
+                    // ToDo: string resource
+                    ((MainActivity)getActivity()).showToast("Problem has occured.");
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ServiceData>> call, Throwable t) {
+                // ToDo: string resource
+                ((MainActivity)getActivity()).showToast("Failed to download data.");
+            }
+        });
+    }
+
     // ----------------------------------- Fragment Lifecycle ----------------------------------- //
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
+
         if (context instanceof OnListFragmentInteractionListener) {
             mListener = (OnListFragmentInteractionListener) context;
-        } else {
+        }
+        else {
             throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
         }
     }
@@ -65,6 +141,8 @@ public class MonitorFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        sharedPref = getContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
         }
@@ -72,6 +150,7 @@ public class MonitorFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+
         View view = inflater.inflate(R.layout.fragment_item_list, container, false);
 
         if (view instanceof RecyclerView) {
@@ -86,12 +165,13 @@ public class MonitorFragment extends Fragment {
             }
 
             if(savedInstanceState == null) {
-                adapter = new MyItemRecyclerViewAdapter(new ArrayList<ServiceData>(), mListener);
+                adapter = new MyAdapter(new ArrayList<Service>(), mListener);
             }
             else {
-                List<ServiceData> sites;
-                sites = savedInstanceState.getParcelableArrayList("list");
-                adapter = new MyItemRecyclerViewAdapter(sites, mListener);
+                List<Service> sites;
+                Type listType = new TypeToken<List<ServiceData>>(){}.getType();
+                sites = new Gson().fromJson(savedInstanceState.getString("list"), listType);
+                adapter = new MyAdapter(sites, mListener);
             }
 
             recyclerView.setAdapter(adapter);
@@ -105,7 +185,7 @@ public class MonitorFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putParcelableArrayList("list", (ArrayList<? extends Parcelable>) getAdapter().getList());
+        outState.putString("list", new Gson().toJson(getAdapter().getList()));
     }
 
     @Override
@@ -116,7 +196,7 @@ public class MonitorFragment extends Fragment {
 
     // ---------------------------------------- Listeners --------------------------------------- //
     public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(ServiceData item);
+        void onListFragmentInteraction(Service item);
     }
 
     /* ========================================================================================== */

@@ -2,6 +2,7 @@ package pwr.android_app.network.rest;
 
 import java.util.List;
 import pwr.android_app.dataStructures.ServiceData;
+import pwr.android_app.dataStructures.SubscriptionData;
 import pwr.android_app.dataStructures.UserData;
 import retrofit2.Call;
 import retrofit2.http.Field;
@@ -25,6 +26,9 @@ public interface ApiService {
 
     @GET("/servicesandroid")
     Call<List<ServiceData>> getServices(@Header("Cookie") String cookie);
+
+    @GET("/subscriptionandroid")
+    Call<List<SubscriptionData>> getSubscriptions(@Header("Cookie") String cookie);
 
     /* ========================================================================================== */
 }

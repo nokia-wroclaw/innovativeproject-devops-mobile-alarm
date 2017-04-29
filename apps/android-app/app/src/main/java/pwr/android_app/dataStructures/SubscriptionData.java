@@ -1,36 +1,29 @@
 package pwr.android_app.dataStructures;
 
-public class ServiceData {
+public class SubscriptionData {
 
     /* ========================================== DATA ========================================== */
 
-    private Service service = null;
+    private Subscription subscritpion = null;
 
     /* ========================================= GETTERS ======================================== */
 
-    public int getId() {
-        return service.id;
+    public int getServiceId() {
+        return subscritpion.id_service;
     }
-    public int getOrganizationId() {
-        return service.organization_id;
-    }
-    public String getAddress() {
-        return service.address;
-    }
-    public String getName() {
-        return service.name;
-    }
+
+    public int getServiceStatus() { return subscritpion.status; }
 
     /* ========================================= CLASSES ======================================== */
 
-    class Service {
+    class Subscription {
 
         // --- DATA --- //
-        private int id;
-        private int organization_id;
-        private String address;
-        private String name;
+        private int status;
+        private int id_service;
+
     }
 
     /* ========================================================================================== */
+
 }

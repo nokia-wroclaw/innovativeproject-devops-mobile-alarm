@@ -5,10 +5,10 @@
     <!-- Strings related to login -->
     <string name="prompt_email">E-mail</string>
     <string name="prompt_password">Password</string>
-    
+
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
-    
+
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is invalid</string>
     <string name="error_incorrect_password">This password is incorrect</string>
@@ -19,7 +19,8 @@
     <!-- Strings used in MainActivity -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
-    <string name="action_settings">Settings</string>
+
+    <string name="action_about_us">About us</string>
     <string name="action_logout">Logout</string>
 
     <!-- Strings used in left panel -->
@@ -40,5 +41,10 @@
 
     <string name="fix">Fix</string>
     <string name="chat">Chat</string>
+
+
+    <string name="stop_subscribing_button_string">Stop\nsubscribing</string>
+    <string name="start_subscribing_button_string">Subscribe</string>
+    <string name="fix_service_button_string">Fix it!</string>
 
 </resources>

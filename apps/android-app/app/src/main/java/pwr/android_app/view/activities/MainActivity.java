@@ -4,8 +4,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
@@ -22,18 +24,15 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 import com.google.gson.Gson;
-import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pwr.android_app.R;
-import pwr.android_app.dataStructures.ServiceData;
+import pwr.android_app.dataStructures.Service;
 import pwr.android_app.dataStructures.UserData;
 import pwr.android_app.network.rest.ApiService;
 import pwr.android_app.network.rest.ServiceGenerator;
 import pwr.android_app.view.fragments.MainMenuFragment;
 import pwr.android_app.view.fragments.MonitorFragment;
-import pwr.android_app.view.fragments.TestingFragment;
-import pwr.android_app.view.fragments.WebBrowserFragment;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -64,8 +63,6 @@ public class MainActivity
     private ActionBar actionBar;
 
     private MainMenuFragment mainMenuFragment;
-    private WebBrowserFragment webBrowserFragment;
-    private TestingFragment testingFragment;
     private MonitorFragment monitorFragment;
 
     /* ========================================= METHODS ======================================== */
@@ -82,37 +79,15 @@ public class MainActivity
 
         ButterKnife.bind(this);
 
-        // ToDo: Przerobić FAB'a
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String cookie = sharedPref.getString("cookie",null);
-                Call<List<ServiceData>> call = client.getServices(cookie);
 
-                call.enqueue(new Callback<List<ServiceData>>() {
-                    @Override
-                    public void onResponse(Call<List<ServiceData>> call, Response<List<ServiceData>> response) {
-                        if (response.code() == 200) {
-                            monitorFragment.getAdapter().clearValues();
-
-                            for(ServiceData data : response.body()) {
-                                monitorFragment.getAdapter().addService(new ServiceData(data.getId(), data.getAddress(), data.getName(), data.getCurrent_state()));
-                            }
-
-                            monitorFragment.getAdapter().notifyDataSetChanged();
-                        }
-                        else {
-                            showToast("Problem has occured.");
-                        }
-                    }
-
-                    @Override
-                    public void onFailure(Call<List<ServiceData>> call, Throwable t) {
-                        showToast("Failed to download data.");
-                    }
-                });
-
-                monitorFragment.getAdapter().notifyDataSetChanged();
+                FragmentManager fragmentManager = getSupportFragmentManager();
+                MonitorFragment fragment = (MonitorFragment)fragmentManager.findFragmentByTag("FRAGMENT_MONITOR");
+                fragment.getServices();
+             SystemClock.sleep(1000);
+                fragment.getSubscriptions();
             }
         });
 
@@ -168,7 +143,8 @@ public class MainActivity
         int id = item.getItemId();
 
         switch (id) {
-            case R.id.action_settings:
+            case R.id.action_about_us:
+
                 return true;
 
             case R.id.action_logout:
@@ -192,7 +168,7 @@ public class MainActivity
     }
 
     @Override
-    public void onListFragmentInteraction(ServiceData item) {
+    public void onListFragmentInteraction(Service item) {
 
     }
 
@@ -212,37 +188,7 @@ public class MainActivity
             // Włączenie głównego menu po wybraniu odpowiedniej opcji z lewego panelu
             mainMenuFragment = new MainMenuFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, mainMenuFragment);
-            fragmentTransaction.commit();
-
-            fab.hide();
-
-        } else if (option_id == R.id.website_option) {
-
-            // Włączenie przeglądarki po wybraniu odpowiedniej opcji z lewogo panelu
-            webBrowserFragment = new WebBrowserFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, webBrowserFragment);
-            fragmentTransaction.commit();
-
-            fab.hide();
-
-        } else if (option_id == R.id.testing_option) {
-
-            // Włączenie strony testowej po wybraniu odpowiedniej opcji z lewogo panelu
-            testingFragment = new TestingFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, testingFragment);
-            fragmentTransaction.commit();
-
-            fab.hide();
-
-        } else if (option_id == R.id.website_option) {
-
-            // Włączenie przeglądarki po wybraniu odpowiedniej opcji z lewogo panelu
-            webBrowserFragment = new WebBrowserFragment();
-            android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, webBrowserFragment);
+            fragmentTransaction.replace(R.id.fragment_container, mainMenuFragment, "FRAGMENT_MAIN_MENU");
             fragmentTransaction.commit();
 
             fab.hide();
@@ -252,7 +198,7 @@ public class MainActivity
             // Włączenie strony testowej po wybraniu odpowiedniej opcji z lewego panelu
             monitorFragment = new MonitorFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, monitorFragment);
+            fragmentTransaction.replace(R.id.fragment_container, monitorFragment, "FRAGMENT_MONITOR");
             fragmentTransaction.commit();
 
             fab.show();
@@ -297,7 +243,7 @@ public class MainActivity
         });
     }
 
-    private void showToast(CharSequence text) {
+    public void showToast(CharSequence text) {
 
         LayoutInflater inflater = getLayoutInflater();
         View layout = inflater.inflate(R.layout.layout_yellow_toast, (ViewGroup) findViewById(R.id.yellow_toast_container));
