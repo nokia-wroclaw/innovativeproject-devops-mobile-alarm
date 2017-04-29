@@ -109,6 +109,30 @@ def remove_service():
         db.session.commit()
     return redirect(request.args.get('next') or url_for('services'))
 
+@app.route('/remove_user', methods=['GET', 'POST'])
+@login_required
+def remove_user():
+    if request.method == 'POST':
+        id = request.args.get('id')
+        org = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
+
+        services_of_organization = Service.query.filter_by(organization_id=org.id_organization).all()
+        subscriptions = Subscription.query.filter_by(id_user=id).all()
+        membership_to_organization = User_Organization_mapping.query.filter_by(id_user=id, id_organization=org.id_organization).first()
+       
+       # we have to delete just a subscriptions of services which are belong to organization from which we remove user
+        for sub in subscriptions:
+            for serv in services_of_organization:
+                if sub.id_service == serv.id:
+                    db.session.delete(sub)
+        
+        # we remove a user just from admin's organization and just if that user is not an admin 
+        if membership_to_organization.user_type != UserType.adm:
+            db.session.delete(membership_to_organization)
+        
+        db.session.commit()
+    return redirect(request.args.get('next') or url_for('invite'))
+
 #admin registration
 @app.route('/register' , methods=['GET','POST'])
 def register_admin():

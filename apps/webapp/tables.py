@@ -7,6 +7,7 @@ class UsersTable(Table):
     surname = Col('Surname')
     email = Col('Email')
     user_type = OptCol('Type of user', choices={1: 'Admin', 2: 'User', 3: 'Other'})
+    remove = ButtonCol('Remove', 'remove_user', url_kwargs=dict(id='id'), button_attrs={'class': 'remove-btn'})
 
 class ServicesTable(Table):
     classes = ['table', 'table-striped']

@@ -32,3 +32,13 @@
   border-color: #e07f31;
   
 }
+.remove-btn {
+  background-color: #f44336;
+  color: white;
+  border-radius: 8px;
+  width: 50%;
+  font-size: 13px;
+}
+.remove-btn:hover {
+  background-color: #c61103;
+}
