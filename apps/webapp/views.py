@@ -331,6 +331,10 @@ def services():
     address = request.form['service_address']
     name = request.form['service_name']
 
+    # adding required prefix 'http://' if do not exist
+    if address[0:7] != 'http://' and address[0:8] != 'https://':
+        address = 'http://' + address
+
     # checking if a service with a given address or name does not exist
     address_check = Service.query.filter_by(address=address, organization_id=org_id.id_organization).first()
     name_check = Service.query.filter_by(name=name, organization_id=org_id.id_organization).first()
