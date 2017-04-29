@@ -1,0 +1,31 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<link href="../static/css/services.css" rel="stylesheet">
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main primary">
+
+          <h1 class="sub-header">Add a new service</h1>
+
+          <h4>Fill up the below fields to add a new service to tracking.
+              <br><br>
+              Service address and name have to be unique.
+              <br><br>
+              Check all monitoring services for your organization in Services tab.
+              <br>
+          </h4>
+        
+        <form action="" method="POST" class="form-top">
+          <div class="form-add-service">
+            <input type="text" name="service_address" id="service_address" class="form-control" placeholder="Service address" required autofocus>
+          </div>
+          <div class="form-add-service">
+            <input type="text" name="service_name" id="service_name" class="form-control" placeholder="Service name" required autofocus>
+          </div>
+          <div class="form-add-service">
+            <button class="btn btn-lg btn-primary" type="submit">Add service</button>
+          </div>
+        </form>
+          
+        </div>
+{% endblock %}

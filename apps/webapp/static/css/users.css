@@ -1,18 +1,18 @@
 /*
  * Invite a new user.
  */
-
-.add-user-left {
-    width: 40%;
-    height: 100px;
-    float: left;
-}
-.add-user-right {
-    margin-left: 15%;
-    height: 100px;
+ .primary {
+   text-align: center;
+   padding-top: 5%;
+ }
+.form-top{
+  margin-top: 30px;
 }
 .form-control {
   height: 50px;
+  width: 45%;
+  display: inline-block;
+  text-align: center;
 }
 .form-add-user .form-control:focus {
   z-index: 2;
@@ -21,11 +21,11 @@
   box-shadow: 0 0 10px #e07f31;
 }
 .btn {
-    width: 300px; 
+    width: 45%; 
     height: 50px;
     background-color: #f29346; 
     border-color: #f29346;
-    margin-left: 15px;
+    margin-top: 5px;
 }
 .btn:hover {
   background-color: #e07f31;

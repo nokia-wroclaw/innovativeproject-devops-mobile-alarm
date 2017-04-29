@@ -131,7 +131,7 @@ def remove_user():
             db.session.delete(membership_to_organization)
         
         db.session.commit()
-    return redirect(request.args.get('next') or url_for('invite'))
+    return redirect(request.args.get('next') or url_for('users'))
 
 #admin registration
 @app.route('/register' , methods=['GET','POST'])
@@ -159,9 +159,9 @@ def register_admin():
     return redirect(request.args.get('next') or url_for('login'))
 
 
-@app.route('/invite',methods=['GET','POST'])
+@app.route('/users',methods=['GET','POST'])
 @login_required
-def invite():
+def users():
     # get id_organization of specific admin
     org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
     
@@ -171,40 +171,6 @@ def invite():
         items = db.session.query(User_Organization_mapping).filter_by(id_organization=org_id.id_organization).all()
         users_table = UsersTable(items)
         return render_template('users.html', users_table=users_table, panel="users", org_name=org_id.organization.name)
-    
-    # get email from template
-    email = request.form['email']
-
-    # checking if email exists in database
-    email_check = User.query.filter_by(email=email).first()
-    if email_check:
-        return render_template('users.html', exist="Ten e-mail juz istnieje w bazie danych!!!")
-
-    # create a client for sending emails
-    sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
-    # email's data
-    from_email = Email("devops-nokia@heroku.com")
-    subject = "You got invited to awesome app!"
-    to_email = Email(email)
-    content = Content("text/plain", "Hello, World!")
-
-    # generates token for an email
-    token=Tokens(token=generate_registration_token(email), email=email, date=datetime.datetime.now()+datetime.timedelta(days=7))
-    
-    content = Content("text/plain", "Hello! You've got invited to DevOps project. To continue "+
-                      "the registration click this link: "+
-                      "https://devops-nokia.herokuapp.com/register/"+token.token+"/"+str(org_id.id_organization)+
-                      " You have 7 days for sign up, after that your token will be deactivated.")
-
-    # creatin the mail
-    mail = Mail(from_email, subject, to_email, content)
-    # sending the email
-    response = sg.client.mail.send.post(request_body=mail.get())
-    db.session.add(token)
-    db.session.commit()
-
-    flash('E-mail sent successfully')
-    return redirect(request.args.get('next') or url_for('invite'))
 
 @app.errorhandler(404)
 def page_not_found(error):
@@ -277,7 +243,6 @@ def subscriptionandroid():
             
                 return "Success", 200
         elif status == "add":
-            if Subscription.query.filter_by(id_user=1, id_service=1).first() is None:
             if Subscription.query.filter_by(id_user=g.user.id, id_service=id).first() is None:
                 sub=Subscription(id_user=g.user.id, id_service=id, status=1)
                 db.session.add(sub)
@@ -327,7 +292,57 @@ def services():
         services_table = ServicesTable(items)
 
         return render_template('services.html', services_table=services_table, panel="services", org_name=org_id.organization.name)
+
+@app.route('/invite',methods=['GET','POST'])
+@login_required
+def invite():
+    org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
+
+    if request.method == 'GET':
+        return render_template('invite.html', panel="invite")
+
+    # get email from template
+    email = request.form['email']
+
+    # checking if email exists in database
+    email_check = User.query.filter_by(email=email).first()
+    if email_check:
+        return render_template('invite.html', exist="Ten e-mail juz istnieje w bazie danych!!!")
+
+    # create a client for sending emails
+    sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
+    # email's data
+    from_email = Email("devops-nokia@heroku.com")
+    subject = "You got invited to awesome app!"
+    to_email = Email(email)
+    content = Content("text/plain", "Hello, World!")
+
+    # generates token for an email
+    token=Tokens(token=generate_registration_token(email), email=email, date=datetime.datetime.now()+datetime.timedelta(days=7))
     
+    content = Content("text/plain", "Hello! You've got invited to DevOps project. To continue "+
+                      "the registration click this link: "+
+                      "https://devops-nokia.herokuapp.com/register/"+token.token+"/"+str(org_id.id_organization)+
+                      " You have 7 days for sign up, after that your token will be deactivated.")
+
+    # creatin the mail
+    mail = Mail(from_email, subject, to_email, content)
+    # sending the email
+    response = sg.client.mail.send.post(request_body=mail.get())
+    db.session.add(token)
+    db.session.commit()
+
+    flash('E-mail sent successfully')
+    return redirect(request.args.get('next') or url_for('invite'))
+
+@app.route('/add_service',methods=['GET','POST'])
+@login_required
+def add_service():
+    org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
+
+    if request.method == 'GET':
+        return render_template('add_service.html', panel="add_service")
+
     # get the values from the template
     address = request.form['service_address']
     name = request.form['service_name']
@@ -342,11 +357,11 @@ def services():
 
     # if exists redirect to the error page
     if address_check or name_check:
-        return redirect(url_for('services'))
+        return redirect(url_for('add_service'))
 
     # creating a new user
     new_service = Service(address=address, name=name, organization_id=org_id.id_organization)
     db.session.add(new_service)
     db.session.commit()
 
-    return redirect(request.args.get('next') or url_for('services'))
+    return redirect(request.args.get('next') or url_for('add_service'))

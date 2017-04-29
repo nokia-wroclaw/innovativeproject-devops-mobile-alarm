@@ -1,0 +1,29 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<link href="../static/css/users.css" rel="stylesheet">
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main primary">
+
+          <h1 class="sub-header">Invite a new user</h1>
+
+          <h4>Here you can add a new user to your organization.
+              <br><br>
+              Fill up the below field with a valid e-mail address and press 'Invite' button.
+              <br>
+              When your friend receive your invitation, will be able to join to your organization.
+              <br><br>
+              Check all members of your organization in Users tab.
+          </h4>
+
+        <form action="" method="POST" class="form-top">
+            <div class="form-add-user">
+                <input type="email" name="email" id="email" class="form-control" placeholder="Email address" required autofocus>
+            </div>
+            <div class="form-add-user"> 
+                <button class="btn btn-primary" type="submit">Invite</button>
+            </div>
+        </form>
+          
+        </div>
+{% endblock %}
