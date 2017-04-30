@@ -4,7 +4,7 @@ class User(db.Model):
     id=db.Column(db.Integer, primary_key=True)
     name=db.Column(db.String(15), index=True)
     surname=db.Column(db.String(40), index=True)
-    email = db.Column(db.String(80), index=True, unique=True)
+    email = db.Column(db.String(80), index=True)
     password = db.Column(db.String(100), index=True)
     fcm_token = db.Column(db.String(200), index=True)
     organizations = db.relationship("User_Organization_mapping", back_populates="user")

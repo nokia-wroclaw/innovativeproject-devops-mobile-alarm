@@ -71,19 +71,32 @@ def register(token, organization_id):
     if expiration_date <= datetime.datetime.now():
         if request.method == 'GET':
             return "Brak dostepu! Token wygasl!"
-    
+
     if request.method == 'GET':
         if pushed_token is None or pushed_token.is_used == True:
             return "Brak dostepu!"
-        else:
-            return render_template('register.html', title="DevOps", registerAdmin="false")
-
+    
+    # register user which already exist in db
     email = confirm_token(token)
+    user = User.query.filter_by(email=email).first()
+    if user is not None:
+        org_usr_mapp=User_Organization_mapping(id_user=user.id, id_organization=organization_id, user_type=2)
+        db.session.add(org_usr_mapp)
+        pushed_token.is_used = True
+        db.session.commit()
+        flash('User successfully registered')
+        return "You are register to other organization! Now you joined to this organization too."
+    
+    if request.method == 'GET':
+        return render_template('register.html', title="DevOps", registerAdmin="false")
+
     name = request.form['name']
     surname = request.form['surname']
     password = request.form['password']
     password_bytes = password.encode('utf-8')
     hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+    
+    # register new user
     user=User(name=name, surname=surname, email=email, password=hashed)
     db.session.add(user)
     db.session.commit()
@@ -129,6 +142,10 @@ def remove_user():
         # we remove a user just from admin's organization and just if that user is not an admin 
         if membership_to_organization.user_type != UserType.adm:
             db.session.delete(membership_to_organization)
+            user = User.query.filter_by(id=id).first()
+            # if user do not belong to any organization we remove him
+            if user.organizations == []:
+                db.session.delete(user)
         
         db.session.commit()
     return redirect(request.args.get('next') or url_for('users'))
@@ -301,7 +318,7 @@ def services():
 @app.route('/invite',methods=['GET','POST'])
 @login_required
 def invite():
-    org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
+    admin_org = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
 
     if request.method == 'GET':
         return render_template('invite.html', panel="invite")
@@ -309,10 +326,12 @@ def invite():
     # get email from template
     email = request.form['email']
 
-    # checking if email exists in database
-    email_check = User.query.filter_by(email=email).first()
-    if email_check:
-        return render_template('invite.html', exist="Ten e-mail juz istnieje w bazie danych!!!")
+    # checking if user exists in current organization
+    user = User.query.filter_by(email=email).first()
+    if user is not None:
+        for org in user.organizations:
+            if org.id_organization == admin_org.id_organization:
+                return render_template('invite.html', panel="invite", exist="Ten e-mail juz istnieje w biezacej organizacji!!!")
 
     # create a client for sending emails
     sg = sendgrid.SendGridAPIClient(apikey=os.environ.get('SENDGRID_API_KEY'))
@@ -327,7 +346,7 @@ def invite():
     
     content = Content("text/plain", "Hello! You've got invited to DevOps project. To continue "+
                       "the registration click this link: "+
-                      "https://devops-nokia.herokuapp.com/register/"+token.token+"/"+str(org_id.id_organization)+
+                      "https://devops-nokia.herokuapp.com/register/"+token.token+"/"+str(admin_org.id_organization)+
                       " You have 7 days for sign up, after that your token will be deactivated.")
 
     # creatin the mail
@@ -392,7 +411,7 @@ def settings():
         password_bytes = password.encode('utf-8')
         hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
         g.user.password = hashed
-        
+
     db.session.commit()
 
     return redirect(request.args.get('next') or url_for('settings'))
