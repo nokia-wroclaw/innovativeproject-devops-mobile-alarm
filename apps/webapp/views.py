@@ -365,3 +365,29 @@ def add_service():
     db.session.commit()
 
     return redirect(request.args.get('next') or url_for('add_service'))
+
+@app.route('/settings',methods=['GET','POST'])
+@login_required
+def settings():
+    org = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
+
+    if request.method == 'GET':
+        return render_template('settings.html', org_name=org.organization.name)
+
+    org_name = request.form['organization_name']
+
+    if Organization.query.filter_by(name=org_name).first() is None:
+        org.organization.name = org_name
+    
+    old_password = request.form['old_password']
+    check_pass = bcrypt.checkpw(old_password.encode(), g.user.password.encode())
+
+    if check_pass:
+        password = request.form['password']
+        password_bytes = password.encode('utf-8')
+        hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+        g.user.password = hashed
+        
+    db.session.commit()
+
+    return redirect(request.args.get('next') or url_for('settings'))
