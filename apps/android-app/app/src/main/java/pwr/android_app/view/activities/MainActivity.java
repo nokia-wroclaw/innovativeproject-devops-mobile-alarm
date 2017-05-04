@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -39,8 +40,7 @@ import retrofit2.Response;
 
 public class MainActivity
         extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener,
-                   MonitorFragment.OnListFragmentInteractionListener {
+        implements NavigationView.OnNavigationItemSelectedListener {
 
     /* ========================================== DATA ========================================== */
 
@@ -61,9 +61,6 @@ public class MainActivity
     NavigationView navigationView;
 
     private ActionBar actionBar;
-
-    private MainMenuFragment mainMenuFragment;
-    private MonitorFragment monitorFragment;
 
     /* ========================================= METHODS ======================================== */
 
@@ -167,11 +164,6 @@ public class MainActivity
         return true;
     }
 
-    @Override
-    public void onListFragmentInteraction(Service item) {
-
-    }
-
     // ---------------------------------------- Functions --------------------------------------- //
     private void setUserInfo(UserData userData) {
 
@@ -183,12 +175,15 @@ public class MainActivity
     }
 
     private void setFragment() {
+
+        Fragment currentFragment;
+
         if (option_id == R.id.main_menu_option) {
 
             // Włączenie głównego menu po wybraniu odpowiedniej opcji z lewego panelu
-            mainMenuFragment = new MainMenuFragment();
+            currentFragment = new MainMenuFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, mainMenuFragment, "FRAGMENT_MAIN_MENU");
+            fragmentTransaction.replace(R.id.fragment_container, currentFragment, "FRAGMENT_MAIN_MENU");
             fragmentTransaction.commit();
 
             fab.hide();
@@ -196,9 +191,9 @@ public class MainActivity
         } else if (option_id == R.id.monitor_option) {
 
             // Włączenie strony testowej po wybraniu odpowiedniej opcji z lewego panelu
-            monitorFragment = new MonitorFragment();
+            currentFragment = new MonitorFragment();
             android.support.v4.app.FragmentTransaction fragmentTransaction = getSupportFragmentManager().beginTransaction();
-            fragmentTransaction.replace(R.id.fragment_container, monitorFragment, "FRAGMENT_MONITOR");
+            fragmentTransaction.replace(R.id.fragment_container, currentFragment, "FRAGMENT_MONITOR");
             fragmentTransaction.commit();
 
             fab.show();

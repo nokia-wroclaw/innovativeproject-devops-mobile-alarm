@@ -10,7 +10,7 @@
     <color name="service_down_color">#ff1744</color>
     <color name="service_not_subscribed_color">#eeeeee</color>
     <color name="service_unspecified_color">#ff9100</color>
-    <color name="service_unknown_color">#303030</color>
+    <color name="service_unknown_color">#888888</color>
 
 </resources>
 

@@ -9,6 +9,7 @@
         <item name="colorAccent">@color/yellow</item>
         <item name="colorButtonNormal">@color/yellow</item>
         <item name="android:colorBackground">@color/dark_grey</item>
+        <item name="android:textSize">@dimen/normal_text</item>
     </style>
 
     <!-- Splash Screen Theme -->

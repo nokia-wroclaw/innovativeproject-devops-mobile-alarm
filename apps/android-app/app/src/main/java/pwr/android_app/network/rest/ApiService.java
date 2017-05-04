@@ -5,6 +5,7 @@ import pwr.android_app.dataStructures.ServiceData;
 import pwr.android_app.dataStructures.SubscriptionData;
 import pwr.android_app.dataStructures.UserData;
 import retrofit2.Call;
+import retrofit2.http.Body;
 import retrofit2.http.Field;
 import retrofit2.http.FormUrlEncoded;
 import retrofit2.http.GET;
@@ -29,6 +30,9 @@ public interface ApiService {
 
     @GET("/subscriptionandroid")
     Call<List<SubscriptionData>> getSubscriptions(@Header("Cookie") String cookie);
+
+    @POST("/subscriptionandroid")
+    Call<String> setSubscription(@Header("Cookie") String cookie, @Body String body);
 
     /* ========================================================================================== */
 }

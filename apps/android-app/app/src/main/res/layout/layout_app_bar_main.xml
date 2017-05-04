@@ -20,7 +20,7 @@
         android:layout_margin="@dimen/fab_margin"
         app:backgroundTint="@color/yellow"
         app:elevation="0dp"
-        app:srcCompat="@drawable/ic_sync_white_24dp" />
+        app:srcCompat="@drawable/sync_icon" />
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"

@@ -5,11 +5,11 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/main_menu_option"
-            android:icon="@drawable/ic_home_white_24dp"
+            android:icon="@drawable/home_icon"
             android:title="@string/main_option_name" />
         <item
             android:id="@+id/monitor_option"
-            android:icon="@drawable/ic_list_white_24dp"
+            android:icon="@drawable/list_icon"
             android:title="@string/monitor_option_name" />
     </group>
 

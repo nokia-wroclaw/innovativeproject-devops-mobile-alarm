@@ -4,13 +4,15 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import java.util.List;
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import pwr.android_app.R;
 import pwr.android_app.dataStructures.Service;
 import pwr.android_app.dataStructures.ServiceData;
 import pwr.android_app.dataStructures.SubscriptionData;
-import pwr.android_app.view.fragments.MonitorFragment.OnListFragmentInteractionListener;
 
 public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -18,7 +20,6 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // ToDo: map
     private List<Service> mValues;
-    private OnListFragmentInteractionListener mListener;
 
     private final int SERVICE_UNKNOWN = 0;
     private final int SERVICE_DOWN = 1;
@@ -28,15 +29,15 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     /* ====================================== CONSTRUCTORS ====================================== */
 
-    public MyAdapter(List<Service> items,
-                     OnListFragmentInteractionListener listener) {
+    public MyAdapter(List<Service> items) {
         mValues = items;
-        mListener = listener;
     }
 
     /* ========================================= GETTERS ======================================== */
 
-    public List<Service> getList() { return mValues; }
+    public List<Service> getList() {
+        return mValues;
+    }
 
     /* ========================================= SETTERS ======================================== */
 
@@ -110,7 +111,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, final int viewType) {
 
         RecyclerView.ViewHolder viewHolder;
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
@@ -153,197 +154,183 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(final RecyclerView.ViewHolder holder, int position) {
+    public void onBindViewHolder(final RecyclerView.ViewHolder holder, final int position) {
 
         switch (holder.getItemViewType()) {
 
             case SERVICE_UP:
-                ViewHolderServiceUp holderServiceUp = (ViewHolderServiceUp) holder;
-                onBindServiceUpFragment(holderServiceUp, position);
+                onBindServiceUp((ViewHolderServiceUp) holder, position);
                 break;
 
             case SERVICE_DOWN:
-                ViewHolderServiceDown holderServiceDown = (ViewHolderServiceDown) holder;
-                onBindServiceDownFragment(holderServiceDown, position);
+                onBindServiceDown((ViewHolderServiceDown) holder, position);
                 break;
 
             case SERVICE_UNSPECIFIED:
-                ViewHolderServiceUnspecified holderServiceUnspecified = (ViewHolderServiceUnspecified) holder;
-                onBindServiceUnspecifiedFragment(holderServiceUnspecified, position);
+                onBindServiceUnspecified((ViewHolderServiceUnspecified) holder, position);
                 break;
 
             case SERVICE_NOT_SUBSCRIBED:
-                ViewHolderServiceNotSubscribed holderServiceNotSubscribed = (ViewHolderServiceNotSubscribed) holder;
-                onBindServiceNotSubscribedFragment(holderServiceNotSubscribed, position);
+                onBindServiceNotSubscribed((ViewHolderServiceNotSubscribed) holder, position);
                 break;
 
             case SERVICE_UNKNOWN:
-                ViewHolderServiceUnknown holderServiceUnknown = (ViewHolderServiceUnknown) holder;
-                onBindServiceUnknownFragment(holderServiceUnknown, position);
+                onBindServiceUnknown((ViewHolderServiceUnknown) holder, position);
                 break;
 
             default:
-                ViewHolderServiceUnknown holderDefault = (ViewHolderServiceUnknown) holder;
-                onBindServiceUnknownFragment(holderDefault, position);
+                onBindServiceUnknown((ViewHolderServiceUnknown) holder, position);
                 break;
         }
     }
 
-    private void onBindServiceUpFragment(final ViewHolderServiceUp holder, int position) {
+    private void onBindServiceUp(final ViewHolderServiceUp holder, final int position) {
 
-        holder.getServiceNameLabel().setText(mValues.get(position).getServiceName());
-        holder.getServiceAddressLabel().setText((mValues.get(position).getServiceAddress()));
+        holder.serviceNameLabel.setText(mValues.get(position).getServiceName());
+        holder.serviceAddressLabel.setText((mValues.get(position).getServiceAddress()));
 
-        // ToDo: listener w każdej klasie
+        holder.stopSubscribingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
 
-//        holder.itemView.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if (null != mListener) {
-//
-//                    mListener.onListFragmentInteraction(holder.mItem);
-//                }
-//            }
-//        });
+                // ToDo: write code here
+            }
+        });
     }
-    private void onBindServiceDownFragment(final ViewHolderServiceDown holder, int position) {
+    private void onBindServiceDown(final ViewHolderServiceDown holder, final int position) {
 
-        holder.getServiceNameLabel().setText(mValues.get(position).getServiceName());
-        holder.getServiceAddressLabel().setText((mValues.get(position).getServiceAddress()));
+        holder.serviceNameLabel.setText(mValues.get(position).getServiceName());
+        holder.serviceAddressLabel.setText((mValues.get(position).getServiceAddress()));
+
+        holder.stopSubscribingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // ToDo: write code here
+            }
+        });
+        holder.repairServiceButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // ToDo: write code here
+            }
+        });
     }
-    private void onBindServiceUnspecifiedFragment(final ViewHolderServiceUnspecified holder, int position) {
+    private void onBindServiceUnspecified(final ViewHolderServiceUnspecified holder, final int position) {
 
-        holder.getServiceNameLabel().setText(mValues.get(position).getServiceName());
-        holder.getServiceAddressLabel().setText((mValues.get(position).getServiceAddress()));
+        holder.serviceNameLabel.setText(mValues.get(position).getServiceName());
+        holder.serviceAddressLabel.setText((mValues.get(position).getServiceAddress()));
+
+        holder.stopSubscribingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // ToDo: write code here
+            }
+        });
     }
-    private void onBindServiceNotSubscribedFragment(final ViewHolderServiceNotSubscribed holder, int position) {
+    private void onBindServiceNotSubscribed(final ViewHolderServiceNotSubscribed holder, final int position) {
 
-        holder.getServiceNameLabel().setText(mValues.get(position).getServiceName());
-        holder.getServiceAddressLabel().setText((mValues.get(position).getServiceAddress()));
+        holder.serviceNameLabel.setText(mValues.get(position).getServiceName());
+        holder.serviceAddressLabel.setText((mValues.get(position).getServiceAddress()));
+
+        holder.startSubscribingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                // ToDo: write code here
+            }
+        });
     }
-    private void onBindServiceUnknownFragment(final ViewHolderServiceUnknown holder, int position) {
+    private void onBindServiceUnknown(final ViewHolderServiceUnknown holder, final int position) {
 
-        holder.getServiceNameLabel().setText(mValues.get(position).getServiceName());
-        holder.getServiceAddressLabel().setText((mValues.get(position).getServiceAddress()));
+        holder.serviceNameLabel.setText(mValues.get(position).getServiceName());
+        holder.serviceAddressLabel.setText((mValues.get(position).getServiceAddress()));
     }
 
     /* ========================================= CLASSES ======================================== */
 
     // ---------------------------------- View Holder Lifecycle --------------------------------- //
-    private class ViewHolderServiceUp extends RecyclerView.ViewHolder {
+    // .......................................... STATIC ........................................ //
+    static class ViewHolderServiceUp extends RecyclerView.ViewHolder {
 
         // --- DATA --- //
-        public final TextView serviceNameLabel;
-        public final TextView serviceAddressLabel;
+        @BindView(R.id.service_name_label)
+        TextView serviceNameLabel;
+        @BindView(R.id.service_address_label)
+        TextView serviceAddressLabel;
+        @BindView(R.id.stop_subscribing_button)
+        ImageButton stopSubscribingButton;
 
         // --- CONSTRUCTORS --- //
-        public ViewHolderServiceUp (View view) {
+        private ViewHolderServiceUp (View view) {
             super(view);
-
-            serviceNameLabel = (TextView) view.findViewById(R.id.service_name_label);
-            serviceAddressLabel = (TextView) view.findViewById(R.id.service_address_label);
-        }
-
-        // --- GETTERS --- //
-        public TextView getServiceNameLabel() {
-            return serviceNameLabel;
-        }
-
-        public TextView getServiceAddressLabel() {
-            return serviceAddressLabel;
+            ButterKnife.bind(this,view);
         }
     }
-    private class ViewHolderServiceDown extends RecyclerView.ViewHolder {
+    static class ViewHolderServiceDown extends RecyclerView.ViewHolder {
 
         // --- DATA --- //
-        private final TextView serviceNameLabel;
-        private final TextView serviceAddressLabel;
+        @BindView(R.id.service_name_label)
+        TextView serviceNameLabel;
+        @BindView(R.id.service_address_label)
+        TextView serviceAddressLabel;
+        @BindView(R.id.stop_subscribing_button)
+        ImageButton stopSubscribingButton;
+        @BindView(R.id.repair_button)
+        ImageButton repairServiceButton;
 
         // --- CONSTRUCTORS --- //
-        public ViewHolderServiceDown (View view) {
+        private ViewHolderServiceDown (View view) {
             super(view);
-
-            serviceNameLabel = (TextView) view.findViewById(R.id.service_name_label);
-            serviceAddressLabel = (TextView) view.findViewById(R.id.service_address_label);
-        }
-
-        // --- GETTERS --- //
-        public TextView getServiceNameLabel() {
-            return serviceNameLabel;
-        }
-
-        public TextView getServiceAddressLabel() {
-            return serviceAddressLabel;
+            ButterKnife.bind(this,view);
         }
     }
-    private class ViewHolderServiceUnspecified extends RecyclerView.ViewHolder {
+    static class ViewHolderServiceUnspecified extends RecyclerView.ViewHolder {
 
         // --- DATA --- //
-        public final TextView serviceNameLabel;
-        public final TextView serviceAddressLabel;
+        @BindView(R.id.service_name_label)
+        TextView serviceNameLabel;
+        @BindView(R.id.service_address_label)
+        TextView serviceAddressLabel;
+        @BindView(R.id.stop_subscribing_button)
+        ImageButton stopSubscribingButton;
 
         // --- CONSTRUCTORS --- //
-        public ViewHolderServiceUnspecified (View view) {
+        private ViewHolderServiceUnspecified (View view) {
             super(view);
-
-            serviceNameLabel = (TextView) view.findViewById(R.id.service_name_label);
-            serviceAddressLabel = (TextView) view.findViewById(R.id.service_address_label);
-        }
-
-        // --- GETTERS --- //
-        public TextView getServiceNameLabel() {
-            return serviceNameLabel;
-        }
-
-        public TextView getServiceAddressLabel() {
-            return serviceAddressLabel;
+            ButterKnife.bind(this,view);
         }
     }
-    private class ViewHolderServiceNotSubscribed extends RecyclerView.ViewHolder {
+    static class ViewHolderServiceNotSubscribed extends RecyclerView.ViewHolder {
 
         // --- DATA --- //
-        public final TextView serviceNameLabel;
-        public final TextView serviceAddressLabel;
+        @BindView(R.id.service_name_label)
+        TextView serviceNameLabel;
+        @BindView(R.id.service_address_label)
+        TextView serviceAddressLabel;
+        @BindView(R.id.start_subscribing_button)
+        ImageButton startSubscribingButton;
 
         // --- CONSTRUCTORS --- //
-        public ViewHolderServiceNotSubscribed(View view) {
+        private ViewHolderServiceNotSubscribed(View view) {
             super(view);
-
-            serviceNameLabel = (TextView) view.findViewById(R.id.service_name_label);
-            serviceAddressLabel = (TextView) view.findViewById(R.id.service_address_label);
-        }
-
-        // --- GETTERS --- //
-        public TextView getServiceNameLabel() {
-            return serviceNameLabel;
-        }
-
-        public TextView getServiceAddressLabel() {
-            return serviceAddressLabel;
+            ButterKnife.bind(this,view);
         }
     }
-    private class ViewHolderServiceUnknown extends RecyclerView.ViewHolder {
+    static class ViewHolderServiceUnknown extends RecyclerView.ViewHolder {
 
         // --- DATA --- //
-        public final TextView serviceNameLabel;
-        public final TextView serviceAddressLabel;
-
+        @BindView(R.id.service_name_label)
+        TextView serviceNameLabel;
+        @BindView(R.id.service_address_label)
+        TextView serviceAddressLabel;
 
         // --- CONSTRUCTORS --- //
-        public ViewHolderServiceUnknown (View view) {
+        private ViewHolderServiceUnknown (View view) {
             super(view);
-
-            serviceNameLabel = (TextView) view.findViewById(R.id.service_name_label);
-            serviceAddressLabel = (TextView) view.findViewById(R.id.service_address_label);
-        }
-
-        // --- GETTERS --- //
-        public TextView getServiceNameLabel() {
-            return serviceNameLabel;
-        }
-
-        public TextView getServiceAddressLabel() {
-            return serviceAddressLabel;
+            ButterKnife.bind(this,view);
         }
     }
 

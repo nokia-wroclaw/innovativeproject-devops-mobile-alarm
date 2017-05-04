@@ -1,80 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.ContentFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
 
-    android:id="@+id/item_layout"
+<android.support.v7.widget.LinearLayoutCompat
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="5dp"
-    android:layout_marginLeft="5dp"
-    android:layout_marginRight="5dp"
-    android:layout_marginTop="5dp"
-    android:background="@color/service_down_color"
-    android:orientation="horizontal"
-    android:gravity="left">
-
-
-    <android.support.percent.PercentRelativeLayout
-        android:id="@+id/percentageLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="3dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginTop="0dp"
-        android:background="@color/service_down_color"
-        android:gravity="left"
-        android:orientation="horizontal">
+    android:layout_marginTop="3dp"
+    android:background="@color/service_down_color">
 
         <LinearLayout
-            android:id="@+id/linearLayout"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_marginLeft="5dp"
-            android:layout_toLeftOf="@+id/start_subscription_button"
-            android:layout_toStartOf="@+id/start_subscription_button"
+            android:layout_marginLeft="8dp"
+            android:layout_marginRight="5dp"
+            android:layout_weight="1"
             android:orientation="vertical">
 
             <TextView
                 android:id="@+id/service_name_label"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="service_name_label"
-                android:textColor="@color/black"
-                android:textSize="24sp" />
+                android:text="Service"
+                android:textColor="@android:color/white"
+                android:textSize="@dimen/big_text" />
 
             <TextView
                 android:id="@+id/service_address_label"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="service_address_label"
-                android:textColor="@color/black" />
-
+                android:textColor="@android:color/white"
+                android:text="address" />
         </LinearLayout>
 
-        <Button
-            android:id="@+id/start_subscription_button"
+        <ImageButton
+            android:id="@+id/repair_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/stop_subscribing_button_string"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentRight="true"
-            android:layout_alignParentEnd="true"
-            android:layout_alignBottom="@+id/fix_service_button" />
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/wrench_icon" />
 
-        <Button
-            android:id="@+id/fix_service_button"
-            android:layout_width="match_parent"
+        <ImageButton
+            android:id="@+id/stop_subscribing_button"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="@string/fix_service_button_string"
-            android:layout_below="@+id/linearLayout"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true"
-            android:layout_toLeftOf="@+id/start_subscription_button"
-            android:layout_toStartOf="@+id/start_subscription_button" />
+            android:layout_gravity="center"
+            android:layout_marginLeft="5dp"
+            android:layout_marginRight="5dp"
+            android:background="@android:color/transparent"
+            app:srcCompat="@drawable/open_eye_icon"
+            android:contentDescription="@string/stop_subscribing_button_string" />
 
-    </android.support.percent.PercentRelativeLayout>
 
-</android.support.v7.widget.ContentFrameLayout>
+</android.support.v7.widget.LinearLayoutCompat>

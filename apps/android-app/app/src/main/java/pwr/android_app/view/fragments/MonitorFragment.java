@@ -10,10 +10,8 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
-
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -39,7 +37,6 @@ public class MonitorFragment extends Fragment {
     private SharedPreferences sharedPref;
 
     private int mColumnCount = 1;
-    private OnListFragmentInteractionListener mListener;
     private MyAdapter adapter = null;
 
     // .......................................... STATIC ........................................ //
@@ -128,13 +125,6 @@ public class MonitorFragment extends Fragment {
     @Override
     public void onAttach(Context context) {
         super.onAttach(context);
-
-        if (context instanceof OnListFragmentInteractionListener) {
-            mListener = (OnListFragmentInteractionListener) context;
-        }
-        else {
-            throw new RuntimeException(context.toString() + " must implement OnListFragmentInteractionListener");
-        }
     }
 
     @Override
@@ -165,13 +155,13 @@ public class MonitorFragment extends Fragment {
             }
 
             if(savedInstanceState == null) {
-                adapter = new MyAdapter(new ArrayList<Service>(), mListener);
+                adapter = new MyAdapter(new ArrayList<Service>());
             }
             else {
                 List<Service> sites;
-                Type listType = new TypeToken<List<ServiceData>>(){}.getType();
+                Type listType = new TypeToken<List<Service>>(){}.getType();
                 sites = new Gson().fromJson(savedInstanceState.getString("list"), listType);
-                adapter = new MyAdapter(sites, mListener);
+                adapter = new MyAdapter(sites);
             }
 
             recyclerView.setAdapter(adapter);
@@ -191,12 +181,6 @@ public class MonitorFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener = null;
-    }
-
-    // ---------------------------------------- Listeners --------------------------------------- //
-    public interface OnListFragmentInteractionListener {
-        void onListFragmentInteraction(Service item);
     }
 
     /* ========================================================================================== */
