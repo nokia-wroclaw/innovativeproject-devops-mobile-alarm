@@ -7,7 +7,6 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,24 +16,27 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import pwr.android_app.R;
+import pwr.android_app.interfaces.ServiceButtonsListeners;
+import pwr.android_app.interfaces.ToastMessenger;
 import pwr.android_app.dataStructures.Service;
 import pwr.android_app.dataStructures.ServiceResponse;
 import pwr.android_app.dataStructures.SubscriptionRequest;
 import pwr.android_app.dataStructures.SubscriptionResponse;
-import pwr.android_app.network.rest.ApiService;
+import pwr.android_app.network.rest.ServerApi;
 import pwr.android_app.network.rest.ServiceGenerator;
-import pwr.android_app.view.activities.MainActivity;
 import pwr.android_app.view.adapters.MyAdapter;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MonitorFragment extends Fragment implements MyAdapter.SubscriptionButtonListener {
+public class MonitorFragment
+        extends Fragment
+        implements ServiceButtonsListeners {
 
     /* ========================================== DATA ========================================== */
 
-    private ApiService client =
-            ServiceGenerator.createService(ApiService.class);
+    private ServerApi client =
+            ServiceGenerator.createService(ServerApi.class);
 
     private SharedPreferences sharedPref;
 
@@ -64,63 +66,137 @@ public class MonitorFragment extends Fragment implements MyAdapter.SubscriptionB
         return fragment;
     }
 
-
     /* ========================================= METHODS ======================================== */
 
-    // ---------------------------------------- Functions --------------------------------------- //
-    public void getSubscriptions() {
-        // ToDo: string resource
-        String cookie = sharedPref.getString("cookie",null);
+    // ----------------------------------------- Network ---------------------------------------- //
+    // Synchronizing services info and subscriptions info.
+    public void synchronizeServices() {
+
+        String cookie = sharedPref.getString(getString(R.string.shared_preferences_cookie),null);
+        Call<List<ServiceResponse>> call = client.getServices(cookie);
+
+        call.enqueue(new Callback<List<ServiceResponse>>() {
+
+            @Override
+            public void onResponse(Call<List<ServiceResponse>> call, Response<List<ServiceResponse>> response) {
+
+                if (response.code() == 200) {
+                    getAdapter().setNewServicesList(response.body());
+                    synchronizeSubscriptions();
+                }
+                else {
+                    ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_server_connection));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<List<ServiceResponse>> call, Throwable t) {
+
+                ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_internet_connection));
+            }
+        });
+    }
+
+    // Synchronizing subscriptions info only.
+    public void synchronizeSubscriptions() {
+
+        String cookie = sharedPref.getString(getString(R.string.shared_preferences_cookie),null);
         Call<List<SubscriptionResponse>> call = client.getSubscriptions(cookie);
 
         call.enqueue(new Callback<List<SubscriptionResponse>>() {
+
             @Override
             public void onResponse(Call<List<SubscriptionResponse>> call, Response<List<SubscriptionResponse>> response) {
-                if (response.code() == 200) {
 
-                    getAdapter().addInformationAboutSubscriptions(response.body());
-                    getAdapter().notifyDataSetChanged();
+                if (response.code() == 200) {
+                    getAdapter().refreshSubscriptionsInfo(response.body());
                 }
                 else {
-
-                    // ToDo: string resource
-                    ((MainActivity)getActivity()).showToast("Couldn't get subscriptions.");
+                    ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_server_connection));
                 }
             }
 
             @Override
             public void onFailure(Call<List<SubscriptionResponse>> call, Throwable t) {
                 // ToDo: string resource
-                ((MainActivity)getActivity()).showToast("Couldn't get subscriptions. Bad connection");
+                ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_internet_connection));
             }
         });
     }
 
-    public void getServices() {
+    @Override
+    public void onStartSubscribingButtonFired(int serviceId) {
+
+        String cookie = sharedPref.getString(getString(R.string.shared_preferences_cookie), null);
+
+        final SubscriptionRequest requestBody =
+                new SubscriptionRequest(serviceId, SubscriptionRequest.SubscriptionStatus.ADD);
+
         // ToDo: string resource
-        String cookie = sharedPref.getString("cookie",null);
-        Call<List<ServiceResponse>> call = client.getServices(cookie);
+        Call<Void> call = client.setSubscription("application/json", cookie, requestBody);
 
-        call.enqueue(new Callback<List<ServiceResponse>>() {
+        call.enqueue(new Callback<Void>() {
             @Override
-            public void onResponse(Call<List<ServiceResponse>> call, Response<List<ServiceResponse>> response) {
-                if (response.code() == 200) {
+            public void onResponse(Call<Void> call, Response<Void> response) {
 
-                    getAdapter().setNewServicesDataList(response.body());
-                    getSubscriptions();
+                if (response.code() == 200) {
+                    synchronizeSubscriptions();
                 }
                 else {
-                    // ToDo: string resource
-                    ((MainActivity)getActivity()).showToast("Problem has occured.");
+                    ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_server_connection));
                 }
             }
 
             @Override
-            public void onFailure(Call<List<ServiceResponse>> call, Throwable t) {
-                // ToDo: string resource
-                ((MainActivity)getActivity()).showToast("Failed to download data.");
+            public void onFailure(Call<Void> call, Throwable t) {
+
+                ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_internet_connection));
             }
         });
+    }
+
+    @Override
+    public void onStopSubscribingButtonFired(int serviceId) {
+
+        String cookie = sharedPref.getString(getString(R.string.shared_preferences_cookie), null);
+
+        SubscriptionRequest requestBody =
+                new SubscriptionRequest(serviceId, SubscriptionRequest.SubscriptionStatus.REMOVE);
+
+        Call<Void> call = client.setSubscription("application/json", cookie, requestBody);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+                if (response.code() == 200) {
+                    synchronizeSubscriptions();
+                }
+                else {
+                    ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_server_connection));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+                ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_internet_connection));
+            }
+        });
+
+    }
+
+    @Override
+    public void onStartRepairServiceButtonFired(int serviceId) {
+
+        ((ToastMessenger)getActivity()).showToast("You've started repairing service number " + String.valueOf(serviceId));
+    }
+
+    @Override
+    public void onStopRepairServiceButtonFired(int serviceId) {
+
+        ((ToastMessenger)getActivity()).showToast("You've stopped repairing service number " + String.valueOf(serviceId));
+
     }
 
     // ----------------------------------- Fragment Lifecycle ----------------------------------- //
@@ -133,7 +209,7 @@ public class MonitorFragment extends Fragment implements MyAdapter.SubscriptionB
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        sharedPref = getContext().getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+        sharedPref = getContext().getSharedPreferences(getString(R.string.shared_preferences_key), Context.MODE_PRIVATE);
 
         if (getArguments() != null) {
             mColumnCount = getArguments().getInt(ARG_COLUMN_COUNT);
@@ -170,6 +246,8 @@ public class MonitorFragment extends Fragment implements MyAdapter.SubscriptionB
             adapter.notifyDataSetChanged();
         }
 
+        synchronizeServices();
+
         return view;
     }
 
@@ -183,74 +261,6 @@ public class MonitorFragment extends Fragment implements MyAdapter.SubscriptionB
     @Override
     public void onDetach() {
         super.onDetach();
-    }
-
-    // ----------------------------------- Fragment Lifecycle ----------------------------------- //
-    @Override
-    public void onStartSubscribingButtonFired(int serviceId) {
-
-        String cookie = sharedPref.getString("cookie", null);
-
-        SubscriptionRequest requestBody =
-                new SubscriptionRequest(serviceId, SubscriptionRequest.SubscriptionStatus.ADD);
-
-        Call<Void> call = client.setSubscription("application/json", cookie, requestBody);
-
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-
-                Log.i("MonitorFragment", "SUCCESS");
-                getSubscriptions();
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-
-                Log.e("MonitorFragment", "FAILURE");
-            }
-        });
-    }
-
-    @Override
-    public void onStopSubscribingButtonFired(int serviceId) {
-
-        Log.i("Stop subs. service", String.valueOf(serviceId));
-
-        String cookie = sharedPref.getString("cookie", null);
-
-        SubscriptionRequest requestBody =
-                new SubscriptionRequest(serviceId, SubscriptionRequest.SubscriptionStatus.REMOVE);
-
-        Call<Void> call = client.setSubscription("application/json", cookie, requestBody);
-
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
-
-                Log.i("MonitorFragment", "SUCCESS");
-                getSubscriptions();
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-
-                Log.e("MonitorFragment", "FAILURE");
-            }
-        });
-
-    }
-
-    @Override
-    public void onStartRepairServiceButtonFired(int serviceId) {
-
-        // ToDo: write code here
-    }
-
-    @Override
-    public void onStopRepairServiceButtonFired(int serviceId) {
-
-        // ToDo: write code here
     }
 
     /* ========================================================================================== */

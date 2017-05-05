@@ -1,50 +1,45 @@
 <resources>
-    <string name="app_name">DevOps</string>
-    <string name="title_activity_main">DevOps</string>
 
-    <!-- Strings related to login -->
-    <string name="prompt_email">E-mail</string>
-    <string name="prompt_password">Password</string>
+    <!-- :D -->
+    <string name="app_name">DevOps</string>
+
+    <!-- Shared Preferences -->
+    <string name="shared_preferences_key">pwr.android_app.pref</string>
+    <string name="shared_preferences_cookie">cookie</string>
+
+    <!-- Notifications -->
+    <string name="fcm_message_service_state_title">Service %1$s</string>
+    <string name="fcm_message_service_state_body">is %1$s now!</string>
+
+    <!-- General -->
+    <string name="bad_server_connection">Cannot connect to server :(</string>
+    <string name="bad_internet_connection">No internet connection!</string>
+
+    <!-- LoginActivity -->
+    <string name="prompt_email_label">E-mail</string>
+    <string name="prompt_password_label">Password</string>
 
     <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
 
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is invalid</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="error_bad_connection">Cannot connect!</string>
+    <string name="invalid_email_error">This email address is invalid</string>
+    <string name="invalid_password_error">This password is invalid</string>
+    <string name="incorrect_password_error">This password is incorrect</string>
+    <string name="field_required_error">This field is required</string>
+
     <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
 
-    <!-- Strings used in MainActivity -->
+    <!-- MainActivity -->
+    <string name="main_activity_title">MainActivity</string>
+
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_about_us">About us</string>
     <string name="action_logout">Logout</string>
 
-    <!-- Strings used in left panel -->
+    <!-- MainActivity::Drawer -->
     <string name="main_option_name">main menu</string>
-    <string name="browser_option_name">our page</string>
-    <string name="test_option_name">testing page</string>
     <string name="monitor_option_name">services</string>
-
-    <!-- preferences -->
-    <string name="preference_file_key">pwr.android_app.pref</string>
-
-    <!-- RESt API URLs -->
-    <string name="base_url">https://devops-nokia.herokuapp.com/</string>
-
-    <!-- Notifications -->
-    <string name="fcm_message_service_state_title">Service %1$s</string>
-    <string name="fcm_message_service_state_body">is %1$s now!</string>
-
-    <string name="fix">Fix</string>
-    <string name="chat">Chat</string>
-
-
-    <string name="stop_subscribing_button_string">Stop\nsubscribing</string>
-    <string name="start_subscribing_button_string">Subscribe</string>
-    <string name="fix_service_button_string">Fix it!</string>
 
 </resources>

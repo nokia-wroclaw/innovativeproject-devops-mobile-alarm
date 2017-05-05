@@ -10,6 +10,7 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pwr.android_app.R;
+import pwr.android_app.interfaces.ServiceButtonsListeners;
 import pwr.android_app.dataStructures.Service;
 import pwr.android_app.dataStructures.ServiceResponse;
 import pwr.android_app.dataStructures.SubscriptionResponse;
@@ -27,13 +28,13 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private final int SERVICE_UNSPECIFIED = 3;
     private final int SERVICE_NOT_SUBSCRIBED = 4;
 
-    private SubscriptionButtonListener subscriptionButtonListener;
+    private ServiceButtonsListeners serviceButtonsListeners;
 
     /* ====================================== CONSTRUCTORS ====================================== */
 
-    public MyAdapter(List<Service> items, SubscriptionButtonListener listener) {
+    public MyAdapter(List<Service> items, ServiceButtonsListeners listener) {
 
-        this.subscriptionButtonListener = listener;
+        this.serviceButtonsListeners = listener;
         mValues = items;
     }
 
@@ -45,7 +46,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     /* ========================================= SETTERS ======================================== */
 
-    public void setNewServicesDataList(List<ServiceResponse> newList) {
+    public void setNewServicesList(List<ServiceResponse> newList) {
 
         this.mValues.clear();
 
@@ -53,9 +54,10 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             mValues.add(new Service(serviceResponse));
         }
+        this.notifyDataSetChanged();
     }
 
-    public void addInformationAboutSubscriptions(List<SubscriptionResponse> subscriptionList) {
+    public void refreshSubscriptionsInfo(List<SubscriptionResponse> subscriptionList) {
 
         // ToDo: To jest bardzo nieefektywne, należy poprawić ten kod! ( tablice haszujące?? )
 
@@ -71,6 +73,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 }
             }
         }
+        this.notifyDataSetChanged();
     }
 
     /* ========================================= METHODS ======================================== */
@@ -196,8 +199,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.stopSubscribingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                subscriptionButtonListener.onStopSubscribingButtonFired(mValues.get(position).getServiceId());
+                serviceButtonsListeners.onStopSubscribingButtonFired(mValues.get(position).getServiceId());
             }
         });
     }
@@ -209,15 +211,13 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.stopSubscribingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                subscriptionButtonListener.onStopSubscribingButtonFired(mValues.get(position).getServiceId());
+                serviceButtonsListeners.onStopSubscribingButtonFired(mValues.get(position).getServiceId());
             }
         });
         holder.repairServiceButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                // ToDo: write code here
+                serviceButtonsListeners.onStartRepairServiceButtonFired(mValues.get(position).getServiceId());
             }
         });
     }
@@ -229,8 +229,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.stopSubscribingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                subscriptionButtonListener.onStopSubscribingButtonFired(mValues.get(position).getServiceId());
+                serviceButtonsListeners.onStopSubscribingButtonFired(mValues.get(position).getServiceId());
             }
         });
     }
@@ -242,8 +241,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.startSubscribingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
-                subscriptionButtonListener.onStartSubscribingButtonFired(mValues.get(position).getServiceId());
+                serviceButtonsListeners.onStartSubscribingButtonFired(mValues.get(position).getServiceId());
             }
         });
     }
@@ -340,13 +338,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     /* ======================================== INTERFACES ====================================== */
 
-    public interface SubscriptionButtonListener {
 
-        void onStartSubscribingButtonFired(int serviceId);
-        void onStopSubscribingButtonFired(int serviceId);
-        void onStartRepairServiceButtonFired(int serviceId);
-        void onStopRepairServiceButtonFired(int serviceId);
-    }
 
     /* ========================================================================================== */
 }

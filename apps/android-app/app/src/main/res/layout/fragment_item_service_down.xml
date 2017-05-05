@@ -50,8 +50,7 @@
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/open_eye_icon"
-            android:contentDescription="@string/stop_subscribing_button_string" />
+            app:srcCompat="@drawable/open_eye_icon" />
 
 
 </android.support.v7.widget.LinearLayoutCompat>
