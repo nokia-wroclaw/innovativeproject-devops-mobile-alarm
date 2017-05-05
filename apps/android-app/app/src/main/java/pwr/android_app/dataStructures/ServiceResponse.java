@@ -1,6 +1,6 @@
 package pwr.android_app.dataStructures;
 
-public class ServiceData {
+public class ServiceResponse {
 
     /* ========================================== DATA ========================================== */
 

@@ -1,6 +1,6 @@
 package pwr.android_app.dataStructures;
 
-public class SubscriptionData {
+public class SubscriptionResponse {
 
     /* ========================================== DATA ========================================== */
 

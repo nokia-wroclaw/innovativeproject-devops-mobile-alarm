@@ -7,6 +7,7 @@ import android.support.v4.app.Fragment;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,8 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import pwr.android_app.R;
 import pwr.android_app.dataStructures.Service;
-import pwr.android_app.dataStructures.ServiceData;
-import pwr.android_app.dataStructures.SubscriptionData;
+import pwr.android_app.dataStructures.ServiceResponse;
+import pwr.android_app.dataStructures.SubscriptionRequest;
+import pwr.android_app.dataStructures.SubscriptionResponse;
 import pwr.android_app.network.rest.ApiService;
 import pwr.android_app.network.rest.ServiceGenerator;
 import pwr.android_app.view.activities.MainActivity;
@@ -27,7 +29,7 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-public class MonitorFragment extends Fragment {
+public class MonitorFragment extends Fragment implements MyAdapter.SubscriptionButtonListener {
 
     /* ========================================== DATA ========================================== */
 
@@ -69,11 +71,11 @@ public class MonitorFragment extends Fragment {
     public void getSubscriptions() {
         // ToDo: string resource
         String cookie = sharedPref.getString("cookie",null);
-        Call<List<SubscriptionData>> call = client.getSubscriptions(cookie);
+        Call<List<SubscriptionResponse>> call = client.getSubscriptions(cookie);
 
-        call.enqueue(new Callback<List<SubscriptionData>>() {
+        call.enqueue(new Callback<List<SubscriptionResponse>>() {
             @Override
-            public void onResponse(Call<List<SubscriptionData>> call, Response<List<SubscriptionData>> response) {
+            public void onResponse(Call<List<SubscriptionResponse>> call, Response<List<SubscriptionResponse>> response) {
                 if (response.code() == 200) {
 
                     getAdapter().addInformationAboutSubscriptions(response.body());
@@ -87,7 +89,7 @@ public class MonitorFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<List<SubscriptionData>> call, Throwable t) {
+            public void onFailure(Call<List<SubscriptionResponse>> call, Throwable t) {
                 // ToDo: string resource
                 ((MainActivity)getActivity()).showToast("Couldn't get subscriptions. Bad connection");
             }
@@ -97,15 +99,15 @@ public class MonitorFragment extends Fragment {
     public void getServices() {
         // ToDo: string resource
         String cookie = sharedPref.getString("cookie",null);
-        Call<List<ServiceData>> call = client.getServices(cookie);
+        Call<List<ServiceResponse>> call = client.getServices(cookie);
 
-        call.enqueue(new Callback<List<ServiceData>>() {
+        call.enqueue(new Callback<List<ServiceResponse>>() {
             @Override
-            public void onResponse(Call<List<ServiceData>> call, Response<List<ServiceData>> response) {
+            public void onResponse(Call<List<ServiceResponse>> call, Response<List<ServiceResponse>> response) {
                 if (response.code() == 200) {
 
                     getAdapter().setNewServicesDataList(response.body());
-                    getAdapter().notifyDataSetChanged();
+                    getSubscriptions();
                 }
                 else {
                     // ToDo: string resource
@@ -114,7 +116,7 @@ public class MonitorFragment extends Fragment {
             }
 
             @Override
-            public void onFailure(Call<List<ServiceData>> call, Throwable t) {
+            public void onFailure(Call<List<ServiceResponse>> call, Throwable t) {
                 // ToDo: string resource
                 ((MainActivity)getActivity()).showToast("Failed to download data.");
             }
@@ -155,13 +157,13 @@ public class MonitorFragment extends Fragment {
             }
 
             if(savedInstanceState == null) {
-                adapter = new MyAdapter(new ArrayList<Service>());
+                adapter = new MyAdapter(new ArrayList<Service>(), this);
             }
             else {
                 List<Service> sites;
                 Type listType = new TypeToken<List<Service>>(){}.getType();
                 sites = new Gson().fromJson(savedInstanceState.getString("list"), listType);
-                adapter = new MyAdapter(sites);
+                adapter = new MyAdapter(sites, this);
             }
 
             recyclerView.setAdapter(adapter);
@@ -181,6 +183,74 @@ public class MonitorFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
+    }
+
+    // ----------------------------------- Fragment Lifecycle ----------------------------------- //
+    @Override
+    public void onStartSubscribingButtonFired(int serviceId) {
+
+        String cookie = sharedPref.getString("cookie", null);
+
+        SubscriptionRequest requestBody =
+                new SubscriptionRequest(serviceId, SubscriptionRequest.SubscriptionStatus.ADD);
+
+        Call<Void> call = client.setSubscription("application/json", cookie, requestBody);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+                Log.i("MonitorFragment", "SUCCESS");
+                getSubscriptions();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+                Log.e("MonitorFragment", "FAILURE");
+            }
+        });
+    }
+
+    @Override
+    public void onStopSubscribingButtonFired(int serviceId) {
+
+        Log.i("Stop subs. service", String.valueOf(serviceId));
+
+        String cookie = sharedPref.getString("cookie", null);
+
+        SubscriptionRequest requestBody =
+                new SubscriptionRequest(serviceId, SubscriptionRequest.SubscriptionStatus.REMOVE);
+
+        Call<Void> call = client.setSubscription("application/json", cookie, requestBody);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+                Log.i("MonitorFragment", "SUCCESS");
+                getSubscriptions();
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+                Log.e("MonitorFragment", "FAILURE");
+            }
+        });
+
+    }
+
+    @Override
+    public void onStartRepairServiceButtonFired(int serviceId) {
+
+        // ToDo: write code here
+    }
+
+    @Override
+    public void onStopRepairServiceButtonFired(int serviceId) {
+
+        // ToDo: write code here
     }
 
     /* ========================================================================================== */

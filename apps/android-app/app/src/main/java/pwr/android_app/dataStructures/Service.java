@@ -15,7 +15,7 @@ public class Service {
 
     /* ====================================== CONSTRUCTORS ====================================== */
 
-    public Service(ServiceData data) {
+    public Service(ServiceResponse data) {
 
         this.serviceId = data.getId();
         this.organizationId = data.getOrganizationId();
@@ -29,7 +29,7 @@ public class Service {
 
     /* ========================================= SETTERS ======================================== */
 
-    public void addSubscription (SubscriptionData data) {
+    public void addSubscription (SubscriptionResponse data) {
 
         if (data.getServiceId() == this.getServiceId()) {
 
