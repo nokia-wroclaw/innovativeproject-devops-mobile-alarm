@@ -43,7 +43,7 @@ import butterknife.OnClick;
 import butterknife.OnEditorAction;
 import pwr.android_app.R;
 import pwr.android_app.dataStructures.UserData;
-import pwr.android_app.network.rest.ApiService;
+import pwr.android_app.network.rest.ServerApi;
 import pwr.android_app.network.rest.ServiceGenerator;
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,8 +60,8 @@ public class LoginActivity
     // Id to identity READ_CONTACTS permission request
     private static final int REQUEST_READ_CONTACTS = 0;
 
-    private ApiService client =
-            ServiceGenerator.createService(ApiService.class);
+    private ServerApi client =
+            ServiceGenerator.createService(ServerApi.class);
 
     @BindView(R.id.email)
     AutoCompleteTextView mEmailView;
@@ -94,7 +94,7 @@ public class LoginActivity
 
         // Checking cookie value in SharedPreferences
         SharedPreferences sharedPref =
-                context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                context.getSharedPreferences(getString(R.string.shared_preferences_key), Context.MODE_PRIVATE);
         // If cookie isn't null, logging in is skipped
         if (sharedPref.getString("cookie",null) != null) {
             Intent i = new Intent(context, MainActivity.class);
@@ -134,22 +134,22 @@ public class LoginActivity
 
         // Validating password
         if (TextUtils.isEmpty(password)) {
-            mPasswordView.setError(getString(R.string.error_field_required));
+            mPasswordView.setError(getString(R.string.field_required_error));
             focusView = mPasswordView;
             cancel = true;
         } else if (!isPasswordValid(password)) {
-            mPasswordView.setError(getString(R.string.error_invalid_password));
+            mPasswordView.setError(getString(R.string.invalid_password_error));
             focusView = mPasswordView;
             cancel = true;
         }
 
         // Validating email
         if (TextUtils.isEmpty(email)) {
-            mEmailView.setError(getString(R.string.error_field_required));
+            mEmailView.setError(getString(R.string.field_required_error));
             focusView = mEmailView;
             cancel = true;
         } else if (!isEmailValid(email)) {
-            mEmailView.setError(getString(R.string.error_invalid_email));
+            mEmailView.setError(getString(R.string.invalid_email_error));
             focusView = mEmailView;
             cancel = true;
         }
@@ -194,7 +194,7 @@ public class LoginActivity
 
                     // Saving cookie and userData in shared preferences
                     SharedPreferences sharedPref =
-                            context.getSharedPreferences(getString(R.string.preference_file_key), Context.MODE_PRIVATE);
+                            context.getSharedPreferences(getString(R.string.shared_preferences_key), Context.MODE_PRIVATE);
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putString("cookie", cookie);
                     editor.putString("user_data", userData);
@@ -203,10 +203,10 @@ public class LoginActivity
                     Intent i = new Intent(context, MainActivity.class);
                     startActivity(i);
                 } else if (response.code() == 403) {
-                    mPasswordView.setError(getString(R.string.error_incorrect_password));
+                    mPasswordView.setError(getString(R.string.incorrect_password_error));
                     mPasswordView.requestFocus();
                 } else {
-                    showToast(getResources().getString(R.string.error_bad_connection));
+                    showToast(getResources().getString(R.string.bad_server_connection));
                 }
             }
 
@@ -215,7 +215,7 @@ public class LoginActivity
 
                 showProgress(false);                                                                // hide progress animation
                 showForm(true);
-                showToast(getResources().getString(R.string.error_bad_connection));                 // show toast message about connection failure
+                showToast(getResources().getString(R.string.bad_server_connection));                 // show toast message about connection failure
             }
         });
     }
@@ -273,15 +273,15 @@ public class LoginActivity
 
     // -------------------------------- Auto-Filling Email View --------------------------------- //
     private void populateAutoComplete() {
+
         if (!mayRequestContacts()) {
             return;
         }
         getLoaderManager().initLoader(0, null, this);
     }
 
-    private void addEmailsToAutoComplete(
-            List<String> emailAddressCollection) {
-        // Tworzy adapter, który podpowiada AutoCompleteTextView co pokazać na liście proponowanych e-maili
+    private void addEmailsToAutoComplete(List<String> emailAddressCollection) {
+
         ArrayAdapter<String> adapter = new ArrayAdapter<>(LoginActivity.this, android.R.layout.simple_dropdown_item_1line, emailAddressCollection);
 
         mEmailView.setAdapter(adapter);

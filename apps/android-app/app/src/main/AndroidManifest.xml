@@ -43,7 +43,7 @@
 
         <activity
             android:name=".view.activities.MainActivity"
-            android:label="@string/title_activity_main"
+            android:label="@string/main_activity_title"
             android:theme="@style/AppTheme.NoActionBar" />
 
         <service

@@ -39,7 +39,6 @@
         android:layout_marginLeft="5dp"
         android:layout_marginRight="5dp"
         android:background="@android:color/transparent"
-        android:contentDescription="@string/stop_subscribing_button_string"
         app:srcCompat="@drawable/closed_eye_icon"
         android:tint="@color/service_unknown_color"/>
 

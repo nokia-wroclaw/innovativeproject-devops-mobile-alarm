@@ -53,8 +53,7 @@
             android:layout_marginRight="5dp"
             android:background="@android:color/transparent"
             app:srcCompat="@drawable/open_eye_icon"
-            android:tint="@color/light_grey"
-            android:contentDescription="@string/stop_subscribing_button_string" />
+            android:tint="@color/light_grey" />
     </LinearLayout>
 
 </android.support.v7.widget.ContentFrameLayout>
