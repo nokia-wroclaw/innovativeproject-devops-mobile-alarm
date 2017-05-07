@@ -2,7 +2,7 @@ from flask_table import Table, Col, OptCol, ButtonCol
 
 class UsersTable(Table):
     classes = ['table', 'table-striped']
-    id = Col('#')
+    #id = Col('#')
     name = Col('Name')
     surname = Col('Surname')
     email = Col('Email')
@@ -12,7 +12,7 @@ class UsersTable(Table):
 class ServicesTable(Table):
     classes = ['table', 'table-striped']
     states = {1: 'Up', 2: 'Down', 3: 'Unspecified'}
-    id = Col('#')
+    #id = Col('#')
     address = Col('Address')
     name = Col('Name')
     time_of_last_change_of_state = Col('State changed in')
