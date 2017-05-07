@@ -23,16 +23,26 @@ Extra: backend can be notified about application events (“App x is rebooting f
 ## Technologies
 
 * Java
+* Android
 * Python with Flask
-* Angular 1.0/2.0
 * HTML
 * CSS
-* Skeleton
+* Bootstrap
+* SQLAlchemy
+* Celery
+* Cloud Messaging - Firebase
+* Retrofit
 
 ## Team
 
-* Jakub Batogowski
-* Marcin Buciora
-* Marcin Okroy
-* Grzegorz Oliwa
-* Patryk Witkowski
+* Jakub Batogowski - jakub.batogowski@gmail.com
+* Marcin Buciora - buciora.marcin@gmail.com
+* Marcin Okroy - m.okroy@hotmail.com
+* Grzegorz Oliwa - gymnopedia10@gmail.com
+* Patryk Witkowski - patrykwitkovski@gmail.com
+
+## Frontend app demo 
+
+Our application is avalible on heroku cloud platform (administration panel):
+
+* http://devops-nokia.herokuapp.com/
