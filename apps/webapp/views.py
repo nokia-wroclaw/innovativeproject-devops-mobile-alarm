@@ -159,6 +159,10 @@ def register_admin():
     email = request.form['email']
     name = request.form['name']
     organization = request.form['organization']
+
+    if Organization.query.filter_by(name=organization).first() is not None:
+        return redirect(request.args.get('next') or url_for('register_admin'))
+
     surname = request.form['surname']
     password = request.form['password']
     password_bytes = password.encode('utf-8')
