@@ -4,12 +4,10 @@
     android:layout_height="match_parent"
     tools:context=".view.fragments.MainMenuFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:id="@+id/textView"
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/chart"
+        android:layout_margin="@dimen/large_margin"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:textAlignment="center"
-        android:textSize="50sp" />
+        android:layout_height="match_parent" />
 
 </LinearLayout>
