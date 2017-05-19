@@ -361,7 +361,7 @@ def invite():
     db.session.commit()
 
     flash('E-mail sent successfully')
-    return redirect(request.args.get('next') or url_for('invite'))
+    return redirect(request.args.get('next') or url_for('users'))
 
 @app.route('/add_service',methods=['GET','POST'])
 @login_required
@@ -392,7 +392,7 @@ def add_service():
     db.session.add(new_service)
     db.session.commit()
 
-    return redirect(request.args.get('next') or url_for('add_service'))
+    return redirect(request.args.get('next') or url_for('services'))
 
 @app.route('/settings',methods=['GET','POST'])
 @login_required
