@@ -8,7 +8,7 @@ from sendgrid.helpers.mail import *
 import bcrypt
 import datetime
 from functions import generate_registration_token, confirm_token
-from tables import UsersTable, ServicesTable
+from tables import UsersTable, ServicesTable, HistoryTable
 import json
 from bson import json_util
 
@@ -419,7 +419,9 @@ def settings():
     db.session.commit()
 
     return redirect(request.args.get('next') or url_for('settings'))
+
 @app.route('/stats_android')
+@login_required
 def stats_android():
     if current_user.is_authenticated():
         user = g.user
@@ -452,3 +454,14 @@ def stats_android():
         return Response((json.dumps(items, default=json_util.default)), mimetype='application/json')
     else:
         return "Blad", 400
+
+@app.route('/history',methods=['GET','POST'])
+@login_required
+def history():
+    org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
+    if request.method == 'GET':
+        # creating a history table
+        items = db.session.query(History).filter_by(organization_id=org_id.id_organization).all()
+        history_table = HistoryTable(items)
+
+        return render_template('history.html', history_table=history_table, panel="history", org_name=org_id.organization.name)

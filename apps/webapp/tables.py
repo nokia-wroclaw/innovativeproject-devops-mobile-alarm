@@ -19,3 +19,11 @@ class ServicesTable(Table):
     previous_state = OptCol('Previous state', choices=states)
     current_state = OptCol('Current state', choices=states)
     remove = ButtonCol('Remove', 'remove_service', url_kwargs=dict(id='id'), button_attrs={'class': 'remove-btn'})
+
+class HistoryTable(Table):
+    classes = ['table', 'table-striped']
+    states = {1: 'Up', 2: 'Down', 3: 'Unspecified'}
+    address = Col('Address')
+    name = Col('Name')
+    state = OptCol('State', choices=states)
+    state_set_time = Col('State changed in')

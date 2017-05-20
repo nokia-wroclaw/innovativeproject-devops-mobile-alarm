@@ -112,6 +112,14 @@
                         <li><a href="{{ url_for('add_service') }}">Add service</a></li>
                         {% endif %}
                     </ul>
+                    <ul class="nav nav-sidebar">
+                        {% if panel=="history" %}
+                        <li class="active"><a href="{{ url_for('history') }}">History</a></li>
+                        
+                        {% else %}
+                        <li><a href="{{ url_for('history') }}">History</a></li>
+                        {% endif %}
+                    </ul>
                 </div>
 
                 {% block content %}{% endblock %}

@@ -132,8 +132,14 @@ class History(db.Model):
     name=db.Column(db.String(80), index=True)
     state = db.Column(db.Integer)
     state_set_time=db.Column(db.DateTime())
-    time_of_add=db.Column(db.DateTime())
     organization_id=db.Column(db.Integer, db.ForeignKey('organization.id'))
+
+    def __init__(self, address, name, state, state_set_time, organization_id):
+        self.address=address
+        self.name=name
+        self.state=state
+        self.state_set_time=state_set_time
+        self.organization_id=organization_id
 
 class Stats(db.Model):
     id=db.Column(db.Integer, primary_key=True)
