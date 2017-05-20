@@ -75,6 +75,7 @@ class Service(db.Model):
     current_state = db.Column(db.Integer, index=True)
     #fcm_token_group=db.Column(db.String(100), index=True)
     organization_id=db.Column(db.Integer, db.ForeignKey('organization.id'))
+    service_repairer_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     users=db.relationship("Subscription", back_populates="service")
     
     def __init__(self, address, name, organization_id):
@@ -124,3 +125,18 @@ class Tokens(db.Model):
         self.email=email
         self.date_of_expire=date
         self.is_used=False
+
+class History(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    address=db.Column(db.String(100), index=True)
+    name=db.Column(db.String(80), index=True)
+    state = db.Column(db.Integer)
+    state_set_time=db.Column(db.DateTime())
+    time_of_add=db.Column(db.DateTime())
+    organization_id=db.Column(db.Integer, db.ForeignKey('organization.id'))
+
+class Stats(db.Model):
+    id=db.Column(db.Integer, primary_key=True)
+    all_counter=db.Column(db.Integer)
+    down_counter=db.Column(db.Integer)
+    service_id=db.Column(db.Integer, db.ForeignKey('service.id'))
