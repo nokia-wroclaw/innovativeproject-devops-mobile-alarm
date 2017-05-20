@@ -7,8 +7,8 @@ import os
 from sendgrid.helpers.mail import *
 import bcrypt
 import datetime
-from functions import generate_registration_token, confirm_token
 from tables import UsersTable, ServicesTable, HistoryTable
+from functions import generate_registration_token, confirm_token, notification_fix, send_notification
 import json
 from bson import json_util
 
@@ -420,8 +420,40 @@ def settings():
 
     return redirect(request.args.get('next') or url_for('settings'))
 
+@app.route('/fix_service',methods=['GET','POST'])
+def fix_android():
+    if current_user.is_authenticated():
+        if request.method == 'GET':
+            return "Blad", 400
+    
+        json_dict = request.get_json()
+        service_id = json_dict['service_id']
+        in_repairing = json_dict['in_repairing']
+        
+        get_serv = Service.query.filter_by(id=service_id).first()
+        
+        if in_repairing == True:
+            if get_serv != None:
+                get_serv.service_repairer_id = g.user.id
+                db.session.commit()
+                
+                notification_fix( "icon_yellow", get_serv )
+                
+                return "Success", 200
+        elif in_repairing == False:
+            if get_serv != None:
+                get_serv.service_repairer_id = None
+                db.session.commit()
+                
+                send_notification( "icon_red", get_serv, "DOWN" )
+                
+                return "Success", 200
+        else:
+            return "Bad request", 400
+    else:
+        return "Blad", 400
+
 @app.route('/stats_android')
-@login_required
 def stats_android():
     if current_user.is_authenticated():
         user = g.user

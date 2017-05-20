@@ -29,3 +29,13 @@ def send_notification( icon, service, state ):
     #print 'response from server:', json.dumps(res.text)
     
     return res.text
+
+def notification_fix( icon, service ):
+    json_data = { "registration_ids" : [ o.fcm_token for o in service.users ] , "notification" : { 'icon' : icon, 'sound' : 'default', 'tag' : service.id, 'title_loc_key' : 'fcm_message_service_repair_title', 'title_loc_args' : [ service.name ], 'body_loc_key' : 'fcm_message_service_repair_body' } }
+    json_string = json.dumps(json_data)
+    headers = {'Content-Type': 'application/json', 'Authorization': 'key='+app.config['FCM_APP_TOKEN']}
+    #print json_string
+    res = requests.post('https://fcm.googleapis.com/fcm/send', headers=headers, data=json_string)
+    #print 'response from server:', json.dumps(res.text)
+    
+    return res.text
