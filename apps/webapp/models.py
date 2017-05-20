@@ -9,6 +9,7 @@ class User(db.Model):
     fcm_token = db.Column(db.String(200), index=True)
     organizations = db.relationship("User_Organization_mapping", back_populates="user")
     services=db.relationship("Subscription", back_populates="user")
+    in_repairing = db.relationship("Service")
     
     def __init__(self, name, surname, email, password):
         self.name = name
@@ -75,7 +76,7 @@ class Service(db.Model):
     current_state = db.Column(db.Integer, index=True)
     #fcm_token_group=db.Column(db.String(100), index=True)
     organization_id=db.Column(db.Integer, db.ForeignKey('organization.id'))
-    service_repairer_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+    service_repairer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     users=db.relationship("Subscription", back_populates="service")
     
     def __init__(self, address, name, organization_id):
@@ -90,7 +91,16 @@ class Service(db.Model):
         return {"service": {'id': self.id,
                 'address': self.address,
                 'name': self.name,
-                'organization_id': self.organization_id}}
+                'organization_id': self.organization_id,
+                'service_repairer_id': self.service_repairer_id,
+                'repairer_email': self.email}}
+
+    @property
+    def email(self):
+        if self.service_repairer_id != None:
+            return User.query.filter_by(id=self.service_repairer_id).first().email
+        elif self.service_repairer_id == None:
+            return 0
 
 class Subscription(db.Model):
     id=db.Column(db.Integer, primary_key=True)
