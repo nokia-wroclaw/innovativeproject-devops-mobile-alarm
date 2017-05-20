@@ -433,21 +433,25 @@ def fix_android():
         get_serv = Service.query.filter_by(id=service_id).first()
         
         if in_repairing == True:
-            if get_serv != None:
+            if get_serv != None and get_serv.service_repairer_id == None:
                 get_serv.service_repairer_id = g.user.id
                 db.session.commit()
                 
                 notification_fix( "icon_yellow", get_serv )
                 
                 return "Success", 200
+            else:
+                return "Bad request", 400
         elif in_repairing == False:
-            if get_serv != None:
+            if get_serv != None and get_serv.service_repairer_id != None:
                 get_serv.service_repairer_id = None
                 db.session.commit()
                 
                 send_notification( "icon_red", get_serv, "DOWN" )
                 
                 return "Success", 200
+            else:
+                return "Bad request", 400
         else:
             return "Bad request", 400
     else:
