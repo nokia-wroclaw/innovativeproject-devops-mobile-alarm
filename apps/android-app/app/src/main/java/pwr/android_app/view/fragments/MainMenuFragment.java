@@ -1,5 +1,7 @@
 package pwr.android_app.view.fragments;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
@@ -11,17 +13,26 @@ import com.github.mikephil.charting.components.Description;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import pwr.android_app.R;
+import pwr.android_app.dataStructures.StatsResponse;
+import pwr.android_app.network.rest.ServerApi;
+import pwr.android_app.network.rest.ServiceGenerator;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MainMenuFragment extends Fragment {
 
     /* ========================================== DATA ========================================== */
+
+    private SharedPreferences sharedPref;
+
+    private ServerApi client =
+            ServiceGenerator.createService(ServerApi.class);
 
     @BindView(R.id.chart)
     PieChart chart;
@@ -35,6 +46,7 @@ public class MainMenuFragment extends Fragment {
 
     /* ========================================= METHODS ======================================== */
 
+    // ----------------------------------- Fragment Lifecycle ----------------------------------- //
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container,
@@ -45,25 +57,47 @@ public class MainMenuFragment extends Fragment {
 
         ButterKnife.bind(this,view);
 
-//        displayChart(view);
+        getStats();
 
         return view;
     }
 
-    void displayChart(View view) {
+    // ----------------------------------------- Network ---------------------------------------- //
+    public void getStats() {
+
+        sharedPref = getContext().getSharedPreferences(getString(R.string.shared_preferences_key), Context.MODE_PRIVATE);
+        String cookie = sharedPref.getString(getString(R.string.shared_preferences_cookie),null);
+
+        Call<StatsResponse> call = client.getStats(cookie);
+
+        call.enqueue(new Callback<StatsResponse>() {
+            @Override
+            public void onResponse(Call<StatsResponse> call, Response<StatsResponse> response) {
+                displayChart(
+                        getView(),
+                        response.body().getUp(),
+                        response.body().getDown(),
+                        response.body().getUnspecified());
+            }
+
+            @Override
+            public void onFailure(Call<StatsResponse> call, Throwable t) {
+
+            }
+        });
+    }
+
+    // ---------------------------------------- Functions --------------------------------------- //
+    void displayChart(View view, int up, int down, int unspecified) {
 
         List<PieEntry> entries = new ArrayList<>();
         List<Integer> colors = new ArrayList<>();
 
-        float isUp = 3f;
-        float isDown = 1f;
-        float isUnspecified = 1f;
-
         String[] labels = { "Up", "Down", "Unspecified" };
 
-        entries.add(new PieEntry(isUp, labels[0]));
-        entries.add(new PieEntry(isDown, labels[1]));
-        entries.add(new PieEntry(isUnspecified, labels[2]));
+        entries.add(new PieEntry(up, labels[0]));
+        entries.add(new PieEntry(down, labels[1]));
+        entries.add(new PieEntry(unspecified, labels[2]));
 
         colors.add(ContextCompat.getColor(getContext(), R.color.service_up_color));
         colors.add(ContextCompat.getColor(getContext(), R.color.service_down_color));
@@ -78,9 +112,10 @@ public class MainMenuFragment extends Fragment {
 
         chart.setData(data);
         chart.animateY(1000);
-        chart.setCenterText("STATES");
+        chart.setCenterText("All Services");
         chart.setHighlightPerTapEnabled(false);
         chart.setHoleColor(ContextCompat.getColor(getContext(), R.color.light_grey));
+        chart.getLegend().setEnabled(false);
 
         Description desc = new Description();
         desc.setText("");

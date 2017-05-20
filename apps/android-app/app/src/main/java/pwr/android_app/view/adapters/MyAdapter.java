@@ -292,7 +292,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.stopSubscribingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                serviceButtonsListeners.onStartSubscribingButtonFired(mValues.get(position).getServiceId());
+                serviceButtonsListeners.onStopSubscribingButtonFired(mValues.get(position).getServiceId());
             }
         });
     }

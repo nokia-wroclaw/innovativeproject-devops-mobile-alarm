@@ -89,11 +89,6 @@ public class MainActivity
 
         ButterKnife.bind(this);
 
-        if (savedInstanceState == null || !savedInstanceState.containsKey(BUNDLE_SELECTED_WINDOW)) {
-            option_id = R.id.main_menu_option;
-            setFragment();
-        }
-
         setSupportActionBar(toolbar);
         actionBar = getSupportActionBar();
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -101,6 +96,11 @@ public class MainActivity
         toggle.syncState();
 
         navigationView.setNavigationItemSelectedListener(this);
+
+        if (savedInstanceState == null || !savedInstanceState.containsKey(BUNDLE_SELECTED_WINDOW)) {
+            option_id = R.id.main_menu_option;
+            setFragment();
+        }
     }
 
     @Override
@@ -185,6 +185,7 @@ public class MainActivity
             fragmentTransaction.replace(R.id.fragment_container, currentFragment, TAG_MAIN_MENU_FRAGMENT);
             fragmentTransaction.commit();
 
+            actionBar.setTitle(getString(R.string.action_bar_main_menu));
             fab.hide();
 
         } else if (option_id == R.id.monitor_option) {
@@ -195,8 +196,9 @@ public class MainActivity
             fragmentTransaction.replace(R.id.fragment_container, currentFragment, TAG_MONITOR_FRAGMENT);
             fragmentTransaction.commit();
 
+            actionBar.setTitle(getString(R.string.action_bar_services));
             fab.show();
-            fab.bringToFront();
+//            fab.bringToFront();
         }
     }
 

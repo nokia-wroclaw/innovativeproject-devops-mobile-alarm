@@ -18,6 +18,10 @@
     <string name="bad_server_connection">Cannot connect to server :(</string>
     <string name="bad_internet_connection">No internet connection!</string>
 
+    <!-- ActionBar -->
+    <string name="action_bar_services">Services</string>
+    <string name="action_bar_main_menu">Main Menu</string>
+
     <!-- LoginActivity -->
     <string name="prompt_email_label">E-mail</string>
     <string name="prompt_password_label">Password</string>

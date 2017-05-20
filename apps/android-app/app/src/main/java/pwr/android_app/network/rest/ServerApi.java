@@ -4,6 +4,7 @@ import java.util.List;
 
 import pwr.android_app.dataStructures.FixRequest;
 import pwr.android_app.dataStructures.ServiceResponse;
+import pwr.android_app.dataStructures.StatsResponse;
 import pwr.android_app.dataStructures.SubscriptionRequest;
 import pwr.android_app.dataStructures.SubscriptionResponse;
 import pwr.android_app.dataStructures.UserData;
@@ -50,6 +51,10 @@ public interface ServerApi {
             @Header("Content-Type") String contentType,
             @Header("Cookie") String cookie,
             @Body FixRequest body);
+
+    @GET("/stats_android")
+    Call<StatsResponse> getStats(
+            @Header("Cookie") String cookie);
 
     /* ========================================================================================== */
 }
