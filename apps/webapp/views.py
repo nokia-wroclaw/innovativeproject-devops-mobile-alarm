@@ -419,3 +419,36 @@ def settings():
     db.session.commit()
 
     return redirect(request.args.get('next') or url_for('settings'))
+@app.route('/stats_android')
+def stats_android():
+    if current_user.is_authenticated():
+        user = g.user
+        org_id = User_Organization_mapping.query.filter_by(id_user=user.id).first()
+
+        up_services = Service.query.filter_by(organization_id=org_id.id_organization, current_state=ServiceState.up).count()
+        down_services = Service.query.filter_by(organization_id=org_id.id_organization, current_state=ServiceState.down).count()
+        unspecified_services = Service.query.filter_by(organization_id=org_id.id_organization, current_state=ServiceState.unspecified).count()
+        all_services = Service.query.filter_by(organization_id=org_id.id_organization).count()
+    
+        if all_services != 0:
+            percent_up_services = int(float(up_services)/float(all_services)*100)
+            percent_down_services = int(float(down_services)/float(all_services)*100)
+            percent_unspecified_services = int(float(unspecified_services)/float(all_services)*100)
+        else:
+            percent_up_services = 0
+            percent_down_services = 0
+            percent_unspecified_services = 0
+    
+        if percent_up_services + percent_down_services + percent_unspecified_services < 100:
+            if percent_up_services != 0:
+                percent_up_services = percent_up_services + 1
+            elif percent_down_services != 0:
+                percent_down_services = percent_down_services + 1
+            elif percent_unspecified_services != 0:
+                percent_unspecified_services = percent_unspecified_services + 1
+
+        items={"up":percent_up_services, "down":percent_down_services, "unspecified":percent_unspecified_services}
+
+        return Response((json.dumps(items, default=json_util.default)), mimetype='application/json')
+    else:
+        return "Blad", 400
