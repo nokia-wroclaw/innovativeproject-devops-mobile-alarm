@@ -1,6 +1,8 @@
 package pwr.android_app.network.rest;
 
 import java.util.List;
+
+import pwr.android_app.dataStructures.FixRequest;
 import pwr.android_app.dataStructures.ServiceResponse;
 import pwr.android_app.dataStructures.SubscriptionRequest;
 import pwr.android_app.dataStructures.SubscriptionResponse;
@@ -42,6 +44,12 @@ public interface ServerApi {
             @Header("Content-Type") String contentType,
             @Header("Cookie") String cookie,
             @Body SubscriptionRequest body);
+
+    @POST("/fix_service")
+    Call<Void> setFix(
+            @Header("Content-Type") String contentType,
+            @Header("Cookie") String cookie,
+            @Body FixRequest body);
 
     /* ========================================================================================== */
 }

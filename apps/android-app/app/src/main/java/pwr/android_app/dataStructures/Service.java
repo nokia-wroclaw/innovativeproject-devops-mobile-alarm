@@ -13,6 +13,9 @@ public class Service {
     private ServiceStatus serviceStatus;
     private SubscriptionStatus subscriptionStatus;
 
+    private int repairStatus;
+    private String repairerEmail;
+
     /* ====================================== CONSTRUCTORS ====================================== */
 
     public Service(ServiceResponse data) {
@@ -32,6 +35,9 @@ public class Service {
     public void addSubscription (SubscriptionResponse data) {
 
         if (data.getServiceId() == this.getServiceId()) {
+
+            this.repairStatus = data.getServiceRepairerId();
+            this.repairerEmail = data.getServiceRepairerEmail();
 
             this.subscriptionStatus = SubscriptionStatus.SUBSCRIPTION_UP;
 
@@ -86,6 +92,14 @@ public class Service {
 
     public SubscriptionStatus getSubscriptionStatus() {
         return subscriptionStatus;
+    }
+
+    public int getRepairStatus() {
+        return repairStatus;
+    }
+
+    public String getRepairerEmail() {
+        return repairerEmail;
     }
 
     /* ========================================= CLASSES ======================================== */

@@ -11,6 +11,9 @@
     <string name="fcm_message_service_state_title">Service %1$s</string>
     <string name="fcm_message_service_state_body">is %1$s now!</string>
 
+    <string name="fcm_message_service_repair_title">Service %1$s</string>
+    <string name="fcm_message_service_repair_body">is under repair now!</string>
+
     <!-- General -->
     <string name="bad_server_connection">Cannot connect to server :(</string>
     <string name="bad_internet_connection">No internet connection!</string>

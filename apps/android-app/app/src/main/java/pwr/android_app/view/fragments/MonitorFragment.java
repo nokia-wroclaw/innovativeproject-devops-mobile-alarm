@@ -16,6 +16,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 import pwr.android_app.R;
+import pwr.android_app.dataStructures.FixRequest;
+import pwr.android_app.dataStructures.UserData;
 import pwr.android_app.interfaces.ServiceButtonsListeners;
 import pwr.android_app.interfaces.ToastMessenger;
 import pwr.android_app.dataStructures.Service;
@@ -189,14 +191,61 @@ public class MonitorFragment
     @Override
     public void onStartRepairServiceButtonFired(int serviceId) {
 
-        ((ToastMessenger)getActivity()).showToast("You've started repairing service number " + String.valueOf(serviceId));
+        String cookie = sharedPref.getString(getString(R.string.shared_preferences_cookie), null);
+
+        FixRequest requestBody =
+                new FixRequest(serviceId,true);
+
+        Call<Void> call = client.setFix("application/json", cookie, requestBody);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+                if (response.code() == 200) {
+                    synchronizeSubscriptions();
+                }
+                else {
+                    ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_server_connection));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+                ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_internet_connection));
+            }
+        });
     }
 
     @Override
     public void onStopRepairServiceButtonFired(int serviceId) {
 
-        ((ToastMessenger)getActivity()).showToast("You've stopped repairing service number " + String.valueOf(serviceId));
+        String cookie = sharedPref.getString(getString(R.string.shared_preferences_cookie), null);
 
+        FixRequest requestBody =
+                new FixRequest(serviceId,false);
+
+        Call<Void> call = client.setFix("application/json", cookie, requestBody);
+
+        call.enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+
+                if (response.code() == 200) {
+                    synchronizeSubscriptions();
+                }
+                else {
+                    ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_server_connection));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+
+                ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_internet_connection));
+            }
+        });
     }
 
     // ----------------------------------- Fragment Lifecycle ----------------------------------- //
@@ -233,13 +282,14 @@ public class MonitorFragment
             }
 
             if(savedInstanceState == null) {
-                adapter = new MyAdapter(new ArrayList<Service>(), this);
+                adapter = new MyAdapter(new ArrayList<Service>(), this, (new Gson().fromJson(sharedPref.getString("user_data",null), UserData.class)).getUid());
             }
             else {
                 List<Service> sites;
                 Type listType = new TypeToken<List<Service>>(){}.getType();
                 sites = new Gson().fromJson(savedInstanceState.getString("list"), listType);
-                adapter = new MyAdapter(sites, this);
+                adapter = new MyAdapter(sites, this, (new Gson().fromJson(sharedPref.getString("user_data",null), UserData.class)).getUid());
+
             }
 
             recyclerView.setAdapter(adapter);

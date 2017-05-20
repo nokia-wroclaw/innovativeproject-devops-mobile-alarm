@@ -1,32 +1,30 @@
 package pwr.android_app.view.fragments;
 
-import android.content.Intent;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Description;
-import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
-import com.github.mikephil.charting.formatter.PercentFormatter;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import butterknife.BindView;
+import butterknife.ButterKnife;
 import pwr.android_app.R;
 
 public class MainMenuFragment extends Fragment {
 
     /* ========================================== DATA ========================================== */
 
+    @BindView(R.id.chart)
+    PieChart chart;
 
 
     /* ====================================== CONSTRUCTORS ====================================== */
@@ -45,14 +43,15 @@ public class MainMenuFragment extends Fragment {
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_main_menu, container, false);
 
-        displayChart(view);
+        ButterKnife.bind(this,view);
+
+//        displayChart(view);
 
         return view;
     }
 
     void displayChart(View view) {
-        // TODO: Butterknife ~ make it Jacob
-        PieChart chart = (PieChart) view.findViewById(R.id.chart);
+
         List<PieEntry> entries = new ArrayList<>();
         List<Integer> colors = new ArrayList<>();
 

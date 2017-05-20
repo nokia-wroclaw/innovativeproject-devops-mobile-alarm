@@ -14,6 +14,10 @@ public class SubscriptionResponse {
 
     public int getServiceStatus() { return subscritpion.status; }
 
+    public int getServiceRepairerId() { return subscritpion.service_repairer_id; }
+
+    public String getServiceRepairerEmail() {return subscritpion.repairer_email; }
+
     /* ========================================= CLASSES ======================================== */
 
     class Subscription {
@@ -21,7 +25,8 @@ public class SubscriptionResponse {
         // --- DATA --- //
         private int status;
         private int id_service;
-
+        private int service_repairer_id;
+        private String repairer_email;
     }
 
     /* ========================================================================================== */

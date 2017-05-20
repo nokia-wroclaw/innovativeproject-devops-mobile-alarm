@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<android.support.v7.widget.LinearLayoutCompat
-
+<android.support.v7.widget.ContentFrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
@@ -9,10 +8,17 @@
     android:layout_marginTop="3dp"
     android:background="@color/service_down_color">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="3dp"
+        android:background="@color/dark_grey">
+
+
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="8dp"
+            android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:layout_weight="1"
             android:orientation="vertical">
@@ -21,36 +27,27 @@
                 android:id="@+id/service_name_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Service"
-                android:textColor="@android:color/white"
+                android:text="service address"
                 android:textSize="@dimen/big_text" />
 
             <TextView
                 android:id="@+id/service_address_label"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textColor="@android:color/white"
-                android:text="address" />
+                android:text="service name" />
+
         </LinearLayout>
 
         <ImageButton
-            android:id="@+id/start_repair_button"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:layout_marginLeft="5dp"
-            android:background="@android:color/transparent"
-            app:srcCompat="@drawable/wrench_2_icon" />
-
-        <ImageButton
-            android:id="@+id/stop_subscribing_button"
+            android:id="@+id/stop_repairing_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginLeft="5dp"
             android:layout_marginRight="5dp"
             android:background="@android:color/transparent"
-            app:srcCompat="@drawable/open_eye_icon" />
+            app:srcCompat="@drawable/wrench_icon"
+            android:tint="@color/light_grey" />
+    </LinearLayout>
 
-
-</android.support.v7.widget.LinearLayoutCompat>
+</android.support.v7.widget.ContentFrameLayout>

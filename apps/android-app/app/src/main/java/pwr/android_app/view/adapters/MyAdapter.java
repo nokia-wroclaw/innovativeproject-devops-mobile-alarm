@@ -21,21 +21,25 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
     // ToDo: map
     private List<Service> mValues;
+    private int userId;
 
     private final int SERVICE_UNKNOWN = 0;
     private final int SERVICE_DOWN = 1;
     private final int SERVICE_UP = 2;
     private final int SERVICE_UNSPECIFIED = 3;
     private final int SERVICE_NOT_SUBSCRIBED = 4;
+    private final int SERVICE_UNDER_REPAIR = 5;
+    private final int SERVICER_REPAIRED_BY_ME = 6;
 
     private ServiceButtonsListeners serviceButtonsListeners;
 
     /* ====================================== CONSTRUCTORS ====================================== */
 
-    public MyAdapter(List<Service> items, ServiceButtonsListeners listener) {
+    public MyAdapter(List<Service> items, ServiceButtonsListeners listener, int userId) {
 
         this.serviceButtonsListeners = listener;
         mValues = items;
+        this.userId = userId;
     }
 
     /* ========================================= GETTERS ======================================== */
@@ -97,6 +101,17 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                         return SERVICE_UP;
 
                     case DOWN:
+                        if (mValues.get(position).getRepairStatus() == 0) {
+                            return SERVICE_DOWN;
+
+                        } else if (mValues.get(position).getRepairStatus() > 0) {
+                            if (mValues.get(position).getRepairStatus() == userId ) {
+                                return SERVICER_REPAIRED_BY_ME;
+
+                            } else {
+                                return SERVICE_UNDER_REPAIR;
+                            }
+                        }
                         return SERVICE_DOWN;
 
                     case UNSPECIFIED:
@@ -151,6 +166,16 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
                 viewHolder = new ViewHolderServiceUnknown(view);
                 break;
 
+            case SERVICE_UNDER_REPAIR:
+                view = inflater.inflate(R.layout.fragment_item_service_under_repair, parent, false);
+                viewHolder = new ViewHolderServiceUnderRepair(view);
+                break;
+
+            case SERVICER_REPAIRED_BY_ME:
+                view = inflater.inflate(R.layout.fragment_item_service_under_repair_2, parent, false);
+                viewHolder = new ViewHolderServiceUnderRepair2(view);
+                break;
+
             default:
                 view = inflater.inflate(R.layout.fragment_item_service_unknown, parent, false);
                 viewHolder = new ViewHolderServiceUnknown(view);
@@ -183,6 +208,14 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
             case SERVICE_UNKNOWN:
                 onBindServiceUnknown((ViewHolderServiceUnknown) holder, position);
+                break;
+
+            case SERVICE_UNDER_REPAIR:
+                onBindServiceUnderRepair((ViewHolderServiceUnderRepair) holder, position);
+                break;
+
+            case SERVICER_REPAIRED_BY_ME:
+                onBindServiceUnderRepair2((ViewHolderServiceUnderRepair2) holder, position);
                 break;
 
             default:
@@ -250,6 +283,31 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         holder.serviceNameLabel.setText(mValues.get(position).getServiceName());
         holder.serviceAddressLabel.setText((mValues.get(position).getServiceAddress()));
     }
+    private void onBindServiceUnderRepair(final ViewHolderServiceUnderRepair holder, final int position) {
+
+        holder.serviceNameLabel.setText(mValues.get(position).getServiceName());
+        holder.serviceAddressLabel.setText((mValues.get(position).getServiceAddress()));
+        holder.serviceRepairInfoLabel.setText((mValues.get(position).getRepairerEmail()));
+
+        holder.stopSubscribingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                serviceButtonsListeners.onStartSubscribingButtonFired(mValues.get(position).getServiceId());
+            }
+        });
+    }
+    private void onBindServiceUnderRepair2(final ViewHolderServiceUnderRepair2 holder, final int position) {
+
+        holder.serviceNameLabel.setText(mValues.get(position).getServiceName());
+        holder.serviceAddressLabel.setText((mValues.get(position).getServiceAddress()));
+
+        holder.stopRepairButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                serviceButtonsListeners.onStopRepairServiceButtonFired(mValues.get(position).getServiceId());
+            }
+        });
+    }
 
     /* ========================================= CLASSES ======================================== */
 
@@ -280,7 +338,7 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
         TextView serviceAddressLabel;
         @BindView(R.id.stop_subscribing_button)
         ImageButton stopSubscribingButton;
-        @BindView(R.id.repair_button)
+        @BindView(R.id.start_repair_button)
         ImageButton repairServiceButton;
 
         // --- CONSTRUCTORS --- //
@@ -331,6 +389,40 @@ public class MyAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
         // --- CONSTRUCTORS --- //
         private ViewHolderServiceUnknown (View view) {
+            super(view);
+            ButterKnife.bind(this,view);
+        }
+    }
+    static class ViewHolderServiceUnderRepair extends RecyclerView.ViewHolder {
+
+        // --- DATA --- //
+        @BindView(R.id.service_name_label)
+        TextView serviceNameLabel;
+        @BindView(R.id.service_address_label)
+        TextView serviceAddressLabel;
+        @BindView(R.id.service_repair_info_label)
+        TextView serviceRepairInfoLabel;
+        @BindView(R.id.stop_subscribing_button)
+        ImageButton stopSubscribingButton;
+
+        // --- CONSTRUCTORS --- //
+        private ViewHolderServiceUnderRepair (View view) {
+            super(view);
+            ButterKnife.bind(this,view);
+        }
+    }
+    static class ViewHolderServiceUnderRepair2 extends RecyclerView.ViewHolder {
+
+        // --- DATA --- //
+        @BindView(R.id.service_name_label)
+        TextView serviceNameLabel;
+        @BindView(R.id.service_address_label)
+        TextView serviceAddressLabel;
+        @BindView(R.id.stop_repairing_button)
+        ImageButton stopRepairButton;
+
+        // --- CONSTRUCTORS --- //
+        private ViewHolderServiceUnderRepair2 (View view) {
             super(view);
             ButterKnife.bind(this,view);
         }
