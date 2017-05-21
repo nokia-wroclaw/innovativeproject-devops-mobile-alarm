@@ -48,6 +48,7 @@ def ping_services():
                 send_notification( "icon_red", service, "DOWN" )
 
     db.session.commit()
+    db.session.close()
 
 #task run every Monday at 7:30
 @periodic_task(run_every=(crontab(hour=7, minute=30, day_of_week=1)), ignore_result=True)
@@ -58,27 +59,32 @@ def cleaning_tokens():
         if expiration_date <= datetime.datetime.now() or token.is_used == True:
             db.session.delete(token)
     db.session.commit()
+    db.session.close()
 
 @periodic_task(run_every=(crontab(minute=59)), ignore_result=True)
 def reset_hour_counter():
     for stat in Stats.query.all():
         stat.hour_counter = 0
     db.session.commit()
+    db.session.close()
 
 @periodic_task(run_every=(crontab(hour=0, minute=0)), ignore_result=True)
 def reset_day_counter():
     for stat in Stats.query.all():
         stat.day_counter = 0
     db.session.commit()
+    db.session.close()
 
 @periodic_task(run_every=(crontab(hour=0, minute=0, day_of_week=1)), ignore_result=True)
 def reset_week_counter():
     for stat in Stats.query.all():
         stat.week_counter = 0
     db.session.commit()
+    db.session.close()
 
 @periodic_task(run_every=(crontab(hour=0, minute=0, day_of_month=1)), ignore_result=True)
 def reset_month_counter():
     for stat in Stats.query.all():
         stat.month_counter = 0
     db.session.commit()
+    db.session.close()
