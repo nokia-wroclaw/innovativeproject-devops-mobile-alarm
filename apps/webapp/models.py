@@ -91,16 +91,7 @@ class Service(db.Model):
         return {"service": {'id': self.id,
                 'address': self.address,
                 'name': self.name,
-                'organization_id': self.organization_id,
-                'service_repairer_id': self.service_repairer_id,
-                'repairer_email': self.email}}
-
-    @property
-    def email(self):
-        if self.service_repairer_id != None:
-            return User.query.filter_by(id=self.service_repairer_id).first().email
-        elif self.service_repairer_id == None:
-            return 0
+                'organization_id': self.organization_id}}
 
 class Subscription(db.Model):
     id=db.Column(db.Integer, primary_key=True)
@@ -113,7 +104,9 @@ class Subscription(db.Model):
     def dump(self):
         return {"subscritpion": {
                 'id_service': self.id_service,
-                'status': self.service_state}}
+                'status': self.service_state,
+                'service_repairer_id': self.service_repairer_id,
+                'repairer_email': self.email}}
 
     @property
     def fcm_token(self):
@@ -122,6 +115,17 @@ class Subscription(db.Model):
     @property
     def service_state(self):
         return self.service.current_state
+
+    @property
+    def service_repairer_id(self):
+        return Service.query.filter_by(id=self.id_service).first().service_repairer_id
+
+    @property
+    def email(self):
+        if self.service_repairer_id != None:
+            return User.query.filter_by(id=self.service_repairer_id).first().email
+        elif self.service_repairer_id == None:
+            return 0
 
 class Tokens(db.Model):
     id=db.Column(db.Integer, primary_key=True)
