@@ -27,3 +27,12 @@ class HistoryTable(Table):
     name = Col('Name')
     state = OptCol('State', choices=states)
     state_set_time = Col('State changed in')
+
+class StatisticsTable(Table):
+    classes = ['table', 'table-striped']
+    name = Col('Name')
+    hour_counter = Col('Down in last hour')
+    day_counter = Col('Down in last day')
+    week_counter = Col('Down in last week')
+    month_counter = Col('Down in last month')
+

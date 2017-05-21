@@ -114,9 +114,15 @@
                     </ul>
                     <ul class="nav nav-sidebar">
                         {% if panel=="history" %}
+                        <li><a href="{{ url_for('statistics') }}">Statistics</a></li>
                         <li class="active"><a href="{{ url_for('history') }}">History</a></li>
+
+                        {% elif panel=="statistics" %}
+                        <li class="active"><a href="{{ url_for('statistics') }}">Statistics</a></li>
+                        <li><a href="{{ url_for('history') }}">History</a></li>
                         
                         {% else %}
+                        <li><a href="{{ url_for('statistics') }}">Statistics</a></li>
                         <li><a href="{{ url_for('history') }}">History</a></li>
                         {% endif %}
                     </ul>

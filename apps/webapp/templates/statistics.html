@@ -1,0 +1,15 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<link href="../static/css/services.css" rel="stylesheet">
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header">Statistics of {{ org_name }}</h1>
+            <h3 class="page-header">Amount of the down state in time</h3>
+
+          <div class="table-responsive">
+            {{ statistics_table }}
+          </div>
+          
+        </div>
+{% endblock %}

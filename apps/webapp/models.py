@@ -153,6 +153,17 @@ class History(db.Model):
 
 class Stats(db.Model):
     id=db.Column(db.Integer, primary_key=True)
-    all_counter=db.Column(db.Integer)
-    down_counter=db.Column(db.Integer)
+    name=db.Column(db.String(80), index=True)
+    hour_counter=db.Column(db.Integer)
+    day_counter=db.Column(db.Integer)
+    week_counter=db.Column(db.Integer)
+    month_counter=db.Column(db.Integer)
     service_id=db.Column(db.Integer, db.ForeignKey('service.id'))
+
+    def __init__(self, name, service_id):
+        self.name = name
+        self.hour_counter=0
+        self.day_counter=0
+        self.week_counter=0
+        self.month_counter=0
+        self.service_id=service_id
