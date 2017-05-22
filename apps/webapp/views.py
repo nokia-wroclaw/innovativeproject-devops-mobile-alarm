@@ -239,8 +239,12 @@ def logoutandroid():
 @app.route('/servicesandroid')
 def servicesandroid():
     if current_user.is_authenticated():
-        org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
-        items=db.session.query(Service).filter_by(organization_id=org_id.id_organization).all()
+        items=[]
+        users=User_Organization_mapping.query.filter_by(id_user=g.user.id).all()
+        for x in users:
+            items = items + Service.query.filter_by(organization_id=x.id_organization).all()
+        #org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
+        #items=db.session.query(Service).filter_by(organization_id=org_id.id_organization).all()
 
         return Response((json.dumps([o.dump() for o in items], default=json_util.default)), mimetype='application/json')
     else:
