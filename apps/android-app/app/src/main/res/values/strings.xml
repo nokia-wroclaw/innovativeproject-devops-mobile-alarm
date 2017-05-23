@@ -49,4 +49,12 @@
     <string name="main_option_name">main menu</string>
     <string name="monitor_option_name">services</string>
 
+    <!-- Alert Dialog -->
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="start_alert_title">Starting repairing</string>
+    <string name="stop_alert_title">Stopping repairing</string>
+    <string name="start_alert_message">Are you sure you want to start repairing this service?</string>
+    <string name="stop_alert_message">Are you sure you want to stop repairing this service?</string>
+
 </resources>

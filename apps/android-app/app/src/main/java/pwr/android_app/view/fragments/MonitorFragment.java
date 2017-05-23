@@ -1,6 +1,8 @@
 package pwr.android_app.view.fragments;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -127,7 +129,7 @@ public class MonitorFragment
     }
 
     @Override
-    public void onStartSubscribingButtonFired(int serviceId) {
+    public void onStartSubscribingButtonFired(final int serviceId) {
 
         String cookie = sharedPref.getString(getString(R.string.shared_preferences_cookie), null);
 
@@ -137,7 +139,7 @@ public class MonitorFragment
         // ToDo: string resource
         Call<Void> call = client.setSubscription("application/json", cookie, requestBody);
 
-        call.enqueue(new Callback<Void>() {
+            call.enqueue(new Callback<Void>() {
             @Override
             public void onResponse(Call<Void> call, Response<Void> response) {
 
@@ -189,63 +191,88 @@ public class MonitorFragment
     }
 
     @Override
-    public void onStartRepairServiceButtonFired(int serviceId) {
+    public void onStartRepairServiceButtonFired(final int serviceId) {
 
-        String cookie = sharedPref.getString(getString(R.string.shared_preferences_cookie), null);
+        new AlertDialog.Builder(getContext())
+            .setIcon(R.drawable.wrench_icon)
+            .setTitle(R.string.start_alert_title)
+            .setMessage(R.string.start_alert_message)
+            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 
-        FixRequest requestBody =
-                new FixRequest(serviceId,true);
+                public void onClick(DialogInterface dialog, int which) {
+                    {
+                        String cookie = sharedPref.getString(getString(R.string.shared_preferences_cookie), null);
 
-        Call<Void> call = client.setFix("application/json", cookie, requestBody);
+                        FixRequest requestBody =
+                                new FixRequest(serviceId, true);
 
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+                        Call<Void> call = client.setFix("application/json", cookie, requestBody);
 
-                if (response.code() == 200) {
-                    synchronizeSubscriptions();
+                        call.enqueue(new Callback<Void>() {
+
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+
+                                if (response.code() == 200) {
+                                    synchronizeSubscriptions();
+                                } else {
+                                    ((ToastMessenger) getActivity()).showToast(getString(R.string.bad_server_connection));
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+
+                                ((ToastMessenger) getActivity()).showToast(getString(R.string.bad_internet_connection));
+                            }
+                        });
+                    }
                 }
-                else {
-                    ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_server_connection));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-
-                ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_internet_connection));
-            }
-        });
+            })
+            .setNegativeButton(R.string.no, null)
+            .show();
     }
-
     @Override
-    public void onStopRepairServiceButtonFired(int serviceId) {
+    public void onStopRepairServiceButtonFired(final int serviceId) {
 
-        String cookie = sharedPref.getString(getString(R.string.shared_preferences_cookie), null);
+        new AlertDialog.Builder(getContext())
+            .setIcon(R.drawable.wrench_2_icon)
+            .setTitle(R.string.stop_alert_title)
+            .setMessage(R.string.stop_alert_message)
+            .setPositiveButton(R.string.yes, new DialogInterface.OnClickListener() {
 
-        FixRequest requestBody =
-                new FixRequest(serviceId,false);
+                public void onClick(DialogInterface dialog, int which) {
+                    {
+                        String cookie = sharedPref.getString(getString(R.string.shared_preferences_cookie), null);
 
-        Call<Void> call = client.setFix("application/json", cookie, requestBody);
+                        FixRequest requestBody =
+                                new FixRequest(serviceId,false);
 
-        call.enqueue(new Callback<Void>() {
-            @Override
-            public void onResponse(Call<Void> call, Response<Void> response) {
+                        Call<Void> call = client.setFix("application/json", cookie, requestBody);
 
-                if (response.code() == 200) {
-                    synchronizeSubscriptions();
+                        call.enqueue(new Callback<Void>() {
+                            @Override
+                            public void onResponse(Call<Void> call, Response<Void> response) {
+
+                                if (response.code() == 200) {
+                                    synchronizeSubscriptions();
+                                }
+                                else {
+                                    ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_server_connection));
+                                }
+                            }
+
+                            @Override
+                            public void onFailure(Call<Void> call, Throwable t) {
+
+                                ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_internet_connection));
+                            }
+                        });
+                    }
                 }
-                else {
-                    ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_server_connection));
-                }
-            }
-
-            @Override
-            public void onFailure(Call<Void> call, Throwable t) {
-
-                ((ToastMessenger)getActivity()).showToast(getString(R.string.bad_internet_connection));
-            }
-        });
+            })
+            .setNegativeButton(R.string.no, null)
+            .show();
     }
 
     // ----------------------------------- Fragment Lifecycle ----------------------------------- //
