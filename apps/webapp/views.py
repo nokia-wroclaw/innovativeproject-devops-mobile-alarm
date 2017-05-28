@@ -473,13 +473,16 @@ def fix_android():
 @app.route('/stats_android')
 def stats_android():
     if current_user.is_authenticated():
-        user = g.user
-        org_id = User_Organization_mapping.query.filter_by(id_user=user.id).first()
-
-        up_services = Service.query.filter_by(organization_id=org_id.id_organization, current_state=ServiceState.up).count()
-        down_services = Service.query.filter_by(organization_id=org_id.id_organization, current_state=ServiceState.down).count()
-        unspecified_services = Service.query.filter_by(organization_id=org_id.id_organization, current_state=ServiceState.unspecified).count()
-        all_services = Service.query.filter_by(organization_id=org_id.id_organization).count()
+        up_services=0
+        down_services=0
+        unspecified_services=0
+        all_services=0
+        users=User_Organization_mapping.query.filter_by(id_user=g.user.id).all()
+        for x in users:
+            up_services = up_services + Service.query.filter_by(organization_id=x.id_organization, current_state=ServiceState.up).count()
+            down_services = down_services + Service.query.filter_by(organization_id=x.id_organization, current_state=ServiceState.down).count()
+            unspecified_services = unspecified_services + Service.query.filter_by(organization_id=x.id_organization, current_state=ServiceState.unspecified).count()
+            all_services = all_services + Service.query.filter_by(organization_id=x.id_organization).count()
     
         if all_services != 0:
             percent_up_services = int(float(up_services)/float(all_services)*100)
