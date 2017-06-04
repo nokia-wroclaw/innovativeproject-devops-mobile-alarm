@@ -525,7 +525,7 @@ def statistics():
                 delta_uptime = (datetime.datetime.now() - service.time_of_last_change_of_state).seconds
             else:
                 timedelta_uptime = '00:00:00'
-                delta_uptime = 0.0
+                delta_uptime = (datetime.datetime.now() - service.time_of_added).seconds - (datetime.datetime.now() - service.time_of_last_change_of_state).seconds
             delta_time_of_added = (datetime.datetime.now() - service.time_of_added).seconds
             percentage_uptime = int(float(delta_uptime) / float(delta_time_of_added) * 100.0)
             items.append(StatItem(service.name, timedelta_uptime, percentage_uptime))
