@@ -31,8 +31,12 @@ class HistoryTable(Table):
 class StatisticsTable(Table):
     classes = ['table', 'table-striped']
     name = Col('Name')
-    hour_counter = Col('Down in last hour')
-    day_counter = Col('Down in last day')
-    week_counter = Col('Down in last week')
-    month_counter = Col('Down in last month')
+    delta_uptime = Col('Uptime (delta)')
+    percentage_uptime = Col('Uptime (%)')
+
+class StatItem(object):
+    def __init__(self, name, delta_uptime, percentage_uptime):
+        self.name = name
+        self.delta_uptime = delta_uptime
+        self.percentage_uptime = percentage_uptime
 

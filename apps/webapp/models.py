@@ -74,14 +74,15 @@ class Service(db.Model):
     time_of_last_change_of_state=db.Column(db.DateTime())
     previous_state = db.Column(db.Integer, index=True)
     current_state = db.Column(db.Integer, index=True)
-    #fcm_token_group=db.Column(db.String(100), index=True)
+    time_of_added = db.Column(db.DateTime())
     organization_id=db.Column(db.Integer, db.ForeignKey('organization.id'))
     service_repairer_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=True)
     users=db.relationship("Subscription", back_populates="service")
     
-    def __init__(self, address, name, organization_id):
+    def __init__(self, address, name, time_of_added, organization_id):
         self.address=address
         self.name=name
+        self.time_of_added=time_of_added
         self.organization_id=organization_id
         self.previous_state = ServiceState.unspecified
         self.current_state = ServiceState.unspecified
@@ -154,20 +155,3 @@ class History(db.Model):
         self.state=state
         self.state_set_time=state_set_time
         self.organization_id=organization_id
-
-class Stats(db.Model):
-    id=db.Column(db.Integer, primary_key=True)
-    name=db.Column(db.String(80), index=True)
-    hour_counter=db.Column(db.Integer)
-    day_counter=db.Column(db.Integer)
-    week_counter=db.Column(db.Integer)
-    month_counter=db.Column(db.Integer)
-    service_id=db.Column(db.Integer, db.ForeignKey('service.id'))
-
-    def __init__(self, name, service_id):
-        self.name = name
-        self.hour_counter=0
-        self.day_counter=0
-        self.week_counter=0
-        self.month_counter=0
-        self.service_id=service_id

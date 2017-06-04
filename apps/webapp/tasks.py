@@ -4,7 +4,7 @@ from celery.utils.log import get_task_logger
 from celery.signals import worker_process_init
 import datetime
 import ping
-from models import Service, Tokens, History, Stats
+from models import Service, Tokens, History
 from webapp import celery, ServiceState, db
 from functions import send_notification
 
@@ -12,7 +12,6 @@ from functions import send_notification
 @periodic_task(run_every=(crontab(minute="*")), ignore_result=True)
 def ping_services():
     for service in Service.query.all():
-        stat = Stats.query.filter_by(service_id=service.id).first()
         response = ping.ping(service.address)
         if response == 0 and service.current_state != ServiceState.unspecified:
             service.previous_state = service.current_state
@@ -38,11 +37,6 @@ def ping_services():
             # history
             history = History(service.address, service.name, ServiceState.down, service.time_of_last_change_of_state, service.organization_id)
             db.session.add(history)
-            # statistics
-            stat.hour_counter = stat.hour_counter + 1
-            stat.day_counter = stat.day_counter + 1
-            stat.week_counter = stat.week_counter + 1
-            stat.month_counter = stat.month_counter + 1
             # notifications
             if service.users:
                 send_notification( "icon_red", service, "DOWN" )
@@ -58,33 +52,5 @@ def cleaning_tokens():
         expiration_date = token.date_of_expire + datetime.timedelta(days=7)
         if expiration_date <= datetime.datetime.now() or token.is_used == True:
             db.session.delete(token)
-    db.session.commit()
-    db.session.close()
-
-@periodic_task(run_every=(crontab(minute=59)), ignore_result=True)
-def reset_hour_counter():
-    for stat in Stats.query.all():
-        stat.hour_counter = 0
-    db.session.commit()
-    db.session.close()
-
-@periodic_task(run_every=(crontab(hour=0, minute=0)), ignore_result=True)
-def reset_day_counter():
-    for stat in Stats.query.all():
-        stat.day_counter = 0
-    db.session.commit()
-    db.session.close()
-
-@periodic_task(run_every=(crontab(hour=0, minute=0, day_of_week=1)), ignore_result=True)
-def reset_week_counter():
-    for stat in Stats.query.all():
-        stat.week_counter = 0
-    db.session.commit()
-    db.session.close()
-
-@periodic_task(run_every=(crontab(hour=0, minute=0, day_of_month=1)), ignore_result=True)
-def reset_month_counter():
-    for stat in Stats.query.all():
-        stat.month_counter = 0
     db.session.commit()
     db.session.close()

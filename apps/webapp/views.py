@@ -7,7 +7,7 @@ import os
 from sendgrid.helpers.mail import *
 import bcrypt
 import datetime
-from tables import UsersTable, ServicesTable, HistoryTable, StatisticsTable
+from tables import UsersTable, ServicesTable, HistoryTable, StatisticsTable, StatItem
 from functions import generate_registration_token, confirm_token, notification_fix, send_notification
 import json
 from bson import json_util
@@ -114,13 +114,12 @@ def remove_service():
         id = request.args.get('id')
         subscriptions=Subscription.query.filter_by(id_service=id).all()
         serv=Service.query.filter_by(id=id).first()
-        stat=Stats.query.filter_by(service_id=id).first()
        
         for sub in subscriptions:
             db.session.delete(sub)
         
         db.session.delete(serv)
-        db.session.delete(stat)
+
         db.session.commit()
     return redirect(request.args.get('next') or url_for('services'))
 
@@ -394,14 +393,8 @@ def add_service():
         return redirect(url_for('add_service'))
 
     # creating a new service
-    new_service = Service(address=address, name=name, organization_id=org_id.id_organization)
+    new_service = Service(address=address, name=name,time_of_added=datetime.datetime.now(), organization_id=org_id.id_organization)
     db.session.add(new_service)
-
-    db.session.commit()
-
-    # creating a new statistic for the service
-    new_stats = Stats(name=new_service.name, service_id=new_service.id)
-    db.session.add(new_stats)
 
     db.session.commit()
 
@@ -521,11 +514,19 @@ def statistics():
     org_id = User_Organization_mapping.query.filter_by(id_user=g.user.id).first()
     if request.method == 'GET':
         # creating a statistic table
-        service_items = db.session.query(Service).filter_by(organization_id=org_id.id_organization).all()
-        stat_items = []
-        for service in service_items:
-            stat_items.append(db.session.query(Stats).filter_by(service_id=service.id).first())
+        items = []
+        for service in Service.query.filter_by(organization_id=org_id.id_organization).all():
+            if service.current_state == ServiceState.up:
+                timedelta_uptime = datetime.datetime.now() - service.time_of_last_change_of_state
+                timedelta_uptime = str(timedelta_uptime).split(".")[0]
+                delta_uptime = (datetime.datetime.now() - service.time_of_last_change_of_state).seconds
+            else:
+                timedelta_uptime = '00:00:00'
+                delta_uptime = 0.0
+            delta_time_of_added = (datetime.datetime.now() - service.time_of_added).seconds
+            percentage_uptime = int(float(delta_uptime) / float(delta_time_of_added) * 100.0)
+            items.append(StatItem(service.name, timedelta_uptime, percentage_uptime))
 
-        statistics_table = StatisticsTable(stat_items)
+        statistics_table = StatisticsTable(items)
 
         return render_template('statistics.html', statistics_table=statistics_table, panel="statistics", org_name=org_id.organization.name)
