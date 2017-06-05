@@ -1,23 +1,60 @@
 <resources>
-    <string name="app_name">android-app</string>
 
-    <!-- Strings related to login -->
-    <string name="prompt_email">Email</string>
-    <string name="prompt_password">Password (if you have an account)</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <!-- :D -->
+    <string name="app_name">DevOps</string>
+
+    <!-- Shared Preferences -->
+    <string name="shared_preferences_key">pwr.android_app.pref</string>
+    <string name="shared_preferences_cookie">cookie</string>
+
+    <!-- Notifications -->
+    <string name="fcm_message_service_state_title">Service %1$s</string>
+    <string name="fcm_message_service_state_body">is %1$s now!</string>
+
+    <string name="fcm_message_service_repair_title">Service %1$s</string>
+    <string name="fcm_message_service_repair_body">is under repair now!</string>
+
+    <!-- General -->
+    <string name="bad_server_connection">Cannot connect to server :(</string>
+    <string name="bad_internet_connection">No internet connection!</string>
+
+    <!-- ActionBar -->
+    <string name="action_bar_services">Services</string>
+    <string name="action_bar_main_menu">Main Menu</string>
+
+    <!-- LoginActivity -->
+    <string name="prompt_email_label">E-mail</string>
+    <string name="prompt_password_label">Password</string>
+
+    <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="error_invalid_email">This email address is invalid</string>
-    <string name="error_invalid_password">This password is too short</string>
-    <string name="error_incorrect_password">This password is incorrect</string>
-    <string name="error_field_required">This field is required</string>
-    <string name="permission_rationale">"Contacts permissions are needed for providing email
-        completions."
-    </string>
-    <string name="title_activity_main">DevOps</string>
+
+    <string name="invalid_email_error">This email address is invalid</string>
+    <string name="invalid_password_error">This password is invalid</string>
+    <string name="incorrect_password_error">This password is incorrect</string>
+    <string name="field_required_error">This field is required</string>
+
+    <string name="permission_rationale">"Contacts permissions are needed for providing email completions."</string>
+
+    <!-- MainActivity -->
+    <string name="main_activity_title">MainActivity</string>
 
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
-    <string name="title_activity_web_connection">WebConnection</string>
+    <string name="action_about_us">About us</string>
+    <string name="action_logout">Logout</string>
+
+    <!-- MainActivity::Drawer -->
+    <string name="main_option_name">main menu</string>
+    <string name="monitor_option_name">services</string>
+
+    <!-- Alert Dialog -->
+    <string name="yes">yes</string>
+    <string name="no">no</string>
+    <string name="start_alert_title">Starting repairing</string>
+    <string name="stop_alert_title">Stopping repairing</string>
+    <string name="start_alert_message">Are you sure you want to start repairing this service?</string>
+    <string name="stop_alert_message">Are you sure you want to stop repairing this service?</string>
+
 </resources>
