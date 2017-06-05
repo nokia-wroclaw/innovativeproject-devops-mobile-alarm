@@ -1,0 +1,24 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<link href="../static/css/settings.css" rel="stylesheet">
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+            <h1 class="page-header">Settings</h1>
+
+            <h3>Change organization name</h3>
+            <h4>Current name: {{ org_name }}</h4>
+            <form action="" method="POST" onsubmit="return validatePassword()">
+                <input type="text" name="organization_name" id="organization_name" class="form-control" value="{{ org_name  }}" placeholder="Organization" autofocus>
+
+                <h3>Change password</h3>
+                
+                <input type="password" name="old_password" id="old_password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" class="form-control" placeholder="Old password">
+                <input type="password" name="password" id="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" class="form-control" placeholder="New password" onchange="form.confirmPassword.pattern = this.value;">
+                <input type="password" name="confirmPassword" id="confirmPassword" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" class="form-control" placeholder="Confirm Password">  
+            
+                <button class="btn btn-lg btn-primary btn-block" type="submit">Save all</button>
+            </form>
+          
+        </div>
+{% endblock %}

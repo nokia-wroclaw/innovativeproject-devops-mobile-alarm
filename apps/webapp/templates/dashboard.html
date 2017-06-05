@@ -1,0 +1,150 @@
+<!-- extend base layout -->
+{% extends "base.html" %}
+
+{% block content %}
+<link href="../static/css/dashboard.css" rel="stylesheet">
+        <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main">
+          <h1 class="page-header ">Dashboard</h1>
+          <h2 class="page-header center">Organization: {{ org_name }}</h2>
+
+          <div class="modal-body row">
+            <div class="col-md-3 col-md-offset-own center">
+              {% if percent_up_services == 0 %}
+                <div class="c100 p0 big green">
+              {% endif %}
+              {% if percent_up_services > 0 and  percent_up_services <= 10 %}
+                <div class="c100 p5 big green">
+              {% endif %}
+              {% if percent_up_services > 10 and  percent_up_services <= 20 %}
+                <div class="c100 p15 big green">
+              {% endif %}
+              {% if percent_up_services > 20 and  percent_up_services <= 30 %}
+                <div class="c100 p25 big green">
+              {% endif %}
+              {% if percent_up_services > 30 and  percent_up_services <= 40 %}
+                <div class="c100 p35 big green">
+              {% endif %}
+              {% if percent_up_services > 40 and  percent_up_services <= 50 %}
+                <div class="c100 p45 big green">
+              {% endif %}
+              {% if percent_up_services > 50 and  percent_up_services <= 60 %}
+                <div class="c100 p55 big green">
+              {% endif %}
+              {% if percent_up_services > 60 and  percent_up_services <= 70 %}
+                <div class="c100 p65 big green">
+              {% endif %}
+              {% if percent_up_services > 70 and  percent_up_services <= 80 %}
+                <div class="c100 p75 big green">
+              {% endif %}
+              {% if percent_up_services > 80 and  percent_up_services <= 90 %}
+                <div class="c100 p85 big green">
+              {% endif %}
+              {% if percent_up_services > 90 and  percent_up_services < 100 %}
+                <div class="c100 p95 big green">
+              {% endif %}
+              {% if percent_up_services == 100 %}
+                <div class="c100 p100 big green">
+              {% endif %}
+                    <span>{{ percent_up_services }}%</span>
+                    <div class="slice">
+                        <div class="bar"></div>
+                        <div class="fill"></div>
+                    </div>
+                </div>
+                <label for="up" class="label_up">Up</label>
+            </div>
+            <div class="col-md-3 center">
+              {% if percent_down_services == 0 %}
+                <div class="c100 p0 big">
+              {% endif %}
+              {% if percent_down_services > 0 and  percent_down_services <= 10%}
+                <div class="c100 p5 big">
+              {% endif %}
+              {% if percent_down_services > 10 and  percent_down_services <= 20 %}
+                <div class="c100 p15 big">
+              {% endif %}
+              {% if percent_down_services > 20 and  percent_down_services <= 30 %}
+                <div class="c100 p25 big">
+              {% endif %}
+              {% if percent_down_services > 30 and  percent_down_services <= 40 %}
+                <div class="c100 p35 big">
+              {% endif %}
+              {% if percent_down_services > 40 and  percent_down_services <= 50 %}
+                <div class="c100 p45 big">
+              {% endif %}
+              {% if percent_down_services > 50 and  percent_down_services <= 60 %}
+                <div class="c100 p55 big">
+              {% endif %}
+              {% if percent_down_services > 60 and  percent_down_services <= 70 %}
+                <div class="c100 p65 big">
+              {% endif %}
+              {% if percent_down_services > 70 and  percent_down_services <= 80 %}
+                <div class="c100 p75 big">
+              {% endif %}
+              {% if percent_down_services > 80 and  percent_down_services <= 90 %}
+                <div class="c100 p85 big">
+              {% endif %}
+              {% if percent_down_services > 90 and  percent_down_services < 100 %}
+                <div class="c100 p95 big">
+              {% endif %}
+              {% if percent_down_services == 100 %}
+                <div class="c100 p100 big">
+              {% endif %}
+                    <span>{{ percent_down_services }}%</span>
+                    <div class="slice">
+                        <div class="bar"></div>
+                        <div class="fill"></div>
+                    </div>
+                </div>
+                <label for="down" class="label_down">Down</label>
+            </div>
+            <div class="col-md-3 center">
+              {% if percent_unspecified_services == 0 %}
+                <div class="c100 p0 big orange">
+              {% endif %}
+              {% if percent_unspecified_services > 0 and  percent_unspecified_services <= 10 %}
+                <div class="c100 p5 big orange">
+              {% endif %}
+              {% if percent_unspecified_services > 10 and  percent_unspecified_services <= 20 %}
+                <div class="c100 p15 big orange">
+              {% endif %}
+              {% if percent_unspecified_services > 20 and  percent_unspecified_services <= 30 %}
+                <div class="c100 p25 big orange">
+              {% endif %}
+              {% if percent_unspecified_services > 30 and  percent_unspecified_services <= 40 %}
+                <div class="c100 p35 big orange">
+              {% endif %}
+              {% if percent_unspecified_services > 40 and  percent_unspecified_services <= 50 %}
+                <div class="c100 p45 big orange">
+              {% endif %}
+              {% if percent_unspecified_services > 50 and  percent_unspecified_services <= 60 %}
+                <div class="c100 p55 big orange">
+              {% endif %}
+              {% if percent_unspecified_services > 60 and  percent_unspecified_services <= 70 %}
+                <div class="c100 p65 big orange">
+              {% endif %}
+              {% if percent_unspecified_services > 70 and  percent_unspecified_services <= 80 %}
+                <div class="c100 p75 big orange">
+              {% endif %}
+              {% if percent_unspecified_services > 80 and  percent_unspecified_services <= 90 %}
+                <div class="c100 p85 big orange">
+              {% endif %}
+              {% if percent_unspecified_services > 90 and  percent_unspecified_services < 100 %}
+                <div class="c100 p95 big orange">
+              {% endif %}
+              {% if percent_unspecified_services == 100 %}
+                <div class="c100 p100 big orange">
+              {% endif %}
+                    <span>{{ percent_unspecified_services }}%</span>
+                    <div class="slice">
+                        <div class="bar"></div>
+                        <div class="fill"></div>
+                    </div>
+                </div>
+                <label for="unspecified" class="label_unspecified">Unspecified</label>
+            </div>
+          </div>
+
+          
+        </div>
+{% endblock %}

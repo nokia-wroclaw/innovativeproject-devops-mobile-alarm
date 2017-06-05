@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <color name="dark_grey">#303030</color>
+    <color name="light_grey">#d9d9d9</color>
+    <color name="yellow">#fec12d</color>
+    <color name="black">#000000</color>
+
+    <color name="service_up_color">#76ff03</color>
+    <color name="service_down_color">#ff1744</color>
+    <color name="service_not_subscribed_color">#eeeeee</color>
+    <color name="service_unspecified_color">#ff9100</color>
+    <color name="service_unknown_color">#888888</color>
+
+</resources>
+

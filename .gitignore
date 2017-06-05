@@ -1,0 +1,12 @@
+
+apps/android-app/\.idea/
+
+apps/android-app/app/src/test/
+
+apps/android-app/app/src/androidTest/
+
+apps/web-app/\.idea/inspectionProfiles/Project_Default\.xml
+
+apps/web-app/\.idea/
+
+\.idea/

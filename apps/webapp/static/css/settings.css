@@ -1,0 +1,30 @@
+.main {
+    text-align: left
+}
+.form-control {
+  position: relative;
+  height: auto;
+  -webkit-box-sizing: border-box;
+     -moz-box-sizing: border-box;
+          box-sizing: border-box;
+  padding: 10px;
+  font-size: 16px;
+  width: 40%;
+  margin-top: 10px;
+}
+.form-control:focus {
+  z-index: 2;
+  outline: none !important;
+  border:1px solid #e07f31;
+  box-shadow: 0 0 10px #e07f31;
+}
+.btn {
+    margin-top: 10px;
+    background-color: #f29346; 
+    border-color: #f29346;
+    width: 40%;
+}
+.btn:hover {
+  background-color: #e07f31;
+  border-color: #e07f31;
+}
