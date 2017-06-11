@@ -1,6 +1,6 @@
 from flask import Flask, session, request, flash, url_for, redirect, render_template, abort, g, jsonify, Response
 from flask_login import login_user, logout_user, current_user, login_required
-from webapp import db, app, login_manager, UserType
+from webapp import db, app, login_manager, UserType, recaptcha
 from .models import *
 import sendgrid
 import os
@@ -11,6 +11,7 @@ from tables import UsersTable, ServicesTable, HistoryTable, StatisticsTable, Sta
 from functions import generate_registration_token, confirm_token, notification_fix, send_notification
 import json
 from bson import json_util
+from flask_recaptcha import ReCaptcha
 
 @login_manager.user_loader
 def load_user(id):
@@ -90,22 +91,25 @@ def register(token, organization_id):
     if request.method == 'GET':
         return render_template('register.html', title="DevOps", registerAdmin="false")
 
-    name = request.form['name']
-    surname = request.form['surname']
-    password = request.form['password']
-    password_bytes = password.encode('utf-8')
-    hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+    if recaptcha.verify():
+        name = request.form['name']
+        surname = request.form['surname']
+        password = request.form['password']
+        password_bytes = password.encode('utf-8')
+        hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
     
-    # register new user
-    user=User(name=name, surname=surname, email=email, password=hashed)
-    db.session.add(user)
-    db.session.commit()
-    org_usr_mapp=User_Organization_mapping(id_user=user.id, id_organization=organization_id, user_type=2)
-    db.session.add(org_usr_mapp)
-    pushed_token.is_used = True
-    db.session.commit()
-    flash('User successfully registered')
-    return "Your account is ready for login. Go to your Android app and try this on!"
+        # register new user
+        user=User(name=name, surname=surname, email=email, password=hashed)
+        db.session.add(user)
+        db.session.commit()
+        org_usr_mapp=User_Organization_mapping(id_user=user.id, id_organization=organization_id, user_type=2)
+        db.session.add(org_usr_mapp)
+        pushed_token.is_used = True
+        db.session.commit()
+        flash('User successfully registered')
+        return "Your account is ready for login. Go to your Android app and try this on!"
+    else:
+        return render_template("register.html", title="DevOps", registerAdmin="false", captcha="failed")
 
 @app.route('/remove_service', methods=['GET', 'POST'])
 @login_required
@@ -157,29 +161,31 @@ def register_admin():
     if request.method == 'GET':
         return render_template('register.html', title="DevOps", registerAdmin="true")
 
-    email = request.form['email']
-    name = request.form['name']
-    organization = request.form['organization']
+    if recaptcha.verify():
+        email = request.form['email']
+        name = request.form['name']
+        organization = request.form['organization']
 
-    if Organization.query.filter_by(name=organization).first() is not None:
-        return redirect(request.args.get('next') or url_for('register_admin'))
+        if Organization.query.filter_by(name=organization).first() is not None:
+            return redirect(request.args.get('next') or url_for('register_admin'))
 
-    surname = request.form['surname']
-    password = request.form['password']
-    password_bytes = password.encode('utf-8')
-    hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
-    user=User(name=name, surname=surname, email=email, password=hashed)
-    org_usr_mapp=User_Organization_mapping(user_type=1)
-    org_usr_mapp.organization=Organization(name=organization)
-    user.organizations.append(org_usr_mapp)
-    db.session.add(user)
-    db.session.add(org_usr_mapp)
-    db.session.commit()
+        surname = request.form['surname']
+        password = request.form['password']
+        password_bytes = password.encode('utf-8')
+        hashed = bcrypt.hashpw(password_bytes, bcrypt.gensalt())
+        user=User(name=name, surname=surname, email=email, password=hashed)
+        org_usr_mapp=User_Organization_mapping(user_type=1)
+        org_usr_mapp.organization=Organization(name=organization)
+        user.organizations.append(org_usr_mapp)
+        db.session.add(user)
+        db.session.add(org_usr_mapp)
+        db.session.commit()
 
-    # set token as USED
-    flash('User successfully registered')
-    return redirect(request.args.get('next') or url_for('login'))
-
+        # set token as USED
+        flash('User successfully registered')
+        return redirect(request.args.get('next') or url_for('login'))
+    else:
+        return render_template('register.html', title="DevOps", registerAdmin="true", captcha="failed")
 
 @app.route('/users',methods=['GET','POST'])
 @login_required

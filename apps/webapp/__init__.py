@@ -4,12 +4,17 @@ from os import path
 from flask import Flask
 from flask.ext.login import LoginManager
 from flask_sqlalchemy import SQLAlchemy
+from flask_recaptcha import ReCaptcha
 
 app = Flask(__name__)
 sys.path.append(path.dirname(path.dirname(path.abspath(__file__))))
 
 #config for Forms, Register and FCM tokens
-app.config.update(DEBUG = True, SECRET_KEY = 'you-will-never-guess', SECURITY_PASSWORD_SALT = 'my_precious_two', FCM_APP_TOKEN = 'AAAAXUWoieY:APA91bGcVQ67M5mAEl7e2OSb5yKko8J17NH7GZtOspoq9NKjnHMyD9RiCePjLKUHfyBzn4II0aVJx_JnyyBHQijdbT6sYwxAoDrI15bZX_0FdBpHKgAVqMBpKMQAxIggXxakcZ3It54f')
+app.config.update(dict( DEBUG = True, SECRET_KEY = 'you-will-never-guess', SECURITY_PASSWORD_SALT = 'my_precious_two', FCM_APP_TOKEN = 'AAAAXUWoieY:APA91bGcVQ67M5mAEl7e2OSb5yKko8J17NH7GZtOspoq9NKjnHMyD9RiCePjLKUHfyBzn4II0aVJx_JnyyBHQijdbT6sYwxAoDrI15bZX_0FdBpHKgAVqMBpKMQAxIggXxakcZ3It54f', RECAPTCHA_ENABLED = True, RECAPTCHA_SITE_KEY = '6LetACUUAAAAAPckPB-tmBZdLo9eZDp5tacC1XA9', RECAPTCHA_SECRET_KEY = '6LetACUUAAAAAMUPZ3N1gjDO1AHxq8AVAXau9Fg-', RECAPTCHA_THEME = 'light'))
+
+#recaptcha init
+recaptcha = ReCaptcha()
+recaptcha.init_app(app)
 
 #conection to database
 app.config['SQLALCHEMY_DATABASE_URI'] = os.environ['DATABASE_URL']

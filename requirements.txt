@@ -2,6 +2,7 @@
 # Flask
 # ----------------------
 flask
+flask-recaptcha
 Babel==1.3
 Flask-Babel==0.9
 Flask-Login==0.2.11

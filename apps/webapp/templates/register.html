@@ -41,9 +41,11 @@
   <body>
 
     <div class="container">
-
       <form class="form-signin" action="" method="post" onsubmit="return validatePassword()">
         <h2 class="form-signin-heading">Please sign up</h2>
+        {% if captcha == "failed" %}
+        <h1 style="color:red;">Registration failed! Try again prove that you are not a robot!</h1>
+        {% endif %}
         <input type="text" name="name" id="name" pattern="\w+" value="{{ request.form.name }}" maxlength="15" class="form-control" placeholder="Name" required>
         <input type="text" name="surname" id="surname" pattern="\w+" value="{{ request.form.surname }}" maxlength="40" class="form-control" placeholder="Surname" required>
             
@@ -53,7 +55,9 @@
         {% endif %}
         
         <input type="password" name="password" id="password" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" value="{{ request.form.password }}" class="form-control" placeholder="Password" required onchange="form.confirmPassword.pattern = this.value;">
-        <input type="password" name="confirmPassword" id="confirmPassword" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" class="form-control" placeholder="Confirm Password" required title="Hasla roznia sie od siebie.">
+        <input type="password" name="confirmPassword" id="confirmPassword" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,}" class="form-control" placeholder="Confirm Password" required title="Hasla roznia sie od siebie."><br/>
+
+	{{ recaptcha }}
         
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
       </form>
